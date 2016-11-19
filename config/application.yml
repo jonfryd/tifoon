@@ -1,0 +1,20 @@
+application:
+  logging: true
+  scanning: true
+
+network:
+  targets:
+    - name: My Macs
+      addresses:
+        - 10.32.3.32
+        - 10.32.3.33
+        - 10.32.3.34
+      ports:
+        - 80
+    - name: Raspberry Pi 3 Server
+      addresses:
+        - 10.32.2.10
+      ports:
+        - 80
+        - 443
+        - 20-25
