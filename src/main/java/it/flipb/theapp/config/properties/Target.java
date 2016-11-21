@@ -24,24 +24,24 @@ public class Target {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(final String _name) {
+        this.name = _name;
     }
 
     public List<InetAddress> getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(List<InetAddress> addresses) {
-        this.addresses = addresses;
+    public void setAddresses(final List<InetAddress> _addresses) {
+        this.addresses = _addresses;
     }
 
     public List<String> getPorts() {
         return ports;
     }
 
-    public void setPorts(List<String> ports) {
-        this.ports = ports;
+    public void setPorts(final List<String> _ports) {
+        this.ports = _ports;
     }
 
     @Override
