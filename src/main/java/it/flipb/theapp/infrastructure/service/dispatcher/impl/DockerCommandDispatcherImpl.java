@@ -11,7 +11,7 @@ import com.github.dockerjava.core.command.ExecStartResultCallback;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.github.dockerjava.core.command.WaitContainerResultCallback;
 import it.flipb.theapp.infrastructure.service.dispatcher.CommandDispatcher;
-import it.flipb.theapp.infrastructure.service.tools.ToolsService;
+import it.flipb.theapp.infrastructure.repository.command.CommandRepository;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -31,11 +31,11 @@ import java.util.stream.Stream;
 public class DockerCommandDispatcherImpl implements CommandDispatcher {
     private static final Logger logger = LoggerFactory.getLogger(DockerCommandDispatcherImpl.class);
 
-    private final ToolsService toolsService;
+    private final CommandRepository commandRepository;
 
     @Autowired
-    public DockerCommandDispatcherImpl(final ToolsService _toolsService) {
-        toolsService = _toolsService;
+    public DockerCommandDispatcherImpl(final CommandRepository _commandRepository) {
+        commandRepository = _commandRepository;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DockerCommandDispatcherImpl implements CommandDispatcher {
         Assert.notNull(_arguments, "arguments cannot be null");
         Assert.notNull(_outputFile, "output file cannot be null");
 
-        final String image = toolsService.findDockerImage(_command).getImage();
+        final String image = commandRepository.findDockerImage(_command).getImage();
         Assert.notNull(image, "no Docker image not found for command: " + _command);
 
         final DockerClient dockerClient = getDockerClient();

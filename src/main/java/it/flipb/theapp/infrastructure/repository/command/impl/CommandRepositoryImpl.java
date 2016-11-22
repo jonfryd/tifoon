@@ -1,11 +1,11 @@
-package it.flipb.theapp.infrastructure.service.tools.impl;
+package it.flipb.theapp.infrastructure.repository.command.impl;
 
 import it.flipb.theapp.domain.model.tools.DockerImage;
 import it.flipb.theapp.domain.model.tools.ShellCommand;
 import it.flipb.theapp.infrastructure.config.ToolsConfiguration;
-import it.flipb.theapp.infrastructure.service.tools.ToolsService;
+import it.flipb.theapp.infrastructure.repository.command.CommandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
@@ -13,8 +13,8 @@ import javax.validation.constraints.Null;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Service
-public class ToolsServiceImpl implements ToolsService {
+@Repository
+public class CommandRepositoryImpl implements CommandRepository {
     @NotNull
     private Map<String, DockerImage> dockerImageMap;
 
@@ -22,8 +22,8 @@ public class ToolsServiceImpl implements ToolsService {
     private Map<String, ShellCommand> shellCommandMap;
 
     @Autowired
-    public ToolsServiceImpl(final ToolsConfiguration _toolsConfiguration) {
-        Assert.notNull(_toolsConfiguration, "tools configuration cannot be null");
+    public CommandRepositoryImpl(final ToolsConfiguration _toolsConfiguration) {
+        Assert.notNull(_toolsConfiguration, "command configuration cannot be null");
 
         dockerImageMap = _toolsConfiguration.getTools().getDockerImages()
                 .stream()
