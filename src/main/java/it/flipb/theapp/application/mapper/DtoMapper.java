@@ -1,6 +1,6 @@
-package it.flipb.theapp.mapper;
+package it.flipb.theapp.application.mapper;
 
-import it.flipb.theapp.mapper.scanning.TargetPortScannerJobMapper;
+import it.flipb.theapp.application.mapper.scanning.TargetPortScannerJobMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

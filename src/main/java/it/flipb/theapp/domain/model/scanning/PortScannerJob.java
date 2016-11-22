@@ -15,9 +15,9 @@ public class PortScannerJob {
         // required for model mapping
     }
 
-    public PortScannerJob(@NotNull final String _description,
-                          @NotNull final List<InetAddress> _addresses,
-                          @NotNull final List<PortRange> _portRanges) {
+    public PortScannerJob(final String _description,
+                          final List<InetAddress> _addresses,
+                          final List<PortRange> _portRanges) {
         setDescription(_description);
         setAddresses(_addresses);
         setPortRanges(_portRanges);

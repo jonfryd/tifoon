@@ -1,4 +1,4 @@
-package it.flipb.theapp.config.properties;
+package it.flipb.theapp.application.config.properties.network;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -6,7 +6,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@ConfigurationProperties(prefix="network")
+@ConfigurationProperties(locations = {"classpath:network.yml", "classpath:config/network.yml", "file:network.yml", "file:config/network.yml"}, prefix = "network")
 public class Network {
     @NotNull
     @Valid
@@ -16,7 +16,7 @@ public class Network {
         return targets;
     }
 
-    public void setTargets(List<Target> targets) {
+    public void setTargets(@NotNull List<Target> targets) {
         this.targets = targets;
     }
 

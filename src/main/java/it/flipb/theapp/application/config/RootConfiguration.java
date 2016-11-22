@@ -1,11 +1,12 @@
-package it.flipb.theapp.config;
+package it.flipb.theapp.application.config;
         
-import it.flipb.theapp.config.properties.Application;
-import it.flipb.theapp.config.properties.Network;
+import it.flipb.theapp.application.config.properties.application.Application;
+import it.flipb.theapp.application.config.properties.network.Network;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-        
-@org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 @EnableConfigurationProperties({Application.class, Network.class})
 public class RootConfiguration {
     @Autowired

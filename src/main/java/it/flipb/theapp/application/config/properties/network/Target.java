@@ -1,4 +1,4 @@
-package it.flipb.theapp.config.properties;
+package it.flipb.theapp.application.config.properties.network;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public class Target {
     @NotNull
     @NotEmpty
-    private String name;
+    private String description;
 
     @NotNull
     @NotEmpty
@@ -20,19 +20,19 @@ public class Target {
     @NotEmpty
     private List<String> ports;
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(final String _name) {
-        this.name = _name;
+    public void setDescription(@NotNull final String _description) {
+        this.description = _description;
     }
 
     public List<InetAddress> getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(final List<InetAddress> _addresses) {
+    public void setAddresses(@NotNull final List<InetAddress> _addresses) {
         this.addresses = _addresses;
     }
 
@@ -40,14 +40,14 @@ public class Target {
         return ports;
     }
 
-    public void setPorts(final List<String> _ports) {
+    public void setPorts(@NotNull final List<String> _ports) {
         this.ports = _ports;
     }
 
     @Override
     public String toString() {
         return "Target{" +
-            "name=" + name +
+            "description=" + description +
             ", addresses=" + addresses +
             ", ports=" + ports +
             '}';

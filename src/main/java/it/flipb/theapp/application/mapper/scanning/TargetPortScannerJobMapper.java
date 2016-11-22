@@ -1,6 +1,6 @@
-package it.flipb.theapp.mapper.scanning;
+package it.flipb.theapp.application.mapper.scanning;
 
-import it.flipb.theapp.config.properties.Target;
+import it.flipb.theapp.application.config.properties.network.Target;
 import it.flipb.theapp.domain.model.scanning.PortRange;
 import it.flipb.theapp.domain.model.scanning.PortScannerJob;
 import it.flipb.theapp.domain.model.scanning.Protocol;
@@ -19,7 +19,7 @@ public class TargetPortScannerJobMapper extends AbstractConverter<Target, PortSc
                 .map(this::convertStringToPortRange)
                 .collect(Collectors.toList());
 
-        return new PortScannerJob(_target.getName(), _target.getAddresses(), portRanges);
+        return new PortScannerJob(_target.getDescription(), _target.getAddresses(), portRanges);
     }
 
     private PortRange convertStringToPortRange(@NotNull final String _stringRange) {
