@@ -20,6 +20,14 @@
     <version>1.4.2.RELEASE</version>
   </parent>
 
+  <repositories>
+    <repository>
+      <id>project.local</id>
+      <name>project</name>
+      <url>file:${project.basedir}/lib</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -48,7 +56,12 @@
     <dependency>
       <groupId>org.modelmapper.extensions</groupId>
       <artifactId>modelmapper-spring</artifactId>
-      <version>0.7.5</version>
+      <version>0.7.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.nmap4j</groupId>
+      <artifactId>nmap4j</artifactId>
+      <version>1.1.0</version>
     </dependency>
   </dependencies>
 
