@@ -1,29 +1,33 @@
-# README #
+# TheApp #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+This is a super-duper advanced hacking and pentesting application.
 
-### What is this repository for? ###
+Based on an open source technologies, a flexible core and designed with extendability in mind.
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+### Requirements ###
 
-### How do I get set up? ###
+* Linux, Mac OS X or Windows
+* Java 8
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+### Optional ###
 
-### Contribution guidelines ###
+* Local install of nmap, ..., etc.
+* A working Docker installation
 
-* Writing tests
-* Code review
-* Other guidelines
+### Questions ###
 
-### Who do I talk to? ###
+* IRC
+* Forum
 
-* Repo owner or admin
-* Other community or team contact
+### How to contribute ###
+
+* Please read the coding guidelines first!
+* Think in terms of generic principles
+* Produce clean, maintainable and readable code
+* Create a pull-request
+
+### Lead Developers ###
+
+* bad_request
+* (Lone)
+* s0niq
