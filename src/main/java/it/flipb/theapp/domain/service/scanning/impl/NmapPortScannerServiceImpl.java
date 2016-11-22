@@ -71,7 +71,7 @@ class NmapPortScannerServiceImpl implements PortScannerService {
                 .build();
         */
 
-        final String localDockerHost = SystemUtils.IS_OS_WINDOWS ? "//./pipe/docker_engine" : "unix:///var/run/docker.sock";
+        final String localDockerHost = SystemUtils.IS_OS_WINDOWS ? "tcp://localhost:2375" : "unix:///var/run/docker.sock";
 
         final DefaultDockerClientConfig config = DefaultDockerClientConfig
                 .createDefaultConfigBuilder()
