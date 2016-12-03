@@ -25,6 +25,10 @@
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <maven.compiler.source>${java.version}</maven.compiler.source>
 
+    <!-- Character encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     <!-- Spring versions -->
     <spring-boot.version>1.4.2.RELEASE</spring-boot.version>
     <spring-plugin.version>1.2.0.RELEASE</spring-plugin.version>
