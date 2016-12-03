@@ -1,17 +1,18 @@
 package it.flipb.theapp.infrastructure.config;
 
-import it.flipb.theapp.domain.model.profile.MasterPlan;
+import it.flipb.theapp.domain.model.masterplan.MasterPlan;
+import it.flipb.theapp.domain.model.plugin.PluginWrapper;
 import it.flipb.theapp.plugin.executer.ExecutorPlugin;
 import it.flipb.theapp.plugin.scanner.ScannerPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.plugin.core.Plugin;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.plugin.core.config.EnablePluginRegistries;
-
-import javax.validation.constraints.Null;
 
 @Configuration
 @EnablePluginRegistries({ExecutorPlugin.class, ScannerPlugin.class})
@@ -51,14 +52,15 @@ public class PluginConfiguration {
         return true;
     }
 
-    @Null
-    public ScannerPlugin getScannerPlugin() {
-        return scannerPlugin;
+    @Bean
+    public PluginWrapper<ScannerPlugin> scannerPluginWrapper() {
+        // note that we have to wrap the plugin to prevent circular Spring dependencies
+        return new PluginWrapper(scannerPlugin);
     }
 
-    @Null
-    public ExecutorPlugin getExecutorPlugin()
-    {
-        return executorPlugin;
+    @Bean
+    public PluginWrapper<ExecutorPlugin> executorPluginWrapper() {
+        // note that we have to wrap the plugin to prevent circular Spring dependencies
+        return new PluginWrapper(executorPlugin);
     }
 }
