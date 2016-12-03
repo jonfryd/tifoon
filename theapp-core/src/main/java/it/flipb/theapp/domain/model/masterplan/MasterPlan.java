@@ -1,4 +1,4 @@
-package it.flipb.theapp.domain.model.profile;
+package it.flipb.theapp.domain.model.masterplan;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
