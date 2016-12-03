@@ -1,0 +1,5 @@
+masterplan:
+  scanner:
+    active: true
+    toolName: nmap
+  commandExecutor: docker

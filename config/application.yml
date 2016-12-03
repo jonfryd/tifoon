@@ -1,5 +1,0 @@
-application:
-  commandExecutor: docker # supported: docker, shell
-  scanner:
-    active: true
-    tool: nmap

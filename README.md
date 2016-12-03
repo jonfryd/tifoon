@@ -29,5 +29,5 @@ Based on an open source technologies, a flexible core and designed with extendab
 ### Lead Developers ###
 
 * bad_request
-* (Lone)
+* (The MiGhTy Lone)
 * s0niq

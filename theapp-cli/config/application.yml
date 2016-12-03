@@ -1,0 +1,4 @@
+logging:
+    level:
+        org.springframework: 'OFF'
+        it.flipb: INFO

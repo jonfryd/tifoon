@@ -1,8 +1,0 @@
-tools:
-  dockerImages:
-    - command: nmap
-      image: uzyexe/nmap:latest
-
-  shellCommands:
-    - command: nmap
-      path: /opt/local/bin/nmap
