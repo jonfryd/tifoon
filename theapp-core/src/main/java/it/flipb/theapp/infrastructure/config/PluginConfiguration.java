@@ -19,33 +19,34 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 public class PluginConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(PluginConfiguration.class);
 
-    private final MasterPlan masterPlan;
-
-    private final ScannerPlugin scannerPlugin;
-    private final ExecutorPlugin executorPlugin;
+    private final PluginWrapper<ScannerPlugin> scannerPluginWrapper;
+    private final PluginWrapper<ExecutorPlugin> executorPluginWrapper;
 
     @Autowired
     public PluginConfiguration(final MasterPlan _masterPlan,
                                @Qualifier("scannerPluginRegistry") final PluginRegistry<ScannerPlugin, String> _scannerPluginRegistry,
                                @Qualifier("executorPluginRegistry") final PluginRegistry<ExecutorPlugin, String> _executorPluginRegistry) {
-        masterPlan = _masterPlan;
-
+        // Note that we have to wrap the plugins to prevent circular Spring dependencies
         logger.debug("Scanner plugins found: " + _scannerPluginRegistry.getPlugins());
 
-        scannerPlugin = _scannerPluginRegistry.getPluginFor(masterPlan.getScanner().getToolName());
+        final String scannerPluginName = _masterPlan.getScanner().getToolName();
+        final ScannerPlugin scannerPlugin = _scannerPluginRegistry.getPluginFor(scannerPluginName);
+        scannerPluginWrapper = new PluginWrapper(scannerPluginName, scannerPlugin);
 
         logger.debug("Executor plugins found: " + _executorPluginRegistry.getPlugins());
 
-        executorPlugin = _executorPluginRegistry.getPluginFor(masterPlan.getCommandExecutor());
+        final String executorPluginName = _masterPlan.getCommandExecutor();
+        final ExecutorPlugin executorPlugin = _executorPluginRegistry.getPluginFor(executorPluginName);
+        executorPluginWrapper = new PluginWrapper(executorPluginName, executorPlugin);
     }
 
     public boolean verify() {
-        if (scannerPlugin == null) {
-            logger.error(String.format("Scanner plugin '%s' not initialized", masterPlan.getScanner().getToolName()));
+        if (!scannerPluginWrapper.isInitialized()) {
+            logger.error(String.format("Scanner plugin '%s' not initialized", scannerPluginWrapper.getPluginName()));
             return false;
         }
-        if (executorPlugin == null) {
-            logger.error(String.format("Executor plugin '%s' not initialized", masterPlan.getCommandExecutor()));
+        if (!executorPluginWrapper.isInitialized()) {
+            logger.error(String.format("Executor plugin '%s' not initialized", executorPluginWrapper.getPluginName()));
             return false;
         }
 
@@ -54,13 +55,11 @@ public class PluginConfiguration {
 
     @Bean
     public PluginWrapper<ScannerPlugin> scannerPluginWrapper() {
-        // note that we have to wrap the plugin to prevent circular Spring dependencies
-        return new PluginWrapper(scannerPlugin);
+        return scannerPluginWrapper;
     }
 
     @Bean
     public PluginWrapper<ExecutorPlugin> executorPluginWrapper() {
-        // note that we have to wrap the plugin to prevent circular Spring dependencies
-        return new PluginWrapper(executorPlugin);
+        return executorPluginWrapper;
     }
 }
