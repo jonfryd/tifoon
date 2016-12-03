@@ -1,6 +1,6 @@
 package it.flipb.theapp.application.config;
         
-import it.flipb.theapp.domain.model.profile.MasterPlan;
+import it.flipb.theapp.domain.model.masterplan.MasterPlan;
 import it.flipb.theapp.domain.model.network.Network;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
