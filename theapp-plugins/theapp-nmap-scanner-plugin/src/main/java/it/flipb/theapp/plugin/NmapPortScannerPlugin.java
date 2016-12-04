@@ -11,6 +11,7 @@ import org.nmap4j.data.nmaprun.Host;
 import org.nmap4j.parser.OnePassParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
@@ -18,14 +19,13 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class NmapPortScannerPlugin extends AbstractScannerPlugin {
     private static final String PROVIDES = "nmap";
 
     private static final Logger logger = LoggerFactory.getLogger(NmapPortScannerPlugin.class);
-
-    private static final String NMAP_XML_RESULT_FILENAME = "/tmp/nmap_scan_result.xml";
 
     @Override
     public boolean supports(final String _s) {
@@ -35,21 +35,26 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
     @Override
     public PortScannerResult scan(final PortScannerJob _request,
                                   final ExecutorPlugin _executorPlugin) {
+        Assert.notNull(_request, "request cannot be null");
+        Assert.notNull(_executorPlugin, "executor plugin cannot be null");
+
         try {
-            final String[] commandWithArguments = buildNmapCommandWithArguments(_request);
-            final byte result[] = _executorPlugin.dispatch("nmap", commandWithArguments, NMAP_XML_RESULT_FILENAME);
+            final String scanResultFilename = String.format("nmap_scan_result_%s.xml", UUID.randomUUID().toString());
+            final String[] commandWithArguments = buildNmapCommandWithArguments(_request, scanResultFilename);
+            final byte result[] = _executorPlugin.dispatch("nmap", commandWithArguments, scanResultFilename);
 
             return mapXmlToPortScannerResult(_request.getDescription(), result);
         }
         catch (Exception _e) {
-            logger.error(_e.getMessage());
+            logger.error("Error running nmap", _e);
 
             return null;
         }
     }
 
     @NotNull
-    private String[] buildNmapCommandWithArguments(@NotNull final PortScannerJob _request) {
+    private String[] buildNmapCommandWithArguments(@NotNull final PortScannerJob _request,
+                                                   @NotNull final String _scanResultFilename) {
         final String nmapPortRanges = _request.getPortRanges()
                 .stream()
                 .map(PortRange::toSingleOrIntervalString)
@@ -60,7 +65,7 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
                 .map(InetAddress::getHostAddress)
                 .collect(Collectors.toList());
 
-        final List<String> argumentsList = Lists.newArrayList("-oX", NMAP_XML_RESULT_FILENAME, "-p", nmapPortRanges);
+        final List<String> argumentsList = Lists.newArrayList("-oX", _scanResultFilename, "-p", nmapPortRanges);
         argumentsList.addAll(targetHosts);
 
         return argumentsList.toArray(new String[argumentsList.size()]);

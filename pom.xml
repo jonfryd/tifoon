@@ -1,106 +1,112 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>flipb.it</groupId>
-  <artifactId>theapp-parent</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  
-  <name>The App - Hacking/Pentesting Application</name>
-  <url>http://www.the-app.com</url>
+    <groupId>flipb.it</groupId>
+    <artifactId>theapp-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-  <modules>
-    <module>theapp-plugin-api</module>
-    <module>theapp-plugins</module>
-    <module>theapp-core</module>
-    <module>theapp-cli</module>
-  </modules>
+    <name>The App - Hacking/Pentesting Application</name>
+    <url>http://www.the-app.com</url>
 
-  <properties>
-    <main.basedir>${basedir}</main.basedir>
+    <modules>
+        <module>theapp-plugin-api</module>
+        <module>theapp-plugins</module>
+        <module>theapp-core</module>
+        <module>theapp-cli</module>
+    </modules>
 
-    <!-- Java version -->
-    <java.version>1.8</java.version>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
-    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <properties>
+        <main.basedir>${basedir}</main.basedir>
 
-    <!-- Character encoding -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- Java version -->
+        <java.version>1.8</java.version>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
 
-    <!-- Spring versions -->
-    <spring-boot.version>1.4.2.RELEASE</spring-boot.version>
-    <spring-plugin.version>1.2.0.RELEASE</spring-plugin.version>
+        <!-- Character encoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <!-- Validation/persistence versions -->
-    <hibernate.version>5.3.2.Final</hibernate.version>
-    <javax-el.version>2.2.6</javax-el.version>
+        <!-- Spring versions -->
+        <spring-boot.version>1.4.2.RELEASE</spring-boot.version>
+        <spring-plugin.version>1.2.0.RELEASE</spring-plugin.version>
 
-    <!-- Utility library versions -->
-    <guava.version>20.0</guava.version>
-    <model-mapper.version>0.7.7</model-mapper.version>
+        <!-- Validation/persistence versions -->
+        <hibernate.version>5.3.2.Final</hibernate.version>
+        <javax-el.version>2.2.6</javax-el.version>
 
-    <!-- nmap versions -->
-    <nmap4j.version>1.1.0</nmap4j.version>
+        <!-- Utility library versions -->
+        <guava.version>20.0</guava.version>
+        <commons-io.version>2.5</commons-io.version>
+        <model-mapper.version>0.7.7</model-mapper.version>
 
-  </properties>
+        <!-- nmap versions -->
+        <nmap4j.version>1.1.0</nmap4j.version>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <!-- Import dependency management from Spring Boot -->
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter</artifactId>
-        <version>${spring-boot.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.plugin</groupId>
-        <artifactId>spring-plugin-core</artifactId>
-        <version>${spring-plugin.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.plugin</groupId>
-        <artifactId>spring-plugin-metadata</artifactId>
-        <version>${spring-plugin.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-validator-annotation-processor</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-validator</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.web</groupId>
-        <artifactId>javax.el</artifactId>
-        <version>${javax-el.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.modelmapper.extensions</groupId>
-        <artifactId>modelmapper-spring</artifactId>
-        <version>${model-mapper.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.nmap4j</groupId>
-        <artifactId>nmap4j</artifactId>
-        <version>${nmap4j.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- Import dependency management from Spring Boot -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.plugin</groupId>
+                <artifactId>spring-plugin-core</artifactId>
+                <version>${spring-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.plugin</groupId>
+                <artifactId>spring-plugin-metadata</artifactId>
+                <version>${spring-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator-annotation-processor</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.web</groupId>
+                <artifactId>javax.el</artifactId>
+                <version>${javax-el.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.modelmapper.extensions</groupId>
+                <artifactId>modelmapper-spring</artifactId>
+                <version>${model-mapper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.nmap4j</groupId>
+                <artifactId>nmap4j</artifactId>
+                <version>${nmap4j.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

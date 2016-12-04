@@ -28,6 +28,11 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <artifactId>theapp-process-executor-plugin</artifactId>
+            <groupId>flipb.it</groupId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
             <artifactId>theapp-nmap-scanner-plugin</artifactId>
             <groupId>flipb.it</groupId>
             <version>${project.parent.version}</version>

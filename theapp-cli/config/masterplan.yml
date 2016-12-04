@@ -2,4 +2,4 @@ masterplan:
   scanner:
     active: true
     toolName: nmap
-  commandExecutor: docker
+  commandExecutor: docker # 'docker' & 'process' supported
