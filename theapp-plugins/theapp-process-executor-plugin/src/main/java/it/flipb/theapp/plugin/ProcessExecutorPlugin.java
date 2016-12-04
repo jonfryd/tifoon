@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ProcessExecutorPlugin extends AbstractExecutorPlugin {
@@ -32,21 +33,30 @@ public class ProcessExecutorPlugin extends AbstractExecutorPlugin {
         Assert.notNull(_arguments, "arguments cannot be null");
         Assert.notNull(_outputFile, "output file cannot be null");
 
-        String[] commandWithArguments = Stream.concat(Arrays.stream(new String[]{_command}), Arrays.stream(_arguments))
+        final String[] commandWithArguments = Stream.concat(Arrays.stream(new String[]{_command}), Arrays.stream(_arguments))
                 .toArray(String[]::new);
 
         try {
-            Process myProcess = new ProcessBuilder(commandWithArguments).start();
+            final String formattedCommand = Stream
+                    .of(commandWithArguments)
+                    .collect(Collectors.joining(" ","[","]"));
+            logger.info("Executing process: " + formattedCommand);
 
-            if (myProcess.waitFor(30, TimeUnit.SECONDS)) {
-                if (myProcess.exitValue() == 0) {
+            final Process process = new ProcessBuilder(commandWithArguments).start();
+
+            if (process.waitFor(30, TimeUnit.SECONDS)) {
+                if (process.exitValue() == 0) {
                     final File outputFile = new File(_outputFile);
-                    byte outputData[] = FileUtils.readFileToByteArray(outputFile);
+
+                    logger.debug("Reading output produced by command");
+                    byte data[] = FileUtils.readFileToByteArray(outputFile);
+
+                    logger.debug("Deleting file produced by command");
                     outputFile.delete();
 
-                    return outputData;
+                    return data;
                 } else {
-                    logger.error("Non-zero exit code executing command: " + _command);
+                    logger.error(String.format("Non-zero exit code (%d) executing command: %s", process.exitValue(), _command));
                 }
             } else {
                 logger.error("Timed out executing command: " + _command);

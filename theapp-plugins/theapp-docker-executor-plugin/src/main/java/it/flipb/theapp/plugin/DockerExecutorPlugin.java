@@ -71,8 +71,13 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
 
         dockerClient.startContainerCmd(container.getId()).exec();
 
-        String[] commandWithArguments = Stream.concat(Arrays.stream(new String[]{_command}), Arrays.stream(_arguments))
+        final String[] commandWithArguments = Stream.concat(Arrays.stream(new String[]{_command}), Arrays.stream(_arguments))
                 .toArray(String[]::new);
+
+        final String formattedCommand = Stream
+                .of(commandWithArguments)
+                .collect(Collectors.joining(" ","[","]"));
+        logger.info("Docker executing: " + formattedCommand);
 
         final boolean result = runCommand(dockerClient, container, commandWithArguments);
 
