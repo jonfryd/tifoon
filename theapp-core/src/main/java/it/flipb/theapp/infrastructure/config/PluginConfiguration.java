@@ -25,7 +25,7 @@ public class PluginConfiguration {
     public PluginConfiguration(final MasterPlan _masterPlan,
                                @Qualifier("scannerPluginRegistry") final PluginRegistry<ScannerPlugin, String> _scannerPluginRegistry,
                                @Qualifier("executorPluginRegistry") final PluginRegistry<ExecutorPlugin, String> _executorPluginRegistry) {
-        // plugins are wrapped in CorePlug objects to prevent circular Spring dependencies caused by adding Plugin beans here
+        // plugins are wrapped in CorePlugin objects to prevent circular Spring dependencies caused by adding Plugin beans here
 
         logger.debug("Scanner plugins found: " + _scannerPluginRegistry.getPlugins());
 
