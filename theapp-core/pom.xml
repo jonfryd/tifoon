@@ -34,8 +34,8 @@
             <artifactId>modelmapper-spring</artifactId>
         </dependency>
         <dependency>
-            <artifactId>theapp-plugin-api</artifactId>
             <groupId>flipb.it</groupId>
+            <artifactId>theapp-plugin-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

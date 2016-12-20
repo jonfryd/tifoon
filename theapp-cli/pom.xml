@@ -18,24 +18,40 @@
             <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-loader</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>flipb.it</groupId>
             <artifactId>theapp-core</artifactId>
-            <groupId>flipb.it</groupId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <artifactId>theapp-docker-executor-plugin</artifactId>
             <groupId>flipb.it</groupId>
+            <artifactId>theapp-plugin-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <artifactId>theapp-process-executor-plugin</artifactId>
             <groupId>flipb.it</groupId>
+            <artifactId>theapp-plugins</artifactId>
             <version>${project.parent.version}</version>
+            <type>pom</type>
         </dependency>
         <dependency>
-            <artifactId>theapp-nmap-scanner-plugin</artifactId>
-            <groupId>flipb.it</groupId>
-            <version>${project.parent.version}</version>
+            <groupId>org.xeustechnologies</groupId>
+            <artifactId>jcl-core</artifactId>
+            <version>2.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.8.5</version>
         </dependency>
     </dependencies>
 
@@ -45,6 +61,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
+                <configuration>
+                    <layout>ZIP</layout>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -53,6 +72,67 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-plugins</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${basedir}/plugins" flatten="true">
+                                    <fileset dir="${basedir}/../theapp-plugins/">
+                                        <include name="**/theapp-*-plugin-*.jar"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>org.springframework.boot.loader.PropertiesLauncher</mainClass>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>loader.config.location</key>
+                            <value>classpath:application.properties</value>
+                        </systemProperty>
+                    </systemProperties>
+                </configuration>
             </plugin>
         </plugins>
     </build>

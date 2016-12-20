@@ -21,10 +21,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.nmap4j</groupId>
             <artifactId>nmap4j</artifactId>
         </dependency>
