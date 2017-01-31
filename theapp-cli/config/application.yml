@@ -1,4 +1,10 @@
+spring:
+    main:
+        banner-mode: "off"
+
 logging:
     level:
-        org.springframework: 'OFF'
+        org.springframework: OFF
+        org.javers: OFF
+        org.polyjdbc: OFF
         it.flipb: INFO

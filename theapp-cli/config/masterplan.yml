@@ -2,4 +2,5 @@ masterplan:
   scanner:
     active: true
     toolName: nmap
-  commandExecutor: docker # 'docker' & 'process' supported
+  commandExecutor: process # 'docker' & 'process' supported
+  ioFormat: yaml

@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -33,8 +34,8 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
     }
 
     @Override
-    public PortScannerResult scan(final PortScannerJob _request,
-                                  final ExecutorPlugin _executorPlugin) {
+    public NetworkResult scan(final PortScannerJob _request,
+                              final ExecutorPlugin _executorPlugin) {
         Assert.notNull(_request, "request cannot be null");
         Assert.notNull(_executorPlugin, "executor plugin cannot be null");
 
@@ -72,13 +73,13 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
     }
 
     @NotNull
-    private PortScannerResult mapXmlToPortScannerResult(@NotNull final String _description,
-                                                        @Null final byte[] _result) {
+    private NetworkResult mapXmlToPortScannerResult(@NotNull final String _description,
+                                                    @Null final byte[] _result) {
         final Map<InetAddress, List<Port>> openPortsMap = Maps.newHashMap();
 
         if (_result != null) {
             final OnePassParser opp = new OnePassParser();
-            final NMapRun nmapRun = opp.parse(new String(_result), OnePassParser.STRING_INPUT);
+            final NMapRun nmapRun = opp.parse(new String(_result, StandardCharsets.UTF_8), OnePassParser.STRING_INPUT);
 
             for(Host host : nmapRun.getHosts()) {
                 final List<Port> openPorts = host.getPorts().getPorts().stream()
@@ -102,7 +103,7 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
             }
         }
 
-        return new PortScannerResult(_description, openPortsMap);
+        return new NetworkResult(_description, openPortsMap);
     }
 
     private Protocol mapProtocol(final String _protocol) {

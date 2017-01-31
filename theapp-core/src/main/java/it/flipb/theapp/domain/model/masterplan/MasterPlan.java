@@ -17,6 +17,10 @@ public class MasterPlan {
     private String commandExecutor;
 
     @NotNull
+    @NotEmpty
+    private String ioFormat;
+
+    @NotNull
     public Scanner getScanner() {
         return scanner;
     }
@@ -34,11 +38,21 @@ public class MasterPlan {
         commandExecutor = _commandExecutor;
     }
 
+    @NotNull
+    public String getIoFormat() {
+        return ioFormat;
+    }
+
+    public void setIoFormat(@NotNull final String _ioFormat) {
+        ioFormat = _ioFormat;
+    }
+
     @Override
     public String toString() {
         return "MasterPlan{" +
                 "scanner=" + scanner +
                 ", commandExecutor='" + commandExecutor + '\'' +
+                ", ioFormat='" + ioFormat + '\'' +
                 '}';
     }
 }

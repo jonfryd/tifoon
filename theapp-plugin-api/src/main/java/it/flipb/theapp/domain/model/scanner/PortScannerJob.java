@@ -1,19 +1,22 @@
 package it.flipb.theapp.domain.model.scanner;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.springframework.util.Assert;
 
-import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
 public class PortScannerJob {
+    @NonNull
     private String description;
+    @NonNull
     private List<InetAddress> addresses;
+    @NonNull
     private List<PortRange> portRanges;
-
-    private PortScannerJob() {
-        // required for model mapping
-    }
 
     public PortScannerJob(final String _description,
                           final List<InetAddress> _addresses,
@@ -23,19 +26,9 @@ public class PortScannerJob {
         setPortRanges(_portRanges);
     }
 
-    @NotNull
-    public String getDescription() {
-        return description;
-    }
-
     private void setDescription(final String _description) {
         Assert.hasLength(_description, "description must have length");
         description = _description;
-    }
-
-    @NotNull
-    public List<InetAddress> getAddresses() {
-        return addresses;
     }
 
     private void setAddresses(final List<InetAddress> _addresses) {
@@ -43,22 +36,8 @@ public class PortScannerJob {
         addresses = _addresses;
     }
 
-    @NotNull
-    public List<PortRange> getPortRanges() {
-        return portRanges;
-    }
-
     private void setPortRanges(final List<PortRange> _portRanges) {
         Assert.notEmpty(_portRanges, "port ranges cannot be empty");
         portRanges = _portRanges;
-    }
-
-    @Override
-    public String toString() {
-        return "PortScannerJob{" +
-                "description='" + description + '\'' +
-                ", addresses=" + addresses +
-                ", portRanges=" + portRanges +
-                '}';
     }
 }

@@ -1,37 +1,33 @@
 package it.flipb.theapp.domain.model.scanner;
 
-import javax.validation.constraints.NotNull;
-import java.net.InetAddress;
+import it.flipb.theapp.domain.model.object.BaseEntity;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import javax.persistence.*;
 import java.util.List;
-import java.util.Map;
 
-/*
- * Immutable
- */
-public class PortScannerResult {
-    private final String description;
-    private final Map<InetAddress, List<Port>> openPortsMap;
+@Entity
+@Data
+@NoArgsConstructor
+@RequiredArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class PortScannerResult extends BaseEntity {
+    @NonNull
+    private Long beganAt;
+    @NonNull
+    private Long endedAt;
+    @NonNull
+    private Boolean success;
 
-    public PortScannerResult(final String _description, final Map<InetAddress, List<Port>> _openPortsMap) {
-        description = _description;
-        openPortsMap = _openPortsMap;
-    }
+    @NonNull
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @JoinColumn(name = "portScannerResultId", referencedColumnName = "id")
+    private List<NetworkResult> networkResults;
 
-    @NotNull
-    public String getDescription() {
-        return description;
-    }
-
-    @NotNull
-    public Map<InetAddress, List<Port>> getOpenPortsMap() {
-        return openPortsMap;
-    }
-
-    @Override
-    public String toString() {
-        return "PortScannerResult{" +
-                "description='" + description + '\'' +
-                ", openPortsMap=" + openPortsMap +
-                '}';
+    public long calcExecutionTimeMillis() {
+        return getEndedAt() - getBeganAt();
     }
 }

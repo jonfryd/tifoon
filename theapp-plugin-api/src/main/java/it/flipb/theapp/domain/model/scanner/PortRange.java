@@ -1,5 +1,7 @@
 package it.flipb.theapp.domain.model.scanner;
 
+import lombok.Data;
+import lombok.Value;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
@@ -7,20 +9,17 @@ import javax.validation.constraints.NotNull;
 /*
  * Immutable
  */
+@Value
 public class PortRange {
-    private Port lowPort;
-    private Port highPort;
+    private final Port lowPort;
+    private final Port highPort;
 
     public static PortRange from(final Port _lowPort,
                                  final Port _highPort) {
         Assert.notNull(_lowPort, "low port cannot be null");
         Assert.notNull(_highPort, "high port cannot be null");
 
-        final PortRange portRange = new PortRange();
-        portRange.lowPort = _lowPort;
-        portRange.highPort = _highPort;
-
-        return portRange;
+        return new PortRange(_lowPort, _highPort);
     }
 
     public static PortRange from(final Protocol _protocol,
@@ -33,16 +32,6 @@ public class PortRange {
     public static PortRange singular(final Protocol _protocol,
                                      final int _portNumber) {
         return from(Port.from(_protocol, _portNumber), Port.from(_protocol, _portNumber));
-    }
-
-    @NotNull
-    public Port getLowPort() {
-        return lowPort;
-    }
-
-    @NotNull
-    public Port getHighPort() {
-        return highPort;
     }
 
     public boolean isSinglePort() {
@@ -60,13 +49,5 @@ public class PortRange {
         return String.valueOf(getLowPort().getPortNumber())
                 + "-"
                 + String.valueOf(getHighPort().getPortNumber());
-    }
-
-    @Override
-    public String toString() {
-        return "PortRange{" +
-                "lowPort=" + lowPort +
-                ", highPort=" + highPort +
-                '}';
     }
 }

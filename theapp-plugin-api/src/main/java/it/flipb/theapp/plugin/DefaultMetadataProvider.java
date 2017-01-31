@@ -4,6 +4,8 @@ import org.springframework.plugin.metadata.MetadataProvider;
 import org.springframework.plugin.metadata.PluginMetadata;
 import org.springframework.plugin.metadata.SimplePluginMetadata;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class DefaultMetadataProvider implements MetadataProvider {
@@ -21,24 +23,24 @@ public class DefaultMetadataProvider implements MetadataProvider {
     public PluginMetadata getMetadata() {
         final String name = pluginDescriptorName;
         final String version = readVersion();
+
         return new SimplePluginMetadata(name, version);
     }
 
     protected String readVersion() {
-        try {
+        try (final InputStream is = getClass().getResourceAsStream(META_INF_THEAPP + getPluginDescriptorName())) {
             final Properties properties = new Properties();
-            properties.load(getClass().getResourceAsStream(META_INF_THEAPP + getPluginDescriptorName()));
+            properties.load(is);
 
             final Object version = properties.get(PROPERTY_NAME);
             if (version != null) {
                 return version.toString();
             }
+        }
+        catch (IOException _e) {
+        }
 
-            return UNDEFINED;
-        }
-        catch (final Exception e) {
-            return UNDEFINED;
-        }
+        return UNDEFINED;
     }
 
     protected String getPluginDescriptorName() {

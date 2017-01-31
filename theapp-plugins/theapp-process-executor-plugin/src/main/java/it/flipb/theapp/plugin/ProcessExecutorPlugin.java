@@ -52,7 +52,11 @@ public class ProcessExecutorPlugin extends AbstractExecutorPlugin {
                     byte data[] = FileUtils.readFileToByteArray(outputFile);
 
                     logger.debug("Deleting file produced by command");
-                    outputFile.delete();
+                    final boolean deletionSuccessful = outputFile.delete();
+
+                    if (!deletionSuccessful) {
+                        logger.warn("Failed to delete temporary file: %s", outputFile.toPath());
+                    }
 
                     return data;
                 } else {

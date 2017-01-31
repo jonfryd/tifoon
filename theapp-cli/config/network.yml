@@ -11,6 +11,6 @@ network:
       addresses:
         - google.dk
       ports:
-        - 80
         - 443
         - 20-25
+        - 80
