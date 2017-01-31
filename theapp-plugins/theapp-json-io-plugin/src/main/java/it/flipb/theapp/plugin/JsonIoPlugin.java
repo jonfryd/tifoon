@@ -1,21 +1,17 @@
 package it.flipb.theapp.plugin;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.flipb.theapp.plugin.io.AbstractIoPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+@Slf4j
 public class JsonIoPlugin extends AbstractIoPlugin {
     private static final String PROVIDES = "json";
-
-    private static final Logger logger = LoggerFactory.getLogger(JsonIoPlugin.class);
 
     private final ObjectMapper mapper;
 
@@ -29,32 +25,28 @@ public class JsonIoPlugin extends AbstractIoPlugin {
     }
 
     @Override
-    public <T> T load(final InputStream _inputStream, final Class<T> _rootClass) {
-        Assert.notNull(_inputStream, "InputStream cannot be null");
-        Assert.notNull(_rootClass, "Root class cannot be null");
-
+    public <T> T load(@NonNull final InputStream _inputStream,
+                      @NonNull final Class<T> _rootClass) {
         try {
-            logger.debug("Loading json");
+            log.debug("Loading json");
 
             return mapper.readValue(_inputStream, _rootClass);
         } catch (IOException _e) {
-            logger.error("Error loading JSON", _e);
+            log.error("Error loading JSON", _e);
 
             return null;
         }
     }
 
     @Override
-    public void save(final OutputStream _outputStream, final Object _object) {
-        Assert.notNull(_outputStream, "OutputStream cannot be null");
-        Assert.notNull(_object, "Object cannot be null");
-
+    public void save(@NonNull final OutputStream _outputStream,
+                     @NonNull final Object _object) {
         try {
-            logger.debug("Saving json");
+            log.debug("Saving json");
 
             mapper.writerWithDefaultPrettyPrinter().writeValue(_outputStream, _object);
         } catch (IOException _e) {
-            logger.error("Error saving JSON", _e);
+            log.error("Error saving JSON", _e);
         }
     }
 }

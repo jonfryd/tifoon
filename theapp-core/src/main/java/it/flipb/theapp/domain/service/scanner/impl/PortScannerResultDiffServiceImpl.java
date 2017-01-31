@@ -8,6 +8,8 @@ import it.flipb.theapp.domain.model.scanner.diff.GenericChange;
 import it.flipb.theapp.domain.model.scanner.diff.GlobalId;
 import it.flipb.theapp.domain.model.scanner.diff.PortScannerDiff;
 import it.flipb.theapp.domain.service.scanner.PortScannerResultDiffService;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.javers.core.Javers;
 import org.javers.core.JaversBuilder;
 import org.javers.core.diff.Diff;
@@ -16,16 +18,13 @@ import org.javers.core.diff.changetype.ObjectRemoved;
 import org.javers.core.diff.changetype.ValueChange;
 import org.javers.core.diff.changetype.container.ContainerChange;
 import org.javers.core.diff.changetype.map.MapChange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@Slf4j
 public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffService {
-    private static final Logger logger = LoggerFactory.getLogger(PortScannerResultDiffServiceImpl.class);
-
     private final Javers javers;
 
     public PortScannerResultDiffServiceImpl() {
@@ -33,14 +32,15 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
     }
 
     @Override
-    public PortScannerDiff diff(final PortScannerResult _oldResult, final PortScannerResult _newResult) {
+    @NonNull
+    public PortScannerDiff diff(@NonNull final PortScannerResult _oldResult, @NonNull final PortScannerResult _newResult) {
         // find diff
         final Diff diff = javers.compare(new NetworkResults(_oldResult.getNetworkResults()), new NetworkResults(_newResult.getNetworkResults()));
 
         //final Diff diff = javers.compareCollections(_oldResult.getNetworkResults(), _newResult.getNetworkResults(), NetworkResult.class);
 
-        logger.debug(diff.prettyPrint());
-        logger.debug("Summary: " + diff.changesSummary());
+        log.debug(diff.prettyPrint());
+        log.debug("Summary: " + diff.changesSummary());
 
         final SetMultimap<String, GlobalId> objectsRemovedMultimap = LinkedHashMultimap.create();
 

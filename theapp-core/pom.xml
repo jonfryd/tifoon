@@ -21,18 +21,6 @@
             <artifactId>h2</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator-annotation-processor</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>javax.el</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.modelmapper.extensions</groupId>
             <artifactId>modelmapper-spring</artifactId>
         </dependency>

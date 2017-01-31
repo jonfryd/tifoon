@@ -6,24 +6,21 @@ import it.flipb.theapp.domain.service.scanner.PortScannerService;
 import it.flipb.theapp.infrastructure.jpa.repositories.PortScannerResultRepository;
 import it.flipb.theapp.plugin.executer.ExecutorPlugin;
 import it.flipb.theapp.plugin.scanner.ScannerPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.validation.constraints.Null;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class PortScannerServiceImpl implements PortScannerService {
-    private static final Logger logger = LoggerFactory.getLogger(PortScannerServiceImpl.class);
-
     private final CorePlugin<ScannerPlugin> scannerCorePlugin;
     private final CorePlugin<ExecutorPlugin> executorCorePlugin;
 
@@ -31,26 +28,26 @@ public class PortScannerServiceImpl implements PortScannerService {
 
     @Autowired
     public PortScannerServiceImpl(@Qualifier("scannerCorePlugin") final CorePlugin<ScannerPlugin> _scannerCorePlugin,
-                           @Qualifier("executorCorePlugin") final CorePlugin<ExecutorPlugin> _executorCorePlugin,
-                           final PortScannerResultRepository _portScannerResultRepository) {
+                                  @Qualifier("executorCorePlugin") final CorePlugin<ExecutorPlugin> _executorCorePlugin,
+                                  final PortScannerResultRepository _portScannerResultRepository) {
         scannerCorePlugin = _scannerCorePlugin;
         executorCorePlugin = _executorCorePlugin;
         portScannerResultRepository = _portScannerResultRepository;
     }
 
-    @Null
-    private NetworkResult scanNetwork(final PortScannerJob _request) {
-        Assert.notNull(_request, "Request cannot be null");
+    @NonNull
+    private NetworkResult scanNetwork(@NonNull final PortScannerJob _request) {
         Assert.isTrue(scannerCorePlugin.isInitialized(), "Scanner plugin must be initialized");
         Assert.isTrue(executorCorePlugin.isInitialized(), "Executor plugin must be initialized");
 
-        logger.info("Performing port scan against: " + _request.getDescription());
+        log.info("Performing port scan against: " + _request.getDescription());
 
         return scannerCorePlugin.get().scan(_request, executorCorePlugin.get());
     }
 
     @Override
-    public PortScannerResult scan(final List<PortScannerJob> _request) {
+    @NonNull
+    public PortScannerResult scan(@NonNull final List<PortScannerJob> _request) {
         final long start = System.currentTimeMillis();
 
         final NetworkResults networkResults = new NetworkResults(_request
@@ -72,7 +69,8 @@ public class PortScannerServiceImpl implements PortScannerService {
 
     @Override
     @Transactional
-    public PortScannerResult scanAndPersist(final List<PortScannerJob> _request) {
+    @NonNull
+    public PortScannerResult scanAndPersist(@NonNull final List<PortScannerJob> _request) {
         final PortScannerResult portScannerResult = scan(_request);
 
         return portScannerResultRepository.save(portScannerResult);

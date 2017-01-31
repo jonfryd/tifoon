@@ -34,18 +34,6 @@
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator-annotation-processor</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>javax.el</artifactId>
-        </dependency>
-        <dependency>
             <groupId>flipb.it</groupId>
             <artifactId>theapp-plugin-api</artifactId>
             <version>${project.parent.version}</version>
@@ -122,32 +110,12 @@
                             <artifactId>commons-io</artifactId>
                         </exclude>
                         <exclude>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-validator-annotation-processor</artifactId>
-                        </exclude>
-                        <exclude>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-validator</artifactId>
-                        </exclude>
-                        <exclude>
                             <groupId>javax.validation</groupId>
                             <artifactId>validation-api</artifactId>
                         </exclude>
                         <exclude>
                             <groupId>org.jboss.logging</groupId>
                             <artifactId>jboss-logging</artifactId>
-                        </exclude>
-                        <exclude>
-                            <groupId>com.fasterxml</groupId>
-                            <artifactId>classmate</artifactId>
-                        </exclude>
-                        <exclude>
-                            <groupId>org.glassfish.web</groupId>
-                            <artifactId>javax.el</artifactId>
-                        </exclude>
-                        <exclude>
-                            <groupId>javax.el</groupId>
-                            <artifactId>javax.el-api</artifactId>
                         </exclude>
                         <exclude>
                             <groupId>org.springframework.plugin</groupId>
@@ -264,6 +232,22 @@
                         <exclude>
                             <groupId>org.apache.commons</groupId>
                             <artifactId>commons-lang3</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>com.google.code.findbugs</groupId>
+                            <artifactId>jsr305</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>com.google.code.findbugs</groupId>
+                            <artifactId>annotations</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>net.jcip</groupId>
+                            <artifactId>jcip-annotations</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
                 </configuration>

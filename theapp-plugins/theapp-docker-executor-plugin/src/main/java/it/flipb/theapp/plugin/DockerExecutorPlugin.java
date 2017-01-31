@@ -14,14 +14,13 @@ import com.google.common.base.MoreObjects;
 import it.flipb.theapp.domain.model.docker.DockerConfiguration;
 import it.flipb.theapp.domain.model.docker.DockerImage;
 import it.flipb.theapp.plugin.executer.AbstractExecutorPlugin;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -30,10 +29,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public class DockerExecutorPlugin extends AbstractExecutorPlugin {
     private static final String PROVIDES = "docker";
-
-    private static final Logger logger = LoggerFactory.getLogger(DockerExecutorPlugin.class);
 
     private final DockerConfiguration dockerConfiguration;
 
@@ -53,21 +51,17 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
     }
 
     @Override
-    public byte[] dispatch(final String _command,
-                           final String[] _arguments,
-                           final String _outputFile) {
-        Assert.notNull(_command, "command cannot be null");
-        Assert.notNull(_arguments, "arguments cannot be null");
-        Assert.notNull(_outputFile, "output file cannot be null");
-
+    public byte[] dispatch(@NonNull final String _command,
+                           @NonNull final String[] _arguments,
+                           @NonNull final String _outputFile) {
         final DockerClient dockerClient = getDockerClient();
 
-        logger.debug("Connected to Docker instance.");
+        log.debug("Connected to Docker instance.");
 
         final DockerImage customDockerImage = findDockerImage(_command);
         final CreateContainerResponse container = createContainer(dockerClient, customDockerImage.getImage());
 
-        logger.debug("Starting container.");
+        log.debug("Starting container.");
 
         dockerClient.startContainerCmd(container.getId()).exec();
 
@@ -77,34 +71,35 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
         final String formattedCommand = Stream
                 .of(commandWithArguments)
                 .collect(Collectors.joining(" ","[","]"));
-        logger.info("Docker executing: " + formattedCommand);
+        log.info("Docker executing: " + formattedCommand);
 
         final boolean result = runCommand(dockerClient, container, commandWithArguments);
 
         byte[] data = null;
 
         if (!result) {
-            logger.warn("Command did not complete normally.");
+            log.warn("Command did not complete normally.");
         } else {
-            logger.debug("Reading file from container.");
+            log.debug("Reading file from container.");
 
             data = readFileFromContainer(dockerClient, container, _outputFile);
         }
 
-        logger.debug("Stopping container.");
+        log.debug("Stopping container.");
 
         stopAndRemoveContainer(dockerClient, container);
 
         return data;
     }
 
-    @NotNull
-    private DockerImage findDockerImage(final String _command) {
+    @NonNull
+    private DockerImage findDockerImage(@NonNull final String _command) {
         Assert.hasLength(_command, "command must have length");
 
         return MoreObjects.firstNonNull(customDockerImageMap.get(_command), dockerConfiguration.getDefaultImage());
     }
 
+    @NonNull
     private DockerClient getDockerClient() {
         /*
         TLS connection: ...
@@ -128,11 +123,12 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
                 .build();
     }
 
-    private CreateContainerResponse createContainer(final DockerClient _dockerClient,
-                                                    final String _dispatcher) {
+    @NonNull
+    private CreateContainerResponse createContainer(@NonNull final DockerClient _dockerClient,
+                                                    @NonNull final String _dispatcher) {
         synchronized(this) {
             if (_dockerClient.listImagesCmd().withImageNameFilter(_dispatcher).exec().isEmpty()) {
-                logger.info("Image '" + _dispatcher + "' not found. Please wait while pulling from main repository...");
+                log.info("Image '" + _dispatcher + "' not found. Please wait while pulling from main repository...");
 
                 boolean success = false;
 
@@ -154,7 +150,7 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
                     throw new RuntimeException("Unable to retrieve image:" + _dispatcher);
                 }
             } else {
-                logger.debug("Image found.");
+                log.debug("Image found.");
             }
         }
 
@@ -165,9 +161,9 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
                 .exec();
     }
 
-    private boolean runCommand(final DockerClient _dockerClient,
-                               final CreateContainerResponse _container,
-                               final String[] _commandWithArguments) {
+    private boolean runCommand(@NonNull final DockerClient _dockerClient,
+                               @NonNull final CreateContainerResponse _container,
+                               @NonNull final String[] _commandWithArguments) {
         final ExecCreateCmdResponse mExecCreateCmdResponse = _dockerClient
                 .execCreateCmd(_container.getId())
                 .withAttachStdout(true)
@@ -192,7 +188,9 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
         return false;
     }
 
-    private byte[] readFileFromContainer(final DockerClient _dockerClient, final CreateContainerResponse _container, final String _outputFile) {
+    private byte[] readFileFromContainer(@NonNull final DockerClient _dockerClient,
+                                         @NonNull final CreateContainerResponse _container,
+                                         @NonNull final String _outputFile) {
         final InputStream fileStream =_dockerClient
                 .copyArchiveFromContainerCmd(_container.getId(), _outputFile)
                 .exec();
@@ -200,18 +198,19 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
 
         try {
             if (tarIn.getNextEntry() == null) {
-                logger.error("No entry in tar archive");
+                log.error("No entry in tar archive");
                 return null;
             }
 
             return IOUtils.toByteArray(tarIn);
         } catch (IOException _e) {
-            logger.error("Could not read file", _e);
+            log.error("Could not read file", _e);
             return null;
         }
     }
 
-    private void stopAndRemoveContainer(final DockerClient _dockerClient, final CreateContainerResponse _container) {
+    private void stopAndRemoveContainer(@NonNull final DockerClient _dockerClient,
+                                        @NonNull final CreateContainerResponse _container) {
         _dockerClient
                 .stopContainerCmd(_container.getId())
                 .withTimeout(0)

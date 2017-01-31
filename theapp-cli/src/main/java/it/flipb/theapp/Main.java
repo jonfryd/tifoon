@@ -12,8 +12,7 @@ import it.flipb.theapp.domain.util.TimeHelper;
 import it.flipb.theapp.infrastructure.config.PluginConfiguration;
 import it.flipb.theapp.plugin.io.IoPlugin;
 import lombok.Cleanup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
@@ -29,9 +28,8 @@ import java.util.stream.Collectors;
 
 @SpringBootApplication
 @SuppressFBWarnings("OBL_UNSATISFIED_OBLIGATION") // https://github.com/findbugsproject/findbugs/issues/98
+@Slf4j
 public class Main {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
     private final RootConfiguration configuration;
     private final DtoMapper dtoMapper;
     private final PortScannerService portScannerService;
@@ -53,8 +51,8 @@ public class Main {
         pluginConfiguration = _pluginConfiguration;
         ioCorePlugin = _ioCorePlugin;
 
-        logger.debug(_configuration.getMasterPlan().toString());
-        logger.debug(_configuration.getNetwork().toString());
+        log.debug(_configuration.getMasterPlan().toString());
+        log.debug(_configuration.getNetwork().toString());
     }
 
     @Bean
@@ -65,7 +63,7 @@ public class Main {
                     return;
                 }
 
-                logger.info("Performing parallel port scan.");
+                log.info("Performing parallel port scan.");
 
                 final List<PortScannerJob> portScannerJobs = configuration.getNetwork().getTargets()
                         .stream()
@@ -87,7 +85,7 @@ public class Main {
                 @Cleanup final FileInputStream fis = new FileInputStream(file);
                 final PortScannerResult resultsFromFile = ioCorePlugin.get().load(fis, PortScannerResult.class);
 
-                logger.info("Persisted results equals original results: " + resultsFromFile.equals(portScannerResult));
+                log.info("Persisted results equals original results: " + resultsFromFile.equals(portScannerResult));
 
                 // TODO: remove
                 //resultsFromFile.getPortScannerResults().get(1).getOpenPortsMap().put("hest", new Ports(Lists.newArrayList(Port.from(Protocol.UDP, 53))));
@@ -133,18 +131,18 @@ public class Main {
 //                    System.out.println(portScannerDiff.getPortsChanged());
 //                    System.out.println(resultsFromDiffFile.getPortsChanged());
 
-                logger.info("Persisted diff equals original diff: " + resultsFromDiffFile.equals(portScannerDiff));
+                log.info("Persisted diff equals original diff: " + resultsFromDiffFile.equals(portScannerDiff));
 
 /*
                 if (networkResults.hasResults()) {
-                    logger.info(networkResults.toString());
+                    log.info(networkResults.toString());
                 } else {
-                    logger.warn("No results returned from scanning");
+                    log.warn("No results returned from scanning");
                 }
 */
                 // TODO: do something useful with the results - e.g. test for exploits
             } else {
-                logger.info("Scanning not enabled.");
+                log.info("Scanning not enabled.");
             }
         };
     }
