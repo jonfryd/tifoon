@@ -15,17 +15,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-loader</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
         </dependency>
         <dependency>
             <groupId>flipb.it</groupId>
@@ -126,6 +123,7 @@
                 </executions>
                 <configuration>
                     <mainClass>org.springframework.boot.loader.PropertiesLauncher</mainClass>
+                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
                     <systemProperties>
                         <systemProperty>
                             <key>loader.config.location</key>
