@@ -13,18 +13,18 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 public class PortScannerDiff {
-    private final static Function<Class, String> CLASS_TO_MAP_KEY = _class -> _class.getCanonicalName();
+    private final static Function<Class, String> CLASS_TO_MAP_KEY = Class::getCanonicalName;
 
     @Data
     @NoArgsConstructor
     @RequiredArgsConstructor
     public static class GenericChangeList {
         @NonNull
-        List<PropertyChange> changes;
+        private List<PropertyChange> changes;
     }
 
     @NonNull
-    Map<String, GenericChangeList> entityChangeMap;
+    private Map<String, GenericChangeList> entityChangeMap;
 
     public static PortScannerDiff from(@NonNull final Map<Class<? extends BaseEntity>, Collection<PropertyChange>> _entityChangeMap) {
         final PortScannerDiff portScannerDiff = new PortScannerDiff();
@@ -49,19 +49,14 @@ public class PortScannerDiff {
                                                     final String _key)
     {
         final GenericChangeList genericChangeList = entityChangeMap.get(CLASS_TO_MAP_KEY.apply(_owner));
-        List<PropertyChange> propertyChanges = genericChangeList != null ? genericChangeList.getChanges() : null;
 
-        if (propertyChanges != null)
-        {
-            propertyChanges = genericChangeList
-                    .getChanges()
-                    .stream()
-                    .filter(c -> _path == null || c.getGlobalId().getSelector().contains("#".concat(_path)))
-                    .filter(c -> _property == null || _property.equals(c.getProperty()))
-                    .filter(c -> _key == null || _key.equals(c.getKey()))
-                    .collect(Collectors.toList());
-        }
-
-        return propertyChanges;
+        return genericChangeList == null ?
+                null :
+                genericChangeList.getChanges()
+                        .stream()
+                        .filter(c -> _path == null || c.getGlobalId().getSelector().contains("#".concat(_path)))
+                        .filter(c -> _property == null || _property.equals(c.getProperty()))
+                        .filter(c -> _key == null || _key.equals(c.getKey()))
+                        .collect(Collectors.toList());
     }
 }
