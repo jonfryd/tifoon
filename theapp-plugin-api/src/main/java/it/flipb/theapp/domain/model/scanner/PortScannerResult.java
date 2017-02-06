@@ -22,10 +22,8 @@ public class PortScannerResult extends BaseEntity {
     private Boolean success;
 
     @NonNull
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @Fetch(FetchMode.SUBSELECT)
-    @JoinColumn(name = "portScannerResultId", referencedColumnName = "id")
-    private List<NetworkResult> networkResults;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private NetworkResults result;
 
     public long calcExecutionTimeMillis() {
         return getEndedAt() - getBeganAt();

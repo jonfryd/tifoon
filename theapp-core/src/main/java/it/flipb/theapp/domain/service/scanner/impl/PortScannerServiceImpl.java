@@ -61,7 +61,7 @@ public class PortScannerServiceImpl implements PortScannerService {
                 start,
                 System.currentTimeMillis(),
                 true,
-                networkResults.getNetworkResults()
+                networkResults
         );
 
         return portScannerResult;

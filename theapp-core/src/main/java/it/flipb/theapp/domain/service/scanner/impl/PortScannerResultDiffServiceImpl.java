@@ -4,20 +4,22 @@ import com.google.common.collect.*;
 import it.flipb.theapp.domain.model.object.BaseEntity;
 import it.flipb.theapp.domain.model.object.ObjectTreeAware;
 import it.flipb.theapp.domain.model.scanner.*;
-import it.flipb.theapp.domain.model.scanner.diff.GenericChange;
 import it.flipb.theapp.domain.model.scanner.diff.GlobalId;
 import it.flipb.theapp.domain.model.scanner.diff.PortScannerDiff;
+import it.flipb.theapp.domain.model.scanner.diff.PropertyChange;
+import it.flipb.theapp.domain.model.scanner.diff.Type;
 import it.flipb.theapp.domain.service.scanner.PortScannerResultDiffService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.javers.core.Javers;
 import org.javers.core.JaversBuilder;
+import org.javers.core.diff.Change;
 import org.javers.core.diff.Diff;
 import org.javers.core.diff.changetype.NewObject;
 import org.javers.core.diff.changetype.ObjectRemoved;
 import org.javers.core.diff.changetype.ValueChange;
-import org.javers.core.diff.changetype.container.ContainerChange;
-import org.javers.core.diff.changetype.map.MapChange;
+import org.javers.core.diff.changetype.container.*;
+import org.javers.core.diff.changetype.map.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -35,111 +37,129 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
     @NonNull
     public PortScannerDiff diff(@NonNull final PortScannerResult _oldResult, @NonNull final PortScannerResult _newResult) {
         // find diff
-        final Diff diff = javers.compare(new NetworkResults(_oldResult.getNetworkResults()), new NetworkResults(_newResult.getNetworkResults()));
-
-        //final Diff diff = javers.compareCollections(_oldResult.getNetworkResults(), _newResult.getNetworkResults(), NetworkResult.class);
+        final Diff diff = javers.compare(_oldResult.getResult(), _newResult.getResult());
 
         log.debug(diff.prettyPrint());
         log.debug("Summary: " + diff.changesSummary());
 
-        final SetMultimap<String, GlobalId> objectsRemovedMultimap = LinkedHashMultimap.create();
+        final SetMultimap<Class<? extends BaseEntity>, PropertyChange> entityChangeMultimap = LinkedHashMultimap.create();
 
-        for(final ObjectRemoved objectRemoved : diff.getChangesByType(ObjectRemoved.class)) {
-            System.out.println(objectRemoved);
-            final Object affectedObject = objectRemoved.getAffectedObject().get();
-
-            if (affectedObject instanceof BaseEntity) {
-                final BaseEntity baseEntity = (BaseEntity) affectedObject;
-
-                objectsRemovedMultimap.put(affectedObject.getClass().getCanonicalName(), new GlobalId(baseEntity.getId(), objectRemoved.getAffectedGlobalId().toString()));
-            } else {
-                final List<ObjectTreeAware> path = _newResult.traceObjectPath(affectedObject);
-                final BaseEntity baseEntity = (BaseEntity) path
-                        .stream()
-                        .filter(p -> p instanceof BaseEntity)
-                        .findFirst()
-                        .get();
-                objectsRemovedMultimap.put(baseEntity.getClass().getCanonicalName(), new GlobalId(baseEntity.getId(), objectRemoved.getAffectedGlobalId().toString()));
+        for (final Change change : diff.getChanges()) {
+            if (!change.getAffectedObject().isPresent()) {
+                // TODO: throw exception?!
+                log.error("affected object not present - skipping!");
+                continue;
             }
-        }
 
-        final SetMultimap<String, GlobalId> objectsAddedMultimap = LinkedHashMultimap.create();
+            final Object affectedObject = change.getAffectedObject().get();
+            final BaseEntity baseEntity = findBaseEntity(affectedObject, _newResult.traceObjectPath(affectedObject));
 
-        for(final NewObject newObject : diff.getChangesByType(NewObject.class)) {
-            System.out.println(newObject);
-            final Object affectedObject = newObject.getAffectedObject().get();
-
-            if (affectedObject instanceof BaseEntity) {
-                final BaseEntity baseEntity = (BaseEntity) affectedObject;
-
-                objectsAddedMultimap.put(affectedObject.getClass().getCanonicalName(), new GlobalId(baseEntity.getId(), newObject.getAffectedGlobalId().toString()));
-            } else {
-                final List<ObjectTreeAware> path = _newResult.traceObjectPath(affectedObject);
-                final BaseEntity baseEntity = (BaseEntity) path
-                        .stream()
-                        .filter(p -> p instanceof BaseEntity)
-                        .findFirst()
-                        .get();
-                objectsAddedMultimap.put(baseEntity.getClass().getCanonicalName(), new GlobalId(baseEntity.getId(), newObject.getAffectedGlobalId().toString()));
+            if (baseEntity == null) {
+                // TODO: throw exception!
+                log.error("null base entity - skipping!");
+                continue;
             }
-        }
 
-        //
-        // ADDED:
-        //   "PortScannerResult": [id1, id2, ...]
-        //   "Port": [id1, id2, ...]
-        //
-        // CHANGED:
-        //   "Port": [{id1, {property1, old1, new1}}, id2, ...]
-        //
-        //
-        //
+            final GlobalId globalId = new GlobalId(baseEntity.getId(), change.getAffectedGlobalId().toString());
 
-        final SetMultimap<String, GenericChange> objectsChangedMultimap = LinkedHashMultimap.create();
+            if (change instanceof NewObject) {
+                addChange(entityChangeMultimap, baseEntity, PropertyChange.addition(globalId, Type.OBJECT, null, null, null));
+            } else if (change instanceof ObjectRemoved) {
+                addChange(entityChangeMultimap, baseEntity, PropertyChange.removal(globalId, Type.OBJECT, null, null, null));
+            } else if (change instanceof ValueChange) {
+                final ValueChange valueChange = (ValueChange) change;
 
-        for(final ValueChange valueChange : diff.getChangesByType(ValueChange.class)) {
-            System.out.println(valueChange);
-            System.out.println(valueChange.getAffectedGlobalId().getTypeName());
+                final PropertyChange propertyChangeDTO =
+                        PropertyChange.valueModification(globalId, Type.OBJECT, valueChange.getPropertyName(), null, valueChange.getLeft().toString(), valueChange.getRight().toString());
 
-            final it.flipb.theapp.domain.model.scanner.diff.ValueChange valueChangeDTO =
-                    new it.flipb.theapp.domain.model.scanner.diff.ValueChange(valueChange.getPropertyName(), valueChange.getLeft().toString(), valueChange.getRight().toString());
-            final Object affectedObject = valueChange.getAffectedObject().get();
+                addChange(entityChangeMultimap, baseEntity, propertyChangeDTO);
+            } else if (change instanceof CollectionChange) {
+                final CollectionChange collectionChange = (CollectionChange) change;
 
-            final List<ObjectTreeAware> path = _newResult.traceObjectPath(affectedObject);
-
-            if (path != null) {
-                for(final ObjectTreeAware objectTreeAware : path) {
-                    if (objectTreeAware instanceof BaseEntity) {
-                        System.out.println(((BaseEntity) objectTreeAware).getId() + " " + objectTreeAware.getClass().getCanonicalName());
-                    }
+                for(final ContainerElementChange containerElementChange : collectionChange.getChanges()) {
+                    handleContainerElementChange(entityChangeMultimap, baseEntity, globalId, collectionChange, containerElementChange, Type.COLLECTION);
                 }
-            }
+            } else if (change instanceof ArrayChange) {
+                final ArrayChange arrayChange = (ArrayChange) change;
 
-            if (affectedObject instanceof BaseEntity) {
-                final BaseEntity baseEntity = (BaseEntity) affectedObject;
+                for(final ContainerElementChange containerElementChange : arrayChange.getChanges()) {
+                    handleContainerElementChange(entityChangeMultimap, baseEntity, globalId, arrayChange, containerElementChange, Type.ARRAY);
+                }
+            } else if (change instanceof MapChange) {
+                final MapChange mapChange = (MapChange) change;
 
-                objectsChangedMultimap.put(affectedObject.getClass().getCanonicalName(), new GenericChange(new GlobalId(baseEntity.getId(), valueChange.getAffectedGlobalId().toString()), valueChangeDTO));
+                for(final EntryChange entryChange : mapChange.getEntryChanges()) {
+                    if (entryChange instanceof EntryAdded) {
+                        final EntryAdded entryAdded = (EntryAdded) entryChange;
+
+                        addChange(entityChangeMultimap, baseEntity, PropertyChange.addition(globalId, Type.MAP, mapChange.getPropertyName(), entryAdded.getKey().toString(), entryAdded.getValue().toString()));
+                    } else if (entryChange instanceof EntryRemoved) {
+                        final EntryRemoved entryRemoved = (EntryRemoved) entryChange;
+
+                        addChange(entityChangeMultimap, baseEntity, PropertyChange.removal(globalId, Type.MAP, mapChange.getPropertyName(), entryRemoved.getKey().toString(), entryRemoved.getValue().toString()));
+                    } else if (entryChange instanceof EntryValueChange) {
+                        final EntryValueChange entryValueChange = (EntryValueChange) entryChange;
+
+                        addChange(entityChangeMultimap, baseEntity, PropertyChange.valueModification(globalId, Type.MAP, mapChange.getPropertyName(), entryValueChange.getKey().toString(), entryValueChange.getLeftValue().toString(), entryValueChange.getRightValue().toString()));
+                    } else {
+                        // TODO: throw exception
+                        log.error("UNHANDLED entry change type!");
+                    }
+
+                }
             } else {
-                final BaseEntity baseEntity = (BaseEntity) path
-                        .stream()
-                        .filter(p -> p instanceof BaseEntity)
-                        .findFirst()
-                        .get();
-
-                objectsChangedMultimap.put(baseEntity.getClass().getCanonicalName(), new GenericChange(new GlobalId(baseEntity.getId(), valueChange.getAffectedGlobalId().toString()), valueChangeDTO));
+                // TODO: throw exception
+                log.error("UNHANDLED change type!");
             }
         }
 
-        for(final ContainerChange containerChange : diff.getChangesByType(ContainerChange.class)) {
-            System.out.println(containerChange.toString());
-            System.out.println("NOT HANDLED!");
+        return PortScannerDiff.from(entityChangeMultimap.asMap());
+    }
+
+    private void handleContainerElementChange(final SetMultimap<Class<? extends BaseEntity>, PropertyChange> _entityChangeMultimap,
+                                              final BaseEntity _baseEntity,
+                                              final GlobalId _globalId,
+                                              final ContainerChange _containerChange,
+                                              final ContainerElementChange containerElementChange,
+                                              final Type _type) {
+        if (containerElementChange instanceof ValueAdded) {
+            final ValueAdded valueAdded = (ValueAdded) containerElementChange;
+
+            addChange(_entityChangeMultimap, _baseEntity, PropertyChange.addition(_globalId, _type, _containerChange.getPropertyName(), valueAdded.getIndex().toString(), valueAdded.getAddedValue().toString()));
+        } else if (containerElementChange instanceof ValueRemoved) {
+            final ValueRemoved valueRemoved = (ValueRemoved) containerElementChange;
+
+            addChange(_entityChangeMultimap, _baseEntity, PropertyChange.removal(_globalId, _type, _containerChange.getPropertyName(), valueRemoved.getIndex().toString(), valueRemoved.getRemovedValue().toString()));
+        } else if (containerElementChange instanceof ElementValueChange) {
+            final ElementValueChange elementValueChange = (ElementValueChange) containerElementChange;
+
+            addChange(_entityChangeMultimap, _baseEntity, PropertyChange.valueModification(_globalId, _type, _containerChange.getPropertyName(), elementValueChange.getIndex().toString(), elementValueChange.getLeftValue().toString(), elementValueChange.getRightValue().toString()));
+        } else {
+            // TODO: throw exception
+            log.error("UNHANDLED container element change type!");
+        }
+    }
+
+    private void addChange(final SetMultimap<Class<? extends BaseEntity>, PropertyChange> _entityChangeMultimap,
+                           final BaseEntity _baseEntity,
+                           final PropertyChange _propertyChange) {
+        log.debug("Adding change: %s", _propertyChange.toString());
+
+        _entityChangeMultimap.put(_baseEntity.getClass(), _propertyChange);
+    }
+
+    private static BaseEntity findBaseEntity(@NonNull final Object _affectedObject, final List<ObjectTreeAware> _path) {
+        if (_affectedObject instanceof BaseEntity) {
+            return (BaseEntity) _affectedObject;
+        } else if (_path != null) {
+            Optional<ObjectTreeAware> objectTreeAware = _path
+                    .stream()
+                    .filter(p -> p instanceof BaseEntity)
+                    .findFirst();
+
+            return objectTreeAware.isPresent() ? (BaseEntity) objectTreeAware.get() : null;
         }
 
-        for(final MapChange mapChange : diff.getChangesByType(MapChange.class)) {
-            System.out.println(mapChange.toString());
-            System.out.println("NOT HANDLED!");
-        }
-
-        return PortScannerDiff.from(objectsRemovedMultimap.asMap(), objectsAddedMultimap.asMap(), objectsChangedMultimap.asMap());
+        return null;
     }
 }

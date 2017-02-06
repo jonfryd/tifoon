@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
@@ -89,13 +90,14 @@ public class Main {
 
                 // TODO: remove
                 //resultsFromFile.getPortScannerResults().get(1).getOpenPortsMap().put("hest", new Ports(Lists.newArrayList(Port.from(Protocol.UDP, 53))));
-                final OpenHost openHost = resultsFromFile.getNetworkResults().get(1).getOpenHosts().get(0);
+                final OpenHost openHost = resultsFromFile.getResult().getNetworkResults().get(1).getOpenHosts().get(0);
                 openHost.setHost("sssdsdsd");
                 openHost.getOpenPorts().get(0).getPort().setProtocol(Protocol.STCP);
                 openHost.getOpenPorts().get(1).getPort().setPortNumber(123);
                 openHost.getOpenPorts().get(0).getPort().getJonTester().getSjover()[1] = 4565;
                 openHost.getOpenPorts().get(1).getPort().getJonTester().setSjover(new int[]{1,2,3,-4});
                 openHost.getOpenPorts().get(1).getPort().getJonTester().getFisk().put("sdfsa", "sdf");
+                openHost.getOpenPorts().get(1).getPort().getJonTester().getFisk().put("sdfsa2", "sdf2");
                 openHost.getOpenPorts().get(1).getPort().getJonTester().getFisk().remove("g");
                 openHost.getOpenPorts().get(1).getPort().getJonTester().getFisk().put("g5", "zxc");
                 System.out.println(openHost);
@@ -105,8 +107,8 @@ public class Main {
                 System.out.println(openPort);
                 openHost.getOpenPorts().add(openPort);
 
-                resultsFromFile.getNetworkResults().get(1).setDescription("blah");
-                resultsFromFile.getNetworkResults().remove(0);
+                resultsFromFile.getResult().getNetworkResults().get(1).setDescription("blah");
+                resultsFromFile.getResult().getNetworkResults().remove(0);
 
                 resultsFromFile.setSuccess(false);
 
@@ -130,6 +132,11 @@ public class Main {
 
 //                    System.out.println(portScannerDiff.getPortsChanged());
 //                    System.out.println(resultsFromDiffFile.getPortsChanged());
+                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "port", null, null));
+                System.out.println(resultsFromDiffFile.findPropertyChanges(NetworkResult.class, null, "description", null));
+                System.out.println(resultsFromDiffFile.findPropertyChanges(NetworkResults.class, null, "networkResults", "1"));
+                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "jonTester", null, null));
+                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "port/jonTester", null, null));
 
                 log.info("Persisted diff equals original diff: " + resultsFromDiffFile.equals(portScannerDiff));
 
