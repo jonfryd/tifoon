@@ -6,7 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.introspector.Property;
+import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.InputStream;
@@ -17,6 +18,34 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class YamlIoPlugin extends AbstractIoPlugin {
     private static final String PROVIDES = "yaml";
+
+    private static class SkipEmptyRepresenter extends Representer {
+        @Override
+        protected NodeTuple representJavaBeanProperty(Object javaBean, Property property,
+                                                      Object propertyValue, Tag customTag) {
+            NodeTuple tuple = super.representJavaBeanProperty(javaBean, property, propertyValue,
+                    customTag);
+            Node valueNode = tuple.getValueNode();
+            if (Tag.NULL.equals(valueNode.getTag())) {
+                return null;// skip 'null' values
+            }
+            if (valueNode instanceof CollectionNode) {
+                if (Tag.SEQ.equals(valueNode.getTag())) {
+                    SequenceNode seq = (SequenceNode) valueNode;
+                    if (seq.getValue().isEmpty()) {
+                        return null;// skip empty lists
+                    }
+                }
+                if (Tag.MAP.equals(valueNode.getTag())) {
+                    MappingNode seq = (MappingNode) valueNode;
+                    if (seq.getValue().isEmpty()) {
+                        return null;// skip empty maps
+                    }
+                }
+            }
+            return tuple;
+        }
+    }
 
     public YamlIoPlugin() {
     }
@@ -43,7 +72,7 @@ public class YamlIoPlugin extends AbstractIoPlugin {
                      @NonNull final Object _object) {
         // Hide root bean type
         // http://stackoverflow.com/questions/19246027/how-to-hide-bean-type-in-snakeyaml
-        final Representer hideRootTagRepresenter = new Representer();
+        final Representer hideRootTagRepresenter = new SkipEmptyRepresenter();
         hideRootTagRepresenter.addClassTag(_object.getClass(), Tag.MAP);
 
         final DumperOptions dumperOptions;

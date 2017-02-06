@@ -1,5 +1,6 @@
 package it.flipb.theapp.plugin;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.flipb.theapp.plugin.io.AbstractIoPlugin;
 import lombok.NonNull;
@@ -17,6 +18,7 @@ public class JsonIoPlugin extends AbstractIoPlugin {
 
     public JsonIoPlugin() {
         mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
     @Override
