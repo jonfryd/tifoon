@@ -1,6 +1,7 @@
 package it.flipb.theapp.domain.model.scanner;
 
 import it.flipb.theapp.domain.model.object.BaseEntity;
+import it.flipb.theapp.domain.model.object.ReflectionObjectTreeAware;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -22,7 +23,7 @@ public class PortScannerResult extends BaseEntity {
     private Boolean success;
 
     @NonNull
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Embedded
     private NetworkResults result;
 
     public long calcExecutionTimeMillis() {

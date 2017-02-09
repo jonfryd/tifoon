@@ -15,6 +15,7 @@ import org.javers.core.Javers;
 import org.javers.core.JaversBuilder;
 import org.javers.core.diff.Change;
 import org.javers.core.diff.Diff;
+import org.javers.core.diff.ListCompareAlgorithm;
 import org.javers.core.diff.changetype.NewObject;
 import org.javers.core.diff.changetype.ObjectRemoved;
 import org.javers.core.diff.changetype.ValueChange;
@@ -30,7 +31,7 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
     private final Javers javers;
 
     public PortScannerResultDiffServiceImpl() {
-        javers = JaversBuilder.javers().build();
+        javers = JaversBuilder.javers().withListCompareAlgorithm(ListCompareAlgorithm.LEVENSHTEIN_DISTANCE).build();
     }
 
     @Override
@@ -38,6 +39,7 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
     public PortScannerDiff diff(@NonNull final PortScannerResult _oldResult, @NonNull final PortScannerResult _newResult) {
         // find diff
         final Diff diff = javers.compare(_oldResult.getResult(), _newResult.getResult());
+        //final Diff diff = javers.compareCollections(_oldResult.getResult().getNetworkResults(), _newResult.getResult().getNetworkResults(), NetworkResult.class);
 
         log.debug(diff.prettyPrint());
         log.debug("Summary: " + diff.changesSummary());
@@ -52,7 +54,9 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
             }
 
             final Object affectedObject = change.getAffectedObject().get();
-            final BaseEntity baseEntity = findBaseEntity(affectedObject, _newResult.traceObjectPath(affectedObject));
+            final BaseEntity baseEntity = (change instanceof ObjectRemoved) ?
+                    findBaseEntity(affectedObject, _oldResult.traceObjectPath(affectedObject)) :
+                    findBaseEntity(affectedObject, _newResult.traceObjectPath(affectedObject));
 
             if (baseEntity == null) {
                 // TODO: throw exception!
@@ -107,6 +111,7 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
                     }
 
                 }
+
             } else {
                 // TODO: throw exception
                 log.error("UNHANDLED change type!");

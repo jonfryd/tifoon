@@ -1,6 +1,5 @@
 package it.flipb.theapp.domain.model.scanner;
 
-import it.flipb.theapp.domain.model.object.BaseEntity;
 import it.flipb.theapp.domain.model.object.ReflectionObjectTreeAware;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
@@ -8,18 +7,16 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Optional;
 
-@Entity
+@Embeddable
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class NetworkResults extends BaseEntity {
+public class NetworkResults extends ReflectionObjectTreeAware {
     @NonNull
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Embedded
+    @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
-    @JoinColumn(name = "networkResultsId", referencedColumnName = "id")
     private List<NetworkResult> networkResults;
 
     public boolean hasResults() {

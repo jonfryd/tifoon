@@ -8,7 +8,6 @@ import it.flipb.theapp.domain.model.scanner.diff.PortScannerDiff;
 import it.flipb.theapp.domain.service.scanner.PortScannerResultDiffService;
 import it.flipb.theapp.domain.service.scanner.PortScannerService;
 import it.flipb.theapp.domain.mapper.DtoMapper;
-import it.flipb.theapp.domain.util.TimeHelper;
 import it.flipb.theapp.infrastructure.config.PluginConfiguration;
 import it.flipb.theapp.plugin.io.IoPlugin;
 import lombok.Cleanup;
@@ -23,8 +22,8 @@ import org.springframework.context.annotation.Bean;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
@@ -64,30 +63,26 @@ public class Main {
                     return;
                 }
 
-                log.info("Performing parallel port scan.");
+                final PortScannerResult portScannerResult1 = doScanAndSaveAndReload("1");
+                final PortScannerResult portScannerResult2 = doScanAndSaveAndReload("2");
+                final PortScannerResult portScannerResult3 = load("3");
 
-                final List<PortScannerJob> portScannerJobs = configuration.getNetwork().getTargets()
-                        .stream()
-                        .map(target -> dtoMapper.map(target, PortScannerJob.class))
-                        .collect(Collectors.toList());
-                final PortScannerResult portScannerResult = portScannerService.scanAndPersist(portScannerJobs);
+                System.out.println(portScannerResult2);
+                System.out.println(portScannerResult3);
 
-                //_portScannerResultRepository.save(portScannerResult);
-                //System.out.println(portScannerResult);
-                //final PortScannerResult portScannerResult = _portScannerResultRepository.findOne(portScannerResult.getPortScannerResultId());
-                System.out.println(portScannerResult);
+                final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult3, portScannerResult2);
 
-                final File file = new File("port_scanner_report." + ioCorePlugin.getSupports());
-                file.createNewFile();
+                System.out.println(portScannerDiff);
 
-                @Cleanup FileOutputStream fos = new FileOutputStream(file);
-                ioCorePlugin.get().save(fos, portScannerResult);
+                final File diffFile = new File("diff_report." + ioCorePlugin.getSupports());
+                diffFile.createNewFile();
 
-                @Cleanup final FileInputStream fis = new FileInputStream(file);
-                final PortScannerResult resultsFromFile = ioCorePlugin.get().load(fis, PortScannerResult.class);
+                @Cleanup final FileOutputStream fos2 = new FileOutputStream(diffFile);
+                ioCorePlugin.get().save(fos2, portScannerDiff);
 
-                log.info("Persisted results equals original results: " + resultsFromFile.equals(portScannerResult));
+                System.out.println(portScannerDiff.findPropertyChanges(PortScannerResult.class, ".*/port", null, null, null, null));
 
+                /*
                 // TODO: remove
                 //resultsFromFile.getPortScannerResults().get(1).getOpenPortsMap().put("hest", new Ports(Lists.newArrayList(Port.from(Protocol.UDP, 53))));
                 final OpenHost openHost = resultsFromFile.getResult().getNetworkResults().get(1).getOpenHosts().get(0);
@@ -132,14 +127,18 @@ public class Main {
 
 //                    System.out.println(portScannerDiff.getPortsChanged());
 //                    System.out.println(resultsFromDiffFile.getPortsChanged());
-                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "port", null, null));
-                System.out.println(resultsFromDiffFile.findPropertyChanges(NetworkResult.class, null, "description", null));
-                System.out.println(resultsFromDiffFile.findPropertyChanges(NetworkResults.class, null, "networkResults", "1"));
-                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "jonTester", null, null));
-                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "port/jonTester", null, null));
+                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "port", null, null, null, null));
+                System.out.println(resultsFromDiffFile.findPropertyChanges(NetworkResult.class, null, "description", null, null, null));
+                System.out.println(resultsFromDiffFile.findPropertyChanges(NetworkResults.class, null, "networkResults", "1", null, null));
+                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "jonTester", null, null, null, null));
+                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "port/jonTester", null, null, null, null));
+                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "port", null, null, Type.OBJECT, Operation.ADDITION));
+
+                final OpenPort openPort2 = openPortRepository.findOne(2L);
+                System.out.println(openPort2);
 
                 log.info("Persisted diff equals original diff: " + resultsFromDiffFile.equals(portScannerDiff));
-
+*/
 /*
                 if (networkResults.hasResults()) {
                     log.info(networkResults.toString());
@@ -152,6 +151,46 @@ public class Main {
                 log.info("Scanning not enabled.");
             }
         };
+    }
+
+    private PortScannerResult doScanAndSaveAndReload(final String _suffix) throws IOException {
+        log.info("Performing parallel port scan.");
+
+        final List<PortScannerJob> portScannerJobs = configuration.getNetwork().getTargets()
+                .stream()
+                .map(target -> dtoMapper.map(target, PortScannerJob.class))
+                .collect(Collectors.toList());
+        final PortScannerResult portScannerResult = portScannerService.scanAndPersist(portScannerJobs);
+
+        //_portScannerResultRepository.save(portScannerResult);
+        //System.out.println(portScannerResult);
+        //final PortScannerResult portScannerResult = _portScannerResultRepository.findOne(portScannerResult.getPortScannerResultId());
+
+        final File file = new File("port_scanner_report_" + _suffix + "." + ioCorePlugin.getSupports());
+        final boolean success = file.createNewFile();
+
+        if (!success) {
+//            throw new RuntimeException("failed to create file");
+        }
+
+        @Cleanup FileOutputStream fos = new FileOutputStream(file);
+        ioCorePlugin.get().save(fos, portScannerResult);
+
+        @Cleanup final FileInputStream fis = new FileInputStream(file);
+        final PortScannerResult resultsFromFile = ioCorePlugin.get().load(fis, PortScannerResult.class);
+
+        log.info("Persisted results equals original results: " + resultsFromFile.equals(portScannerResult));
+
+        return resultsFromFile;
+    }
+
+    private PortScannerResult load(final String _suffix) throws IOException {
+        final File file = new File("port_scanner_report_" + _suffix + "." + ioCorePlugin.getSupports());
+
+        @Cleanup final FileInputStream fis = new FileInputStream(file);
+        final PortScannerResult resultsFromFile = ioCorePlugin.get().load(fis, PortScannerResult.class);
+
+        return resultsFromFile;
     }
 
     public static void main(String[] args) {

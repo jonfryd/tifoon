@@ -5,10 +5,10 @@ import lombok.*;
 import org.springframework.util.Assert;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 
 @Data
 @NoArgsConstructor
-@Embeddable
 public class Port extends ReflectionObjectTreeAware {
     @NonNull
     private Protocol protocol;

@@ -44,9 +44,11 @@ public class PortScannerDiff {
     }
 
     public List<PropertyChange> findPropertyChanges(@NonNull final Class<? extends BaseEntity> _owner,
-                                                    final String _path,
+                                                    final String _pathRegExPattern,
                                                     final String _property,
-                                                    final String _key)
+                                                    final String _key,
+                                                    final Type _type,
+                                                    final Operation _operation)
     {
         final GenericChangeList genericChangeList = entityChangeMap.get(CLASS_TO_MAP_KEY.apply(_owner));
 
@@ -54,9 +56,11 @@ public class PortScannerDiff {
                 null :
                 genericChangeList.getChanges()
                         .stream()
-                        .filter(c -> _path == null || c.getGlobalId().getSelector().contains("#".concat(_path)))
+                        .filter(c -> _pathRegExPattern == null || c.getGlobalId().getSelector().matches(".*#".concat(_pathRegExPattern).concat("$")))
                         .filter(c -> _property == null || _property.equals(c.getProperty()))
                         .filter(c -> _key == null || _key.equals(c.getKey()))
+                        .filter(c -> _type == null || _type.equals(c.getType()))
+                        .filter(c -> _operation == null || _operation.equals(c.getOperation()))
                         .collect(Collectors.toList());
     }
 }

@@ -6,17 +6,16 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
 @NoArgsConstructor
-@Embeddable
 @SuppressFBWarnings("EI_EXPOSE_REP")
 public class JonTester {
     private int[] sjover;
 
-    @ElementCollection
     private Map<String, String> fisk = new HashMap<>();
 
     public JonTester(final int[] _sjover) {
