@@ -16,18 +16,18 @@ public class SpringBootPluginsClassLoader extends LaunchedURLClassLoader {
         super(new URL[]{}, parent);
 
         // find all jar plugins
-        Collection<File> jarFiles = FileUtils.listFiles(new File("plugins/"), new String[]{"jar"}, false);
+        final Collection<File> jarFiles = FileUtils.listFiles(new File("plugins/"), new String[]{"jar"}, false);
 
-        for(File jarFile : jarFiles) {
+        for(final File jarFile : jarFiles) {
             // add the jar's own classes to classpath
-            URL jarURL = new URL("jar:file:" + jarFile.getPath() + "!/BOOT-INF/classes/");
+            final URL jarURL = new URL("jar:file:" + jarFile.getPath() + "!/BOOT-INF/classes/");
             addURL(jarURL);
 
-            JarFileArchive jarFileArchive = new JarFileArchive(jarFile);
-            List<Archive> nestedArchives = jarFileArchive
+            final JarFileArchive jarFileArchive = new JarFileArchive(jarFile);
+            final List<Archive> nestedArchives = jarFileArchive
                     .getNestedArchives(entry -> entry.getName().endsWith(".jar"));
 
-            for(Archive archive : nestedArchives) {
+            for(final Archive archive : nestedArchives) {
                 // add all bundled dependencies to classpath
                 addURL(archive.getUrl());
             }
