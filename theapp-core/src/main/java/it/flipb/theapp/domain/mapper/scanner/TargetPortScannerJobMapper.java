@@ -20,7 +20,7 @@ public class TargetPortScannerJobMapper extends AbstractConverter<Target, PortSc
                 .map(this::convertStringToPortRange)
                 .collect(Collectors.toList());
 
-        return new PortScannerJob(_target.getDescription(), _target.getAddresses(), portRanges);
+        return new PortScannerJob(_target.getNetworkId(), _target.getAddresses(), portRanges);
     }
 
     @NonNull

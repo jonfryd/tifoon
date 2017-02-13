@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Target {
     @NonNull
-    private String description;
+    private String networkId;
     @NonNull
     private List<InetAddress> addresses;
     @NonNull

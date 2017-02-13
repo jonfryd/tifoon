@@ -1,10 +1,7 @@
 package it.flipb.theapp.domain.model.scanner.diff;
 
 import it.flipb.theapp.domain.model.object.BaseEntity;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.*;
 import java.util.function.Function;
@@ -17,14 +14,13 @@ public class PortScannerDiff {
 
     @Data
     @NoArgsConstructor
-    @RequiredArgsConstructor
+    @AllArgsConstructor
     public static class GenericChangeList {
-        @NonNull
         private List<PropertyChange> changes;
     }
 
     @NonNull
-    private Map<String, GenericChangeList> entityChangeMap;
+    private Map<String, GenericChangeList> entityChangeMap = Collections.unmodifiableMap(new HashMap<>());
 
     public static PortScannerDiff from(@NonNull final Map<Class<? extends BaseEntity>, Collection<PropertyChange>> _entityChangeMap) {
         final PortScannerDiff portScannerDiff = new PortScannerDiff();
@@ -43,6 +39,7 @@ public class PortScannerDiff {
         return portScannerDiff;
     }
 
+    @NonNull
     public List<PropertyChange> findPropertyChanges(@NonNull final Class<? extends BaseEntity> _owner,
                                                     final String _pathRegExPattern,
                                                     final String _property,
@@ -53,7 +50,7 @@ public class PortScannerDiff {
         final GenericChangeList genericChangeList = entityChangeMap.get(CLASS_TO_MAP_KEY.apply(_owner));
 
         return genericChangeList == null ?
-                null :
+                new ArrayList<>() :
                 genericChangeList.getChanges()
                         .stream()
                         .filter(c -> _pathRegExPattern == null || c.getGlobalId().getSelector().matches(".*#".concat(_pathRegExPattern).concat("$")))

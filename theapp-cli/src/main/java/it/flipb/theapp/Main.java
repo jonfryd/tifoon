@@ -67,85 +67,29 @@ public class Main {
                 final PortScannerResult portScannerResult2 = doScanAndSaveAndReload("2");
                 final PortScannerResult portScannerResult3 = load("3");
 
-                System.out.println(portScannerResult2);
-                System.out.println(portScannerResult3);
+                final PortScannerDiff portScannerDiff12 = portScannerResultDiffService.diff(portScannerResult1, portScannerResult2);
 
-                final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult3, portScannerResult2);
+                log.info("Diff run 1 and 2: {}", portScannerDiff12);
 
-                System.out.println(portScannerDiff);
+                final PortScannerDiff portScannerDiff23 = portScannerResultDiffService.diff(portScannerResult2, portScannerResult3);
 
-                final File diffFile = new File("diff_report." + ioCorePlugin.getSupports());
-                diffFile.createNewFile();
-
-                @Cleanup final FileOutputStream fos2 = new FileOutputStream(diffFile);
-                ioCorePlugin.get().save(fos2, portScannerDiff);
-
-                System.out.println(portScannerDiff.findPropertyChanges(PortScannerResult.class, ".*/port", null, null, null, null));
-
-                /*
-                // TODO: remove
-                //resultsFromFile.getPortScannerResults().get(1).getOpenPortsMap().put("hest", new Ports(Lists.newArrayList(Port.from(Protocol.UDP, 53))));
-                final OpenHost openHost = resultsFromFile.getResult().getNetworkResults().get(1).getOpenHosts().get(0);
-                openHost.setHost("sssdsdsd");
-                openHost.getOpenPorts().get(0).getPort().setProtocol(Protocol.STCP);
-                openHost.getOpenPorts().get(1).getPort().setPortNumber(123);
-                openHost.getOpenPorts().get(0).getPort().getJonTester().getSjover()[1] = 4565;
-                openHost.getOpenPorts().get(1).getPort().getJonTester().setSjover(new int[]{1,2,3,-4});
-                openHost.getOpenPorts().get(1).getPort().getJonTester().getFisk().put("sdfsa", "sdf");
-                openHost.getOpenPorts().get(1).getPort().getJonTester().getFisk().put("sdfsa2", "sdf2");
-                openHost.getOpenPorts().get(1).getPort().getJonTester().getFisk().remove("g");
-                openHost.getOpenPorts().get(1).getPort().getJonTester().getFisk().put("g5", "zxc");
-                System.out.println(openHost);
-                final OpenPort openPort = new OpenPort(Port.from(Protocol.UDP, 53));
-                System.out.println(openPort);
-                openPort.setId(34L);
-                System.out.println(openPort);
-                openHost.getOpenPorts().add(openPort);
-
-                resultsFromFile.getResult().getNetworkResults().get(1).setDescription("blah");
-                resultsFromFile.getResult().getNetworkResults().remove(0);
-
-                resultsFromFile.setSuccess(false);
-
-                System.out.println(openPort);
-
-                final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult, resultsFromFile);
-
-                System.out.println(openPort);
-                System.out.println(TimeHelper.toLocalDateTime(portScannerResult.getBeganAt()));
-                System.out.println(TimeHelper.toLocalDateTime(portScannerResult.getEndedAt()));
-                System.out.println(portScannerResult.calcExecutionTimeMillis());
+                log.info("Diff run 2 and 3 (from disk): {}", portScannerDiff23);
 
                 final File diffFile = new File("diff_report." + ioCorePlugin.getSupports());
                 diffFile.createNewFile();
 
                 @Cleanup final FileOutputStream fos2 = new FileOutputStream(diffFile);
-                ioCorePlugin.get().save(fos2, portScannerDiff);
+                ioCorePlugin.get().save(fos2, portScannerDiff23);
+
+                //System.out.println(portScannerDiff23.findPropertyChanges(PortScannerResult.class, ".*/port", null, null, null, null));
 
                 @Cleanup final FileInputStream fis2 = new FileInputStream(diffFile);
                 final PortScannerDiff resultsFromDiffFile = ioCorePlugin.get().load(fis2, PortScannerDiff.class);
 
-//                    System.out.println(portScannerDiff.getPortsChanged());
-//                    System.out.println(resultsFromDiffFile.getPortsChanged());
-                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "port", null, null, null, null));
-                System.out.println(resultsFromDiffFile.findPropertyChanges(NetworkResult.class, null, "description", null, null, null));
-                System.out.println(resultsFromDiffFile.findPropertyChanges(NetworkResults.class, null, "networkResults", "1", null, null));
-                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "jonTester", null, null, null, null));
-                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "port/jonTester", null, null, null, null));
-                System.out.println(resultsFromDiffFile.findPropertyChanges(OpenPort.class, "port", null, null, Type.OBJECT, Operation.ADDITION));
+                //System.out.println(resultsFromDiffFile);
 
-                final OpenPort openPort2 = openPortRepository.findOne(2L);
-                System.out.println(openPort2);
+                log.info("Persisted diff equals original diff: " + resultsFromDiffFile.equals(portScannerDiff23));
 
-                log.info("Persisted diff equals original diff: " + resultsFromDiffFile.equals(portScannerDiff));
-*/
-/*
-                if (networkResults.hasResults()) {
-                    log.info(networkResults.toString());
-                } else {
-                    log.warn("No results returned from scanning");
-                }
-*/
                 // TODO: do something useful with the results - e.g. test for exploits
             } else {
                 log.info("Scanning not enabled.");
@@ -170,7 +114,7 @@ public class Main {
         final boolean success = file.createNewFile();
 
         if (!success) {
-//            throw new RuntimeException("failed to create file");
+            log.debug("output file already exists: {}", file.getPath());
         }
 
         @Cleanup FileOutputStream fos = new FileOutputStream(file);
@@ -178,6 +122,8 @@ public class Main {
 
         @Cleanup final FileInputStream fis = new FileInputStream(file);
         final PortScannerResult resultsFromFile = ioCorePlugin.get().load(fis, PortScannerResult.class);
+
+        //System.out.println(resultsFromFile);
 
         log.info("Persisted results equals original results: " + resultsFromFile.equals(portScannerResult));
 
@@ -188,9 +134,8 @@ public class Main {
         final File file = new File("port_scanner_report_" + _suffix + "." + ioCorePlugin.getSupports());
 
         @Cleanup final FileInputStream fis = new FileInputStream(file);
-        final PortScannerResult resultsFromFile = ioCorePlugin.get().load(fis, PortScannerResult.class);
 
-        return resultsFromFile;
+        return ioCorePlugin.get().load(fis, PortScannerResult.class);
     }
 
     public static void main(String[] args) {

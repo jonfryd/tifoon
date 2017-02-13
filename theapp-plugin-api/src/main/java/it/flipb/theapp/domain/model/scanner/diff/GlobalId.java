@@ -17,7 +17,7 @@ public class GlobalId {
     public final static Comparator<GlobalId> ORDERING = BY_ENTITY_ID.thenComparing(BY_SELECTOR);
 
     @NonNull
-    Long entityId;
+    private Long entityId;
     @NonNull
     private String selector;
 }

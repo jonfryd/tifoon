@@ -12,23 +12,23 @@ import java.util.List;
 @NoArgsConstructor
 public class PortScannerJob {
     @NonNull
-    private String description;
+    private String networkId;
     @NonNull
     private List<InetAddress> addresses;
     @NonNull
     private List<PortRange> portRanges;
 
-    public PortScannerJob(final String _description,
+    public PortScannerJob(final String _networkId,
                           final List<InetAddress> _addresses,
                           final List<PortRange> _portRanges) {
-        setDescription(_description);
+        setNetworkId(_networkId);
         setAddresses(_addresses);
         setPortRanges(_portRanges);
     }
 
-    private void setDescription(final String _description) {
-        Assert.hasLength(_description, "description must have length");
-        description = _description;
+    private void setNetworkId(final String _networkId) {
+        Assert.hasLength(_networkId, "networkId must have length");
+        networkId = _networkId;
     }
 
     private void setAddresses(final List<InetAddress> _addresses) {

@@ -40,7 +40,7 @@ public class PortScannerServiceImpl implements PortScannerService {
         Assert.isTrue(scannerCorePlugin.isInitialized(), "Scanner plugin must be initialized");
         Assert.isTrue(executorCorePlugin.isInitialized(), "Executor plugin must be initialized");
 
-        log.info("Performing port scan against: " + _request.getDescription());
+        log.info("Performing port scan against: " + _request.getNetworkId());
 
         return scannerCorePlugin.get().scan(_request, executorCorePlugin.get());
     }
@@ -50,19 +50,18 @@ public class PortScannerServiceImpl implements PortScannerService {
     public PortScannerResult scan(@NonNull final List<PortScannerJob> _request) {
         final long start = System.currentTimeMillis();
 
-        final NetworkResults networkResults = new NetworkResults(_request
+        final List<NetworkResult> networkResults = _request
                 .parallelStream()
                 .map(this::scanNetwork)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
 
         // save and reload to populate all ids
         final PortScannerResult portScannerResult = new PortScannerResult(
                 start,
                 System.currentTimeMillis(),
                 true,
-                networkResults
-        );
+                networkResults);
 
         return portScannerResult;
     }

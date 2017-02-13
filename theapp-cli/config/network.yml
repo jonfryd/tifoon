@@ -1,13 +1,13 @@
 network:
   targets:
-    - description: My Macs
+    - networkId: My Macs
       addresses:
         - 10.32.3.32
         - 10.32.3.33
         - 10.32.3.34
       ports:
         - 80
-    - description: Raspberry Pi 3 Server
+    - networkId: Raspberry Pi 3 Server
       addresses:
         - google.dk
       ports:

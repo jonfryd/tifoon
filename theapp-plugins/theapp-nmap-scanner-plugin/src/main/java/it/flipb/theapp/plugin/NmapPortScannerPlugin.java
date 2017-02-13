@@ -37,7 +37,7 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
             final String[] commandWithArguments = buildNmapCommandWithArguments(_request, scanResultFilename);
             final byte result[] = _executorPlugin.dispatch("nmap", commandWithArguments, scanResultFilename);
 
-            return mapXmlToPortScannerResult(_request.getDescription(), result);
+            return mapXmlToPortScannerResult(_request.getNetworkId(), result);
         }
         catch (Exception _e) {
             log.error("Error running nmap", _e);
