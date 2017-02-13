@@ -32,7 +32,7 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
     private final Javers javers;
 
     @Value
-    private class ChangesHolder {
+    private static class ChangesHolder {
         private final SetMultimap<Class<? extends BaseEntity>, PropertyChange> changesMultimap = LinkedHashMultimap.create();
 
         public void addChange(final Class<? extends BaseEntity> _baseEntityClass,

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class PortScannerResult extends BaseEntity {
     @NonNull
     private Long beganAt;
