@@ -1,5 +1,6 @@
 package it.flipb.theapp.domain.model.object;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import javax.annotation.Nullable;
@@ -11,7 +12,7 @@ import java.util.List;
 public class ReflectionObjectTreeAware implements ObjectTreeAware {
     @Override
     @Nullable
-    public final List<ObjectTreeAware> traceObjectPath(final Object _objectToFind) {
+    public final List<ObjectTreeAware> traceObjectPath(@NonNull final Object _objectToFind) {
         for (final Field field : FieldUtils.getAllFieldsList(getClass())) {
             try {
                 final List<ObjectTreeAware> result = findValue(FieldUtils.readField(this, field.getName(), true), _objectToFind);
@@ -28,7 +29,7 @@ public class ReflectionObjectTreeAware implements ObjectTreeAware {
     }
 
     @Nullable
-    private List<ObjectTreeAware> findValue(final Object _value, final Object _objectToFind) {
+    private List<ObjectTreeAware> findValue(@NonNull final Object _value, @NonNull final Object _objectToFind) {
         List<ObjectTreeAware> result = null;
 
         if (_value == _objectToFind) {
