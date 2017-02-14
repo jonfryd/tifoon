@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.type.descriptor.java.JavaTypeDescriptorRegistry;
 import org.hibernate.type.descriptor.java.SerializableTypeDescriptor;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -27,6 +28,7 @@ public class NetworkResult extends ReflectionObjectTreeAware {
         }
 
         @Override
+        @Nullable
         public byte[] convertToDatabaseColumn(final List<OpenHost> _entityValue) {
             if (_entityValue == null) {
                 return null;
@@ -40,6 +42,7 @@ public class NetworkResult extends ReflectionObjectTreeAware {
         }
 
         @Override
+        @Nullable
         public List<OpenHost> convertToEntityAttribute(final byte[] _databaseValue) {
             if (_databaseValue == null) {
                 return null;

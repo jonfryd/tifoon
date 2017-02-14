@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.util.*;
 import java.util.function.Function;
@@ -23,12 +24,13 @@ public class PortScannerResult extends BaseEntity {
     @NonNull
     private Boolean success;
 
+    @NonNull
     @Embedded
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
     private List<NetworkResult> networkResults;
 
-    public void setNetworkResults(final List<NetworkResult> _networkResults) {
+    public void setNetworkResults(@Nullable final List<NetworkResult> _networkResults) {
         networkResults = _networkResults != null ? _networkResults : Collections.unmodifiableList(new ArrayList<>());
     }
 
