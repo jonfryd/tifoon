@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 public class TargetPortScannerJobMapper extends AbstractConverter<Target, PortScannerJob> {
     @Override
-    @NonNull
     protected PortScannerJob convert(@NonNull final Target _target) {
         final List<PortRange> portRanges = _target.getPorts()
                 .stream()
@@ -23,7 +22,6 @@ public class TargetPortScannerJobMapper extends AbstractConverter<Target, PortSc
         return new PortScannerJob(_target.getNetworkId(), _target.getAddresses(), portRanges);
     }
 
-    @NonNull
     private PortRange convertStringToPortRange(@NonNull final String _stringRange) {
         final String[] tokens = _stringRange.split("-");
         Assert.isTrue(tokens.length >= 1 && tokens.length <= 2, "one or two tokens allowed");

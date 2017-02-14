@@ -19,7 +19,6 @@ public class DtoMapper {
         modelMapper.addConverter(new TargetPortScannerJobMapper());
     }
 
-    @NonNull
     public <S,T> T map(@NonNull S _source, @NonNull Class<T> _destination) {
        return modelMapper.map(_source, _destination);
     }

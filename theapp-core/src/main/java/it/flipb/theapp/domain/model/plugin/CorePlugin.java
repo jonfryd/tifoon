@@ -4,25 +4,27 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.plugin.core.Plugin;
 
-import java.util.Optional;
+import javax.annotation.Nullable;
 
 public class CorePlugin<T extends Plugin<?>> {
     @NonNull
     @Getter
     private final String supports;
-    private final Optional<T> t;
+    @Nullable
+    private final T t;
 
     public CorePlugin(@NonNull final String _supports,
-                      final T _t) {
+                      @Nullable final T _t) {
         supports = _supports;
-        t = Optional.ofNullable(_t);
+        t = _t;
     }
 
     public boolean isInitialized() {
-        return t.isPresent();
+        return t != null;
     }
 
+    @Nullable
     public T get() {
-        return t.orElse(null);
+        return t;
     }
 }
