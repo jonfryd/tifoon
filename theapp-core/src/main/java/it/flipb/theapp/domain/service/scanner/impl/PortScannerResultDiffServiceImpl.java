@@ -24,6 +24,7 @@ import org.javers.core.diff.changetype.container.*;
 import org.javers.core.diff.changetype.map.*;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 @Service
@@ -170,7 +171,7 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
 
     private static GlobalId createGlobalId(@NonNull final PortScannerResult _portScannerResult,
                                            @NonNull final NetworkResult _networkResult,
-                                           final Change _change) {
+                                           @Nullable final Change _change) {
         // create faked JaVers style global ID / selector
         final String selectorBase = PortScannerResult.class.getCanonicalName() + "/" +  _portScannerResult.getId() + "#networkResults/" + _portScannerResult.getNetworkResults().indexOf(_networkResult);
 
@@ -217,8 +218,9 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
         _changesHolder.addChange(_baseEntity.getClass(), _propertyChange);
     }
 
+    @Nullable
     private static BaseEntity findBaseEntity(@NonNull final Object _affectedObject,
-                                             final List<ObjectTreeAware> _path) {
+                                             @Nullable final List<ObjectTreeAware> _path) {
         if (_affectedObject instanceof BaseEntity) {
             return (BaseEntity) _affectedObject;
         } else if (_path != null) {

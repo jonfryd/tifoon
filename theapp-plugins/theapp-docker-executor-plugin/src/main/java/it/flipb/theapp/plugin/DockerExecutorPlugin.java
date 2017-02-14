@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.springframework.util.Assert;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -51,6 +52,7 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
     }
 
     @Override
+    @Nullable
     public byte[] dispatch(@NonNull final String _command,
                            @NonNull final String[] _arguments,
                            @NonNull final String _outputFile) {
@@ -92,14 +94,12 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
         return data;
     }
 
-    @NonNull
     private DockerImage findDockerImage(@NonNull final String _command) {
         Assert.hasLength(_command, "command must have length");
 
         return MoreObjects.firstNonNull(customDockerImageMap.get(_command), dockerConfiguration.getDefaultImage());
     }
 
-    @NonNull
     private DockerClient getDockerClient() {
         /*
         TLS connection: ...
@@ -123,7 +123,6 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
                 .build();
     }
 
-    @NonNull
     private CreateContainerResponse createContainer(@NonNull final DockerClient _dockerClient,
                                                     @NonNull final String _dispatcher) {
         synchronized(this) {
@@ -188,6 +187,7 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
         return false;
     }
 
+    @Nullable
     private byte[] readFileFromContainer(@NonNull final DockerClient _dockerClient,
                                          @NonNull final CreateContainerResponse _container,
                                          @NonNull final String _outputFile) {

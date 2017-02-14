@@ -3,6 +3,7 @@ package it.flipb.theapp.domain.model.scanner.diff;
 import it.flipb.theapp.domain.model.object.BaseEntity;
 import lombok.*;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,13 +40,12 @@ public class PortScannerDiff {
         return portScannerDiff;
     }
 
-    @NonNull
     public List<PropertyChange> findPropertyChanges(@NonNull final Class<? extends BaseEntity> _owner,
-                                                    final String _pathRegExPattern,
-                                                    final String _property,
-                                                    final String _key,
-                                                    final Type _type,
-                                                    final Operation _operation)
+                                                    @Nullable final String _pathRegExPattern,
+                                                    @Nullable final String _property,
+                                                    @Nullable final String _key,
+                                                    @Nullable final Type _type,
+                                                    @Nullable final Operation _operation)
     {
         final GenericChangeList genericChangeList = entityChangeMap.get(CLASS_TO_MAP_KEY.apply(_owner));
 

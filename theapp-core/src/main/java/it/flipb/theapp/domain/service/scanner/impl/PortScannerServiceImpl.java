@@ -3,7 +3,7 @@ package it.flipb.theapp.domain.service.scanner.impl;
 import it.flipb.theapp.domain.model.plugin.CorePlugin;
 import it.flipb.theapp.domain.model.scanner.*;
 import it.flipb.theapp.domain.service.scanner.PortScannerService;
-import it.flipb.theapp.infrastructure.jpa.repositories.PortScannerResultRepository;
+import it.flipb.theapp.infrastructure.jpa.repository.PortScannerResultRepository;
 import it.flipb.theapp.plugin.executer.ExecutorPlugin;
 import it.flipb.theapp.plugin.scanner.ScannerPlugin;
 import lombok.NonNull;

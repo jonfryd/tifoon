@@ -12,6 +12,7 @@ import org.nmap4j.data.host.Address;
 import org.nmap4j.data.nmaprun.Host;
 import org.nmap4j.parser.OnePassParser;
 
+import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
@@ -46,7 +47,6 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
         }
     }
 
-    @NonNull
     private String[] buildNmapCommandWithArguments(@NonNull final PortScannerJob _request,
                                                    @NonNull final String _scanResultFilename) {
         final String nmapPortRanges = _request.getPortRanges()
@@ -65,9 +65,8 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
         return argumentsList.toArray(new String[argumentsList.size()]);
     }
 
-    @NonNull
     private NetworkResult mapXmlToPortScannerResult(@NonNull final String _description,
-                                                    final byte[] _result) {
+                                                    @Nullable final byte[] _result) {
         final Map<InetAddress, List<Port>> openPortsMap = Maps.newHashMap();
 
         if (_result != null) {
@@ -99,7 +98,6 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
         return new NetworkResult(_description, openPortsMap);
     }
 
-    @NonNull
     private Protocol mapProtocol(@NonNull final String _protocol) {
         switch(_protocol) {
             case "tcp":

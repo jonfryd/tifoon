@@ -1,7 +1,6 @@
 package it.flipb.theapp.plugin;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.plugin.metadata.MetadataProvider;
@@ -20,18 +19,15 @@ public class DefaultMetadataProvider implements MetadataProvider {
     private static final String META_INF_THEAPP = "/META-INF/theapp/";
 
     @Getter
-    @NonNull
     private final String pluginDescriptorName;
 
     @Override
-    @NonNull
     public PluginMetadata getMetadata() {
         final String version = readVersion();
 
         return new SimplePluginMetadata(pluginDescriptorName, version);
     }
 
-    @NonNull
     private String readVersion() {
         try (final InputStream is = getClass().getResourceAsStream(META_INF_THEAPP + getPluginDescriptorName())) {
             final Properties properties = new Properties();

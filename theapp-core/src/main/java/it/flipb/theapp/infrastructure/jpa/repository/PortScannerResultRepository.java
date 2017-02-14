@@ -1,4 +1,4 @@
-package it.flipb.theapp.infrastructure.jpa.repositories;
+package it.flipb.theapp.infrastructure.jpa.repository;
 
 import it.flipb.theapp.domain.model.scanner.PortScannerResult;
 import org.springframework.data.repository.CrudRepository;

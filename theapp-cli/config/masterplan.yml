@@ -3,4 +3,4 @@ masterplan:
     active: true
     toolName: nmap
   commandExecutor: process # 'docker' & 'process' supported
-  ioFormat: yaml
+  ioFormat: json

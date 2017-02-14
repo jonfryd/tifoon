@@ -6,6 +6,7 @@ import it.flipb.theapp.plugin.io.AbstractIoPlugin;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,6 +28,7 @@ public class JsonIoPlugin extends AbstractIoPlugin {
     }
 
     @Override
+    @Nullable
     public <T> T load(@NonNull final InputStream _inputStream,
                       @NonNull final Class<T> _rootClass) {
         try {

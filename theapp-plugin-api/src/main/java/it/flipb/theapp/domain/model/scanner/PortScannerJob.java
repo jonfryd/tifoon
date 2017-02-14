@@ -1,5 +1,6 @@
 package it.flipb.theapp.domain.model.scanner;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,6 +19,7 @@ public class PortScannerJob {
     @NonNull
     private List<PortRange> portRanges;
 
+    @SuppressFBWarnings("NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     public PortScannerJob(final String _networkId,
                           final List<InetAddress> _addresses,
                           final List<PortRange> _portRanges) {

@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +25,7 @@ public class ProcessExecutorPlugin extends AbstractExecutorPlugin {
     }
 
     @Override
+    @Nullable
     public byte[] dispatch(@NonNull final String _command,
                            @NonNull final String[] _arguments,
                            @NonNull final String _outputFile) {

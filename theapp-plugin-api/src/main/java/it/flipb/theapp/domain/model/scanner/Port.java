@@ -17,7 +17,7 @@ public class Port extends ReflectionObjectTreeAware {
     private JonTester jonTester;
 
     // don't use auto-generation here, enforce use of setters
-    public static Port from(final Protocol _protocol, final int _portNumber) {
+    public static Port from(@NonNull final Protocol _protocol, final int _portNumber) {
         final Port port = new Port();
         port.setProtocol(_protocol);
         port.setPortNumber(_portNumber);

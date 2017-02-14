@@ -15,7 +15,7 @@ public class OpenHost extends ReflectionObjectTreeAware {
     @NonNull
     private List<OpenPort> openPorts;
 
-    public static OpenHost from(final String _hostAddress, final List<Port> _ports) {
+    public static OpenHost from(@NonNull final String _hostAddress, @NonNull final List<Port> _ports) {
         return new OpenHost(_hostAddress, _ports
                 .stream()
                 .map(p -> new OpenPort(p))

@@ -30,6 +30,11 @@
         </dependency>
         <dependency>
             <groupId>flipb.it</groupId>
+            <artifactId>theapp-common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>flipb.it</groupId>
             <artifactId>theapp-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>

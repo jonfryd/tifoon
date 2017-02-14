@@ -3,11 +3,12 @@ package it.flipb.theapp.plugin.scanner;
 import it.flipb.theapp.domain.model.scanner.PortScannerJob;
 import it.flipb.theapp.domain.model.scanner.NetworkResult;
 import it.flipb.theapp.plugin.executer.ExecutorPlugin;
-import lombok.NonNull;
 import org.springframework.plugin.core.Plugin;
 import org.springframework.plugin.metadata.MetadataProvider;
 
+import javax.annotation.Nullable;
+
 public interface ScannerPlugin extends Plugin<String>, MetadataProvider {
-    @NonNull
-    NetworkResult scan(@NonNull PortScannerJob _request, @NonNull ExecutorPlugin _executorPlugin);
+    @Nullable
+    NetworkResult scan(PortScannerJob _request, ExecutorPlugin _executorPlugin);
 }

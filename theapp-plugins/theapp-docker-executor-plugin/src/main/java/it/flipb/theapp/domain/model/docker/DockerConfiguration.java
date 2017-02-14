@@ -15,8 +15,7 @@ public class DockerConfiguration {
     private DockerImage defaultImage;
     @NonNull
     private List<DockerImage> customImages;
-
-    @NonNull
+    
     public DockerImage getDefaultImage() {
         return defaultImage;
     }

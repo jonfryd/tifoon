@@ -11,6 +11,7 @@
     <url>http://www.the-app.com</url>
 
     <modules>
+        <module>theapp-common</module>
         <module>theapp-plugin-api</module>
         <module>theapp-plugins</module>
         <module>theapp-core</module>
@@ -122,6 +123,10 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.4</version>
+                <configuration>
+                    <threshold>Normal</threshold>
+                    <effort>Default</effort>
+                </configuration>
                 <executions>
                     <!--
                         Ensures that FindBugs inspects source code when project is compiled.

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import javax.annotation.Nullable;
 import java.util.Comparator;
 
 @Data
@@ -29,16 +30,20 @@ public class PropertyChange {
     private Type type;
     @NonNull
     private Operation operation;
+    @Nullable
     private String property;
+    @Nullable
     private String key;
+    @Nullable
     private String oldValue;
+    @Nullable
     private String newValue;
 
     public static PropertyChange addition(final GlobalId _globalId,
                                           final Type _type,
-                                          final String _property,
-                                          final String _key,
-                                          final String _newValue)
+                                          @Nullable final String _property,
+                                          @Nullable final String _key,
+                                          @Nullable final String _newValue)
     {
         final PropertyChange propertyChange = new PropertyChange(_globalId, _type, Operation.ADDITION);
         propertyChange.setProperty(_property);
@@ -50,9 +55,9 @@ public class PropertyChange {
 
     public static PropertyChange removal(final GlobalId _globalId,
                                          final Type _type,
-                                         final String _property,
-                                         final String _key,
-                                         final String _oldValue)
+                                         @Nullable final String _property,
+                                         @Nullable final String _key,
+                                         @Nullable final String _oldValue)
     {
         final PropertyChange propertyChange = new PropertyChange(_globalId, _type, Operation.REMOVAL);
         propertyChange.setProperty(_property);
@@ -64,10 +69,10 @@ public class PropertyChange {
 
     public static PropertyChange valueModification(final GlobalId _globalId,
                                                    final Type _type,
-                                                   final String _property,
-                                                   final String _key,
-                                                   final String _oldValue,
-                                                   final String _newValue)
+                                                   @Nullable final String _property,
+                                                   @Nullable final String _key,
+                                                   @Nullable final String _oldValue,
+                                                   @Nullable final String _newValue)
     {
         final PropertyChange propertyChange = new PropertyChange(_globalId, _type, Operation.VALUE_MODIFICATION);
         propertyChange.setProperty(_property);

@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
 
+import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -56,7 +57,7 @@ public class YamlIoPlugin extends AbstractIoPlugin {
     }
 
     @Override
-    @NonNull
+    @Nullable
     @SuppressWarnings("unchecked")
     public <T> T load(@NonNull final InputStream _inputStream,
                       @NonNull final Class<T> _rootClass) {
