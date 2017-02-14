@@ -8,10 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface PortScannerService {
-    @NonNull
-    PortScannerResult scan(@NonNull List<PortScannerJob> _request);
+    PortScannerResult scan(List<PortScannerJob> _request);
 
     @Transactional
-    @NonNull
-    PortScannerResult scanAndPersist(@NonNull List<PortScannerJob> _request);
+    PortScannerResult scanAndPersist(List<PortScannerJob> _request);
 }

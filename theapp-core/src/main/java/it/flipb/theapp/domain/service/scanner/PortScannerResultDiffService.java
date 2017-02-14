@@ -5,6 +5,5 @@ import it.flipb.theapp.domain.model.scanner.PortScannerResult;
 import lombok.NonNull;
 
 public interface PortScannerResultDiffService {
-    @NonNull
-    PortScannerDiff diff(@NonNull PortScannerResult _oldResult, @NonNull PortScannerResult _newResult);
+    PortScannerDiff diff(PortScannerResult _oldResult, PortScannerResult _newResult);
 }
