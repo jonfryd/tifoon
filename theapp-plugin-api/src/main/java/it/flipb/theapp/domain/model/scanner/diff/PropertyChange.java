@@ -1,16 +1,13 @@
 package it.flipb.theapp.domain.model.scanner.diff;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
 
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class PropertyChange {
     private final static Comparator<PropertyChange> BY_GLOBAL_ID = (p1, p2) -> GlobalId.ORDERING.compare(p1.getGlobalId(), p2.getGlobalId());
     private final static Comparator<PropertyChange> BY_TYPE = Comparator.comparing(PropertyChange::getType);
@@ -24,11 +21,11 @@ public class PropertyChange {
             .thenComparing(BY_PROPERTY)
             .thenComparing(BY_KEY);
 
-    @NonNull
+    @Nullable
     private GlobalId globalId;
-    @NonNull
+    @Nullable
     private Type type;
-    @NonNull
+    @Nullable
     private Operation operation;
     @Nullable
     private String property;
@@ -45,12 +42,7 @@ public class PropertyChange {
                                           @Nullable final String _key,
                                           @Nullable final String _newValue)
     {
-        final PropertyChange propertyChange = new PropertyChange(_globalId, _type, Operation.ADDITION);
-        propertyChange.setProperty(_property);
-        propertyChange.setKey(_key);
-        propertyChange.setNewValue(_newValue);
-
-        return propertyChange;
+        return new PropertyChange(_globalId, _type, Operation.ADDITION, _property, _key, null, _newValue);
     }
 
     public static PropertyChange removal(final GlobalId _globalId,
@@ -59,12 +51,7 @@ public class PropertyChange {
                                          @Nullable final String _key,
                                          @Nullable final String _oldValue)
     {
-        final PropertyChange propertyChange = new PropertyChange(_globalId, _type, Operation.REMOVAL);
-        propertyChange.setProperty(_property);
-        propertyChange.setKey(_key);
-        propertyChange.setOldValue(_oldValue);
-
-        return propertyChange;
+        return new PropertyChange(_globalId, _type, Operation.REMOVAL, _property, _key, _oldValue, null);
     }
 
     public static PropertyChange valueModification(final GlobalId _globalId,
@@ -74,12 +61,6 @@ public class PropertyChange {
                                                    @Nullable final String _oldValue,
                                                    @Nullable final String _newValue)
     {
-        final PropertyChange propertyChange = new PropertyChange(_globalId, _type, Operation.VALUE_MODIFICATION);
-        propertyChange.setProperty(_property);
-        propertyChange.setKey(_key);
-        propertyChange.setOldValue(_oldValue);
-        propertyChange.setNewValue(_newValue);
-
-        return propertyChange;
+        return new PropertyChange(_globalId, _type, Operation.VALUE_MODIFICATION, _property, _key, _oldValue, _newValue);
     }
 }

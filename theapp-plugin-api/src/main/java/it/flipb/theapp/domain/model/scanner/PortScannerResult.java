@@ -17,18 +17,15 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class PortScannerResult extends BaseEntity {
-    @NonNull
-    private Long beganAt;
-    @NonNull
-    private Long endedAt;
-    @NonNull
-    private Boolean success;
+    private long beganAt;
+    private long endedAt;
+    private boolean success;
 
     @NonNull
     @Embedded
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
-    private List<NetworkResult> networkResults;
+    private List<NetworkResult> networkResults = Collections.unmodifiableList(new ArrayList<>());
 
     public void setNetworkResults(@Nullable final List<NetworkResult> _networkResults) {
         networkResults = _networkResults != null ? _networkResults : Collections.unmodifiableList(new ArrayList<>());

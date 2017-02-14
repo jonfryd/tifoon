@@ -19,6 +19,9 @@ public class RootConfiguration {
 
     @Autowired
     public RootConfiguration(final MasterPlan _masterPlan, final Network _network) {
+        _masterPlan.validate();
+        _network.validate();
+
         masterPlan = _masterPlan;
         network = _network;
     }

@@ -151,6 +151,10 @@
                             <artifactId>theapp-plugin-api</artifactId>
                         </exclude>
                         <exclude>
+                            <groupId>flipb.it</groupId>
+                            <artifactId>theapp-common</artifactId>
+                        </exclude>
+                        <exclude>
                             <groupId>org.apache.tomcat</groupId>
                             <artifactId>tomcat-juli</artifactId>
                         </exclude>

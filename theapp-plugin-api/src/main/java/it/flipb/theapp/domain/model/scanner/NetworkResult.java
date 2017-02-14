@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class NetworkResult extends ReflectionObjectTreeAware {
-    public static class OpenHostsJsonConverter implements AttributeConverter<List<OpenHost>, byte[]> {
+    public static class OpenHostsJsonConverter implements AttributeConverter<ArrayList<OpenHost>, byte[]> {
         private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
         static {
@@ -29,7 +29,7 @@ public class NetworkResult extends ReflectionObjectTreeAware {
 
         @Override
         @Nullable
-        public byte[] convertToDatabaseColumn(final List<OpenHost> _entityValue) {
+        public byte[] convertToDatabaseColumn(@Nullable final ArrayList<OpenHost> _entityValue) {
             if (_entityValue == null) {
                 return null;
             }
@@ -42,10 +42,9 @@ public class NetworkResult extends ReflectionObjectTreeAware {
         }
 
         @Override
-        @Nullable
-        public List<OpenHost> convertToEntityAttribute(final byte[] _databaseValue) {
+        public ArrayList<OpenHost> convertToEntityAttribute(@Nullable final byte[] _databaseValue) {
             if (_databaseValue == null) {
-                return null;
+                return new ArrayList<>();
             }
 
             try {
@@ -56,12 +55,12 @@ public class NetworkResult extends ReflectionObjectTreeAware {
         }
     }
 
-    @NonNull
+    @Nullable
     private String networkId;
 
     @NonNull
     @Convert(converter = OpenHostsJsonConverter.class)
-    private List<OpenHost> openHosts = Collections.unmodifiableList(new ArrayList<>());
+    private ArrayList<OpenHost> openHosts = new ArrayList<>();
 
     public NetworkResult(@NonNull final String _networkId,
                          @NonNull final Map<InetAddress, List<Port>> _openPortsMap) {

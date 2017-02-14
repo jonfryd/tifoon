@@ -4,16 +4,16 @@ import it.flipb.theapp.domain.model.object.ReflectionObjectTreeAware;
 import lombok.*;
 import org.springframework.util.Assert;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
+import javax.annotation.Nullable;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class Port extends ReflectionObjectTreeAware {
-    @NonNull
+    @Nullable
     private Protocol protocol;
     private int portNumber;
-    @NonNull
+    @Nullable
     private JonTester jonTester;
 
     // don't use auto-generation here, enforce use of setters

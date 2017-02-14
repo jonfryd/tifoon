@@ -43,11 +43,10 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
     }
 
     public PortScannerResultDiffServiceImpl() {
-        javers = JaversBuilder.javers().withListCompareAlgorithm(ListCompareAlgorithm.LEVENSHTEIN_DISTANCE).build();
+        javers = JaversBuilder.javers().build();
     }
 
     @Override
-    @NonNull
     public PortScannerDiff diff(@NonNull final PortScannerResult _oldResult,
                                 @NonNull final PortScannerResult _newResult) {
         final ChangesHolder changesHolder = new ChangesHolder();
