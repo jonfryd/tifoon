@@ -16,7 +16,6 @@ import org.javers.core.Javers;
 import org.javers.core.JaversBuilder;
 import org.javers.core.diff.Change;
 import org.javers.core.diff.Diff;
-import org.javers.core.diff.ListCompareAlgorithm;
 import org.javers.core.diff.changetype.NewObject;
 import org.javers.core.diff.changetype.ObjectRemoved;
 import org.javers.core.diff.changetype.ValueChange;
@@ -52,8 +51,8 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
         final ChangesHolder changesHolder = new ChangesHolder();
 
         // find removed networks, new networks and networks with changes
-        final Map<String, NetworkResult> oldResultsMap = _oldResult.networkResultMapByNetworkId();
-        final Map<String, NetworkResult> newResultsMap = _newResult.networkResultMapByNetworkId();
+        final Map<String, NetworkResult> oldResultsMap = _oldResult.getNetworkResultMapByNetworkId();
+        final Map<String, NetworkResult> newResultsMap = _newResult.getNetworkResultMapByNetworkId();
 
         // set of new
         final Set<String> newNetworkResults = new HashSet<>(newResultsMap.keySet());

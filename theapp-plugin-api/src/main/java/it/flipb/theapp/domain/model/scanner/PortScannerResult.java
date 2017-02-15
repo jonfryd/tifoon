@@ -43,7 +43,7 @@ public class PortScannerResult extends BaseEntity {
         return this.getNetworkResults().size();
     }
 
-    public Map<String, NetworkResult> networkResultMapByNetworkId() {
+    public Map<String, NetworkResult> getNetworkResultMapByNetworkId() {
         return networkResults
                 .stream()
                 .collect(Collectors.toMap(NetworkResult::getNetworkId, Function.identity()));
