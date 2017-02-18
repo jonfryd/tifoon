@@ -43,7 +43,7 @@ public class PortScannerServiceImpl implements PortScannerService {
 
         log.info("Performing port scan against: " + _request.getNetworkId());
 
-        return scannerCorePlugin.get().scan(_request, executorCorePlugin.get());
+        return scannerCorePlugin.getExtension().scan(_request, executorCorePlugin.getExtension());
     }
 
     @Override

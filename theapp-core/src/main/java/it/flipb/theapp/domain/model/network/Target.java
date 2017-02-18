@@ -12,11 +12,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Target implements Validator {
-    @Nullable
     private String networkId;
-    @Nullable
     private List<InetAddress> addresses;
-    @Nullable
     private List<String> ports;
 
     @Override

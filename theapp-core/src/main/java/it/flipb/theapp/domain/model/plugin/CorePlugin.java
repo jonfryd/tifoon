@@ -1,30 +1,19 @@
 package it.flipb.theapp.domain.model.plugin;
 
-import lombok.Getter;
 import lombok.NonNull;
+import lombok.Value;
 import org.springframework.plugin.core.Plugin;
 
 import javax.annotation.Nullable;
 
+@Value
 public class CorePlugin<T extends Plugin<?>> {
     @NonNull
-    @Getter
     private final String supports;
     @Nullable
-    private final T t;
-
-    public CorePlugin(@NonNull final String _supports,
-                      @Nullable final T _t) {
-        supports = _supports;
-        t = _t;
-    }
+    private final T extension;
 
     public boolean isInitialized() {
-        return t != null;
-    }
-
-    @Nullable
-    public T get() {
-        return t;
+        return extension != null;
     }
 }

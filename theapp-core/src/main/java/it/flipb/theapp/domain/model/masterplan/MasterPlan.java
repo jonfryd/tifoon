@@ -12,11 +12,8 @@ import javax.annotation.Nullable;
 @Data
 @NoArgsConstructor
 public class MasterPlan implements Validator {
-    @Nullable
     private Scanner scanner;
-    @Nullable
     private String commandExecutor;
-    @Nullable
     private String ioFormat;
 
     @Override

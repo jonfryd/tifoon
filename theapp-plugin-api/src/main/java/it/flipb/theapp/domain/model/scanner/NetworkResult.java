@@ -11,15 +11,16 @@ import org.hibernate.type.descriptor.java.SerializableTypeDescriptor;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Embeddable
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = false)
-public class NetworkResult extends ReflectionObjectTreeAware {
+public class NetworkResult extends ReflectionObjectTreeAware implements Serializable {
     public static class OpenHostsJsonConverter implements AttributeConverter<ArrayList<OpenHost>, byte[]> {
         private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -55,7 +56,6 @@ public class NetworkResult extends ReflectionObjectTreeAware {
         }
     }
 
-    @Nullable
     private String networkId;
 
     @NonNull

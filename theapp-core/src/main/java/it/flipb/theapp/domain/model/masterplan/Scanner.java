@@ -11,11 +11,12 @@ import javax.annotation.Nullable;
 @NoArgsConstructor
 public class Scanner implements Validator {
     private boolean active;
-    @Nullable
     private String toolName;
 
     @Override
     public void validate() {
-        Assert.hasLength(toolName, "toolName must have length");
+        if (active) {
+            Assert.hasLength(toolName, "toolName must have length");
+        }
     }
 }

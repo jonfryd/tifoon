@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,14 +38,9 @@ public class PortScannerResultTest {
 
     @Test
     public void returnsValidMapByNetworkId() {
-        final NetworkResult networkResult1 = new NetworkResult();
-        networkResult1.setNetworkId("network1");
-
-        final NetworkResult networkResult2 = new NetworkResult();
-        networkResult2.setNetworkId("network2");
-
-        final NetworkResult networkResult3 = new NetworkResult();
-        networkResult3.setNetworkId("network3");
+        final NetworkResult networkResult1 = new NetworkResult("network1", Collections.EMPTY_MAP);
+        final NetworkResult networkResult2 = new NetworkResult("network2", Collections.EMPTY_MAP);
+        final NetworkResult networkResult3 = new NetworkResult("network3", Collections.EMPTY_MAP);
 
         final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2, networkResult3);
 

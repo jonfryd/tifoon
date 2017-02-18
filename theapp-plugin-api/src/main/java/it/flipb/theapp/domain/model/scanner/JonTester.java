@@ -1,16 +1,18 @@
 package it.flipb.theapp.domain.model.scanner;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressFBWarnings("EI_EXPOSE_REP")
-public class JonTester {
+public class JonTester implements Serializable {
     private int[] sjover;
 
     private Map<String, String> fisk = new HashMap<>();

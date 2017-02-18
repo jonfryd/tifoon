@@ -7,16 +7,17 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Entity
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // must be protected for JPA
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class PortScannerResult extends BaseEntity {
+public class PortScannerResult extends BaseEntity implements Serializable {
     private long beganAt;
     private long endedAt;
     private boolean success;

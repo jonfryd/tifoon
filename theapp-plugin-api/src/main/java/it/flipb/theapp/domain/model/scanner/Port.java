@@ -4,16 +4,14 @@ import it.flipb.theapp.domain.model.object.ReflectionObjectTreeAware;
 import lombok.*;
 import org.springframework.util.Assert;
 
-import javax.annotation.Nullable;
+import java.io.Serializable;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = false)
-public class Port extends ReflectionObjectTreeAware {
-    @Nullable
+public class Port extends ReflectionObjectTreeAware implements Serializable {
     private Protocol protocol;
     private int portNumber;
-    @Nullable
     private JonTester jonTester;
 
     // don't use auto-generation here, enforce use of setters

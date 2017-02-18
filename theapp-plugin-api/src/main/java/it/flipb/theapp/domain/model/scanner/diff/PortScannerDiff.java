@@ -3,14 +3,16 @@ package it.flipb.theapp.domain.model.scanner.diff;
 import it.flipb.theapp.domain.model.object.BaseEntity;
 import lombok.*;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Data
-@NoArgsConstructor
-public class PortScannerDiff {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class PortScannerDiff implements Serializable {
     private final static Function<Class, String> CLASS_TO_MAP_KEY = Class::getCanonicalName;
 
     @Data
@@ -20,7 +22,7 @@ public class PortScannerDiff {
         private List<PropertyChange> changes;
     }
 
-    @NonNull
+    @Nonnull
     private Map<String, GenericChangeList> entityChangeMap = Collections.unmodifiableMap(new HashMap<>());
 
     public static PortScannerDiff from(@NonNull final Map<Class<? extends BaseEntity>, Collection<PropertyChange>> _entityChangeMap) {

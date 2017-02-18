@@ -13,7 +13,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Network implements Validator {
-    @Nullable
     private List<Target> targets;
 
     @Override

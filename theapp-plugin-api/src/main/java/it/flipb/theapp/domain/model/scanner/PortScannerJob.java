@@ -13,10 +13,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class PortScannerJob {
-    @Nullable
     private String networkId;
-    @Nullable
     private List<InetAddress> addresses;
-    @Nullable
     private List<PortRange> portRanges;
 }

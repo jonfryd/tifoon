@@ -2,13 +2,14 @@ package it.flipb.theapp.domain.model.scanner.diff;
 
 import lombok.*;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.Comparator;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class PropertyChange {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class PropertyChange implements Serializable {
     private final static Comparator<PropertyChange> BY_GLOBAL_ID = (p1, p2) -> GlobalId.ORDERING.compare(p1.getGlobalId(), p2.getGlobalId());
     private final static Comparator<PropertyChange> BY_TYPE = Comparator.comparing(PropertyChange::getType);
     private final static Comparator<PropertyChange> BY_OPERATION = Comparator.comparing(PropertyChange::getOperation);
@@ -21,20 +22,29 @@ public class PropertyChange {
             .thenComparing(BY_PROPERTY)
             .thenComparing(BY_KEY);
 
-    @Nullable
     private GlobalId globalId;
-    @Nullable
     private Type type;
-    @Nullable
     private Operation operation;
-    @Nullable
     private String property;
-    @Nullable
     private String key;
-    @Nullable
     private String oldValue;
-    @Nullable
     private String newValue;
+
+    private PropertyChange(final GlobalId _globalId,
+                          final Type _type,
+                          final Operation _operation,
+                          @Nullable final String _property,
+                          @Nullable final String _key,
+                          @Nullable final String _oldValue,
+                          @Nullable final String _newValue) {
+        globalId = _globalId;
+        type = _type;
+        operation = _operation;
+        property = _property;
+        key = _key;
+        oldValue = _oldValue;
+        newValue = _newValue;
+    }
 
     public static PropertyChange addition(final GlobalId _globalId,
                                           final Type _type,

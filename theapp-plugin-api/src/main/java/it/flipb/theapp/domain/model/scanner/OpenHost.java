@@ -4,17 +4,16 @@ import it.flipb.theapp.domain.model.object.ReflectionObjectTreeAware;
 import lombok.*;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class OpenHost extends ReflectionObjectTreeAware {
-    @Nullable
+public class OpenHost extends ReflectionObjectTreeAware implements Serializable {
     private String host;
-    @Nullable
     private List<OpenPort> openPorts;
 
     public static OpenHost from(@NonNull final String _hostAddress, @NonNull final List<Port> _ports) {

@@ -79,12 +79,12 @@ public class Main {
                 diffFile.createNewFile();
 
                 @Cleanup final FileOutputStream fos2 = new FileOutputStream(diffFile);
-                ioCorePlugin.get().save(fos2, portScannerDiff23);
+                ioCorePlugin.getExtension().save(fos2, portScannerDiff23);
 
                 //System.out.println(portScannerDiff23.findPropertyChanges(PortScannerResult.class, ".*/port", null, null, null, null));
 
                 @Cleanup final FileInputStream fis2 = new FileInputStream(diffFile);
-                final PortScannerDiff resultsFromDiffFile = ioCorePlugin.get().load(fis2, PortScannerDiff.class);
+                final PortScannerDiff resultsFromDiffFile = ioCorePlugin.getExtension().load(fis2, PortScannerDiff.class);
 
                 //System.out.println(resultsFromDiffFile);
 
@@ -118,10 +118,10 @@ public class Main {
         }
 
         @Cleanup FileOutputStream fos = new FileOutputStream(file);
-        ioCorePlugin.get().save(fos, portScannerResult);
+        ioCorePlugin.getExtension().save(fos, portScannerResult);
 
         @Cleanup final FileInputStream fis = new FileInputStream(file);
-        final PortScannerResult resultsFromFile = ioCorePlugin.get().load(fis, PortScannerResult.class);
+        final PortScannerResult resultsFromFile = ioCorePlugin.getExtension().load(fis, PortScannerResult.class);
 
         //System.out.println(resultsFromFile);
 
@@ -135,7 +135,7 @@ public class Main {
 
         @Cleanup final FileInputStream fis = new FileInputStream(file);
 
-        return ioCorePlugin.get().load(fis, PortScannerResult.class);
+        return ioCorePlugin.getExtension().load(fis, PortScannerResult.class);
     }
 
     public static void main(String[] args) {
