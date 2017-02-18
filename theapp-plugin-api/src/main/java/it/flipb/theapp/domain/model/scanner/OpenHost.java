@@ -3,7 +3,6 @@ package it.flipb.theapp.domain.model.scanner;
 import it.flipb.theapp.domain.model.object.ReflectionObjectTreeAware;
 import lombok.*;
 
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
