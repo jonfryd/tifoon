@@ -51,8 +51,8 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
         final ChangesHolder changesHolder = new ChangesHolder();
 
         // find removed networks, new networks and networks with changes
-        final Map<String, NetworkResult> oldResultsMap = _oldResult.getNetworkResultMapByNetworkId();
-        final Map<String, NetworkResult> newResultsMap = _newResult.getNetworkResultMapByNetworkId();
+        final Map<String, NetworkResult> oldResultsMap = _oldResult.mapNetworkResultsByNetworkId();
+        final Map<String, NetworkResult> newResultsMap = _newResult.mapNetworkResultsByNetworkId();
 
         // set of new
         final Set<String> newNetworkResults = new HashSet<>(newResultsMap.keySet());

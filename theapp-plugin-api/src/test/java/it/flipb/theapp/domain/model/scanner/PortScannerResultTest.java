@@ -48,7 +48,7 @@ public class PortScannerResultTest {
 
         Assert.assertEquals("no. results incorrect", portScannerResult.numberOfResults(), 3);
 
-        Map<String, NetworkResult> networkResultMap = portScannerResult.getNetworkResultMapByNetworkId();
+        Map<String, NetworkResult> networkResultMap = portScannerResult.mapNetworkResultsByNetworkId();
 
         Assert.assertEquals("map size incorrect", networkResultMap.size(), 3);
         Assert.assertEquals("should contain network1", networkResultMap.get("network1"), networkResult1);

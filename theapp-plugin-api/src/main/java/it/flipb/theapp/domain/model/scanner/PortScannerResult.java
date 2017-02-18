@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // must be protected for JPA
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class PortScannerResult extends BaseEntity implements Serializable {
     private long beganAt;
     private long endedAt;
@@ -44,7 +44,7 @@ public class PortScannerResult extends BaseEntity implements Serializable {
         return this.getNetworkResults().size();
     }
 
-    public Map<String, NetworkResult> getNetworkResultMapByNetworkId() {
+    public Map<String, NetworkResult> mapNetworkResultsByNetworkId() {
         return networkResults
                 .stream()
                 .collect(Collectors.toMap(NetworkResult::getNetworkId, Function.identity()));

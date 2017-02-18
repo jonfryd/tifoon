@@ -29,13 +29,13 @@ public class PropertyChange implements Serializable {
     private String oldValue;
     private String newValue;
 
-    private PropertyChange(final GlobalId _globalId,
-                          final Type _type,
-                          final Operation _operation,
-                          @Nullable final String _property,
-                          @Nullable final String _key,
-                          @Nullable final String _oldValue,
-                          @Nullable final String _newValue) {
+    private PropertyChange(@NonNull final GlobalId _globalId,
+                           @NonNull final Type _type,
+                           @NonNull final Operation _operation,
+                           @Nullable final String _property,
+                           @Nullable final String _key,
+                           @Nullable final String _oldValue,
+                           @Nullable final String _newValue) {
         globalId = _globalId;
         type = _type;
         operation = _operation;
