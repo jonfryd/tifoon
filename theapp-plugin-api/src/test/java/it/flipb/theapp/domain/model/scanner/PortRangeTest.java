@@ -1,17 +1,18 @@
 package it.flipb.theapp.domain.model.scanner;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class PortRangeTest {
     @Test
     public void canConstructSinglePortRange() {
         final PortRange portRange = PortRange.singular(Protocol.TCP, 139);
 
-        Assert.assertEquals("Low port incorrect", 139, portRange.getLowPort().getPortNumber());
-        Assert.assertEquals("High port incorrect", 139, portRange.getHighPort().getPortNumber());
-        Assert.assertTrue("Should be single port", portRange.isSinglePort());
-        Assert.assertEquals("Interval string incorrect", "139", portRange.toSingleOrIntervalString());
+        assertThat(portRange.getLowPort().getPortNumber()).as("lowPort").isEqualTo(139);
+        assertThat(portRange.getHighPort().getPortNumber()).as("highPort").isEqualTo(139);
+        assertThat(portRange.isSinglePort()).as("should be single port").isTrue();
+        assertThat(portRange.toSingleOrIntervalString()).as("interval string incorrect").isEqualTo("139");
     }
 
     @Test(expected = NullPointerException.class)
@@ -23,10 +24,10 @@ public class PortRangeTest {
     public void canConstructProperPortRange() {
         final PortRange portRange = PortRange.from(Protocol.UDP, 20, 25);
 
-        Assert.assertEquals("Low port incorrect", 20, portRange.getLowPort().getPortNumber());
-        Assert.assertEquals("High port incorrect", 25, portRange.getHighPort().getPortNumber());
-        Assert.assertFalse("Should be not be single port", portRange.isSinglePort());
-        Assert.assertEquals("Interval string incorrect", "20-25", portRange.toSingleOrIntervalString());
+        assertThat(portRange.getLowPort().getPortNumber()).as("lowPort").isEqualTo(20);
+        assertThat(portRange.getHighPort().getPortNumber()).as("highPort").isEqualTo(25);
+        assertThat(portRange.isSinglePort()).as("should be single port").isFalse();
+        assertThat(portRange.toSingleOrIntervalString()).as("interval string incorrect").isEqualTo("20-25");
     }
 
     @Test(expected = NullPointerException.class)

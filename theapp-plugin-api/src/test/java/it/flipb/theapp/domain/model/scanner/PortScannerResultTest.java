@@ -1,6 +1,5 @@
 package it.flipb.theapp.domain.model.scanner;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class PortScannerResultTest {
     private PortScannerResult portScannerResult;
@@ -19,7 +20,7 @@ public class PortScannerResultTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void initiallyHasEmptyUnmodifiableListInternally() {
-        Assert.assertFalse("should not have results", portScannerResult.hasResults());
+        assertThat(portScannerResult.hasResults()).as("should not have results").isFalse();
 
         // test this is an unmodifiable list, by invoking an operation that causes potential mutation
         // and thus triggers an UnsupportedOperationException
@@ -33,7 +34,7 @@ public class PortScannerResultTest {
         portScannerResult.setBeganAt(startTimestamp);
         portScannerResult.setEndedAt(startTimestamp + 2345);
 
-        Assert.assertEquals("execution time incorrect", portScannerResult.calcExecutionTimeMillis(), 2345);
+        assertThat(portScannerResult.calcExecutionTimeMillis()).as("execution time").isEqualTo(2345);
     }
 
     @Test
@@ -46,21 +47,19 @@ public class PortScannerResultTest {
 
         portScannerResult.setNetworkResults(networkResults);
 
-        Assert.assertEquals("no. results incorrect", portScannerResult.numberOfResults(), 3);
+        assertThat(portScannerResult.numberOfResults()).as("number of results").isEqualTo(3);
 
         Map<String, NetworkResult> networkResultMap = portScannerResult.mapNetworkResultsByNetworkId();
 
-        Assert.assertEquals("map size incorrect", networkResultMap.size(), 3);
-        Assert.assertEquals("should contain network1", networkResultMap.get("network1"), networkResult1);
-        Assert.assertEquals("should contain network2", networkResultMap.get("network2"), networkResult2);
-        Assert.assertEquals("should contain network3", networkResultMap.get("network3"), networkResult3);
+        assertThat(networkResultMap.size()).as("map size incorrect").isEqualTo(3);
+        assertThat(networkResultMap.values()).as("should contain network1, network2, network3").contains(networkResult1, networkResult2, networkResult3);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void providingNullNetworkResultsIsAnEmptyUnmodifiableListInternally() {
         portScannerResult.setNetworkResults(null);
 
-        Assert.assertFalse("should not have results", portScannerResult.hasResults());
+        assertThat(portScannerResult.hasResults()).as("should not have results").isFalse();
 
         // test this is an unmodifiable list, by invoking an operation that causes potential mutation
         // and thus triggers an UnsupportedOperationException

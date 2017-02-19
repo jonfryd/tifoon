@@ -1,7 +1,7 @@
 package it.flipb.theapp.domain.model.scanner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -36,7 +36,7 @@ public class NetworkResultTest {
 
         final ArrayList<OpenHost> openHosts = networkResult.getOpenHosts();
 
-        assertThat(openHosts).isNotEmpty();
+        assertThat(openHosts).as("openHosts should not be empty").isNotEmpty();
 
         testJsonSerializationDeserialization(openHosts);
     }
@@ -47,7 +47,7 @@ public class NetworkResultTest {
 
         final ArrayList<OpenHost> openHosts = networkResult.getOpenHosts();
 
-        assertThat(openHosts).isEmpty();
+        assertThat(openHosts).as("openHosts should be empty").isEmpty();
 
         testJsonSerializationDeserialization(openHosts);
     }
@@ -56,17 +56,17 @@ public class NetworkResultTest {
         final NetworkResult.OpenHostsJsonConverter openHostsJsonConverter = new NetworkResult.OpenHostsJsonConverter();
         final byte[] serializedOpenHosts = openHostsJsonConverter.convertToDatabaseColumn(_openHosts);
 
-        Assert.assertNotNull("Serialized result should not be null", serializedOpenHosts);
+        Assertions.assertThat(serializedOpenHosts).as("serialized result should not be null").isNotNull();
 
-        assertThat(json.write(_openHosts)).isEqualToJson(serializedOpenHosts);
+        assertThat(json.write(_openHosts)).as("manually serialized JSON should be identical to JPA converter JSON").isEqualToJson(serializedOpenHosts);
 
         final List<OpenHost> deseralizedOpenHosts = openHostsJsonConverter.convertToEntityAttribute(serializedOpenHosts);
 
-        Assert.assertNotNull(deseralizedOpenHosts);
+        Assertions.assertThat(deseralizedOpenHosts).as("deserialized result should not be null").isNotNull();
 
-        assertThat(json.parse(serializedOpenHosts)).isEqualTo(deseralizedOpenHosts);
+        assertThat(json.parse(serializedOpenHosts)).as("manually deserialized JSON should be identical to JPA converter result").isEqualTo(deseralizedOpenHosts);
 
-        Assert.assertEquals("Original and deserialized open hosts must be equal", _openHosts, deseralizedOpenHosts);
+        Assertions.assertThat(_openHosts).as("original and deserialized open hosts must be equal").isEqualTo(deseralizedOpenHosts);
     }
 
     @Test(expected = NullPointerException.class)

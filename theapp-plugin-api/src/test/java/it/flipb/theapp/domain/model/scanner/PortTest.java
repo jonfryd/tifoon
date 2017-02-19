@@ -1,15 +1,16 @@
 package it.flipb.theapp.domain.model.scanner;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class PortTest {
     @Test
     public void canConstructValidPort() {
         final Port port = Port.from(Protocol.IP, 23);
 
-        Assert.assertEquals("Protocol incorrect", Protocol.IP, port.getProtocol());
-        Assert.assertEquals("Port number incorrect", 23, port.getPortNumber());
+        assertThat(port.getProtocol()).as("protocol").isEqualTo(Protocol.IP);
+        assertThat(port.getPortNumber()).as("portNumber").isEqualTo(23);
     }
 
     @Test(expected = NullPointerException.class)
