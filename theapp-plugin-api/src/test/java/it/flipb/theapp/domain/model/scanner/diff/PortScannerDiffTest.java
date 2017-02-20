@@ -59,7 +59,7 @@ public class PortScannerDiffTest {
         final List<PropertyChange> propertyChanges = portScannerDiff.findPropertyChanges(PortScannerResult.class, "networkResults.*", null, null, null, null);
         final String key = PortScannerResult.class.getCanonicalName();
 
-        assertThat(propertyChanges).containsExactly(portScannerDiff.getEntityChangeMap().get(key).getChanges().toArray(new PropertyChange[0]));
+        assertThat(propertyChanges).hasSize(6).containsAll(portScannerDiff.getEntityChangeMap().get(key).getChanges());
     }
 
     @Test
