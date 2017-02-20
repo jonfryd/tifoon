@@ -148,8 +148,6 @@ public class PortScannerResultDiffServiceImplTest {
         assertThat(portScannerDiff).isNotNull();
         assertThat(portScannerDiff.getEntityChangeMap()).hasSize(1);
 
-        System.out.println(portScannerDiff);
-
         final String key = PortScannerResult.class.getCanonicalName();
 
         assertThat(portScannerDiff.getEntityChangeMap().get(key).getChanges()).hasSize(4);
