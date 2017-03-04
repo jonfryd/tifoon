@@ -65,9 +65,9 @@ public class PortScannerResultDiffServiceImplTest {
         final NetworkResult networkResult2 = new NetworkResult("test2", Collections.EMPTY_MAP);
 
         final PortScannerResult portScannerResult1 = new PortScannerResult(0, 0, true, Arrays.asList(networkResult1, networkResult2));
-        portScannerResult1.setId(1L);
+        portScannerResult1.setId("1");
         final PortScannerResult portScannerResult2 = new PortScannerResult(0, 0, true, Arrays.asList(networkResult2));
-        portScannerResult2.setId(2L);
+        portScannerResult2.setId("2");
 
         final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult1, portScannerResult2);
 
@@ -80,7 +80,7 @@ public class PortScannerResultDiffServiceImplTest {
 
         final PropertyChange theChange = portScannerDiff.getEntityChangeMap().get(key).getChanges().get(0);
 
-        assertThat(theChange.getGlobalId().getEntityId()).isEqualTo(1L);
+        assertThat(theChange.getGlobalId().getEntityId()).isEqualTo("1");
         assertThat(theChange.getGlobalId().getSelector()).isEqualTo(key + "/1#networkResults/0");
         assertThat(theChange.getType()).isEqualTo(Type.OBJECT);
         assertThat(theChange.getOperation()).isEqualTo(Operation.REMOVAL);
@@ -100,9 +100,9 @@ public class PortScannerResultDiffServiceImplTest {
         final NetworkResult networkResult2 = new NetworkResult("test", inetAddressPortMap2);
 
         final PortScannerResult portScannerResult1 = new PortScannerResult(0, 0, true, Collections.singletonList(networkResult1));
-        portScannerResult1.setId(1L);
+        portScannerResult1.setId("1");
         final PortScannerResult portScannerResult2 = new PortScannerResult(0, 0, true, Collections.singletonList(networkResult2));
-        portScannerResult2.setId(2L);
+        portScannerResult2.setId("2");
 
         final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult1, portScannerResult2);
 
@@ -115,7 +115,7 @@ public class PortScannerResultDiffServiceImplTest {
 
         final PropertyChange theChange = portScannerDiff.getEntityChangeMap().get(key).getChanges().get(0);
 
-        assertThat(theChange.getGlobalId().getEntityId()).isEqualTo(2L);
+        assertThat(theChange.getGlobalId().getEntityId()).isEqualTo("2");
         assertThat(theChange.getGlobalId().getSelector()).isEqualTo(key + "/2#networkResults/0/openHosts/0/openPorts/0/port");
         assertThat(theChange.getType()).isEqualTo(Type.OBJECT);
         assertThat(theChange.getOperation()).isEqualTo(Operation.VALUE_MODIFICATION);
@@ -139,9 +139,9 @@ public class PortScannerResultDiffServiceImplTest {
         final NetworkResult networkResult2 = new NetworkResult("test", inetAddressPortMap2);
 
         final PortScannerResult portScannerResult1 = new PortScannerResult(0, 0, true, Collections.singletonList(networkResult1));
-        portScannerResult1.setId(1L);
+        portScannerResult1.setId("1");
         final PortScannerResult portScannerResult2 = new PortScannerResult(0, 0, true, Collections.singletonList(networkResult2));
-        portScannerResult2.setId(2L);
+        portScannerResult2.setId("2");
 
         final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult1, portScannerResult2);
 
@@ -154,7 +154,7 @@ public class PortScannerResultDiffServiceImplTest {
 
         final PropertyChange openPortsCollectionChange = portScannerDiff.getEntityChangeMap().get(key).getChanges().get(0);
 
-        assertThat(openPortsCollectionChange.getGlobalId().getEntityId()).isEqualTo(2L);
+        assertThat(openPortsCollectionChange.getGlobalId().getEntityId()).isEqualTo("2");
         assertThat(openPortsCollectionChange.getGlobalId().getSelector()).isEqualTo(key + "/2#networkResults/0/openHosts/0");
         assertThat(openPortsCollectionChange.getType()).isEqualTo(Type.COLLECTION);
         assertThat(openPortsCollectionChange.getOperation()).isEqualTo(Operation.ADDITION);
@@ -165,7 +165,7 @@ public class PortScannerResultDiffServiceImplTest {
 
         final PropertyChange openPortAddition = portScannerDiff.getEntityChangeMap().get(key).getChanges().get(1);
 
-        assertThat(openPortAddition.getGlobalId().getEntityId()).isEqualTo(2L);
+        assertThat(openPortAddition.getGlobalId().getEntityId()).isEqualTo("2");
         assertThat(openPortAddition.getGlobalId().getSelector()).isEqualTo(key + "/2#networkResults/0/openHosts/0/openPorts/1");
         assertThat(openPortAddition.getType()).isEqualTo(Type.OBJECT);
         assertThat(openPortAddition.getOperation()).isEqualTo(Operation.ADDITION);
@@ -176,7 +176,7 @@ public class PortScannerResultDiffServiceImplTest {
 
         final PropertyChange portAddition = portScannerDiff.getEntityChangeMap().get(key).getChanges().get(2);
 
-        assertThat(portAddition.getGlobalId().getEntityId()).isEqualTo(2L);
+        assertThat(portAddition.getGlobalId().getEntityId()).isEqualTo("2");
         assertThat(portAddition.getGlobalId().getSelector()).isEqualTo(key + "/2#networkResults/0/openHosts/0/openPorts/1/port");
         assertThat(portAddition.getType()).isEqualTo(Type.OBJECT);
         assertThat(portAddition.getOperation()).isEqualTo(Operation.ADDITION);

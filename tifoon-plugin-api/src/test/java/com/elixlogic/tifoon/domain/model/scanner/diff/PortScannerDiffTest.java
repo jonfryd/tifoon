@@ -22,22 +22,22 @@ public class PortScannerDiffTest {
 
     @Before
     public void before() {
-        final GlobalId globalId0 = new GlobalId(2L, "PortScannerResult/2#networkResults/1");
+        final GlobalId globalId0 = new GlobalId("2", "PortScannerResult/2#networkResults/1");
         propertyChange0 = PropertyChange.valueModification(globalId0, Type.OBJECT, null, null, null, null);
 
-        final GlobalId globalId1 = new GlobalId(4L, "PortScannerResult/4#networkResults/2");
+        final GlobalId globalId1 = new GlobalId("4", "PortScannerResult/4#networkResults/2");
         propertyChange1 = PropertyChange.addition(globalId1, Type.COLLECTION, "openHosts", "0", "NetworkResult/#openHosts/0");
 
-        final GlobalId globalId2 = new GlobalId(2L, "PortScannerResult/2#networkResults/1");
+        final GlobalId globalId2 = new GlobalId("2", "PortScannerResult/2#networkResults/1");
         propertyChange2 = PropertyChange.addition(globalId2, Type.COLLECTION, "openHosts", "0", "NetworkResult/#openHosts/0");
 
-        final GlobalId globalId3 = new GlobalId(1L, "PortScannerResult/1#networkResults/0");
+        final GlobalId globalId3 = new GlobalId("1", "PortScannerResult/1#networkResults/0");
         propertyChange3 = PropertyChange.addition(globalId3, Type.COLLECTION, "openHosts", "0", "NetworkResult/#openHosts/0");
 
-        final GlobalId globalId4 = new GlobalId(2L, "PortScannerResult/2#networkResults/1");
+        final GlobalId globalId4 = new GlobalId("2", "PortScannerResult/2#networkResults/1");
         propertyChange4 = PropertyChange.removal(globalId4, Type.OBJECT, null, null, null);
 
-        final GlobalId globalId5 = new GlobalId(1L, "PortScannerResult/2#networkResults/0/fake");
+        final GlobalId globalId5 = new GlobalId("1", "PortScannerResult/2#networkResults/0/fake");
         propertyChange5 = PropertyChange.valueModification(globalId5, Type.OBJECT, "someProperty", null, "1", "2");
 
         final Map<Class<? extends BaseEntity>, Collection<PropertyChange>> classPropertyChangesMap = new HashMap<>();

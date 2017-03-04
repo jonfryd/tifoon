@@ -1,3 +1,9 @@
+tifoon:
+    scanRateSeconds: 10
+    onlySaveReportOnChange: true
+    useInitialScanAsBaseline: false
+    baselineFilename: scans/port_scanner_report_20170304_220841.json
+
 spring:
     main:
         banner-mode: "off"

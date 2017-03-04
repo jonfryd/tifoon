@@ -14,6 +14,6 @@ public class GlobalId implements Serializable {
 
     public final static Comparator<GlobalId> ORDERING = BY_ENTITY_ID.thenComparing(BY_SELECTOR);
 
-    private Long entityId;
+    private String entityId;
     private String selector;
 }

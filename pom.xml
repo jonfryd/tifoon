@@ -7,8 +7,8 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Tifoon - Hacking/Pentesting Application</name>
-    <url>http://www.the-app.com</url>
+    <name>Tifoon - Port Scanner Diff Application</name>
+    <url>https://github.com/jonfryd/tifoon</url>
 
     <modules>
         <module>tifoon-common</module>

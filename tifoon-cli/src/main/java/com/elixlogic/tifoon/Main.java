@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
+@EnableScheduling
 @SuppressFBWarnings("OBL_UNSATISFIED_OBLIGATION") // https://github.com/findbugsproject/findbugs/issues/98
 @Slf4j
 public class Main {
@@ -59,7 +62,8 @@ public class Main {
     @Bean
     public CommandLineRunner scan() {
         return (args) -> {
-            if (configuration.getMasterPlan().getScanner().isActive()) {
+            log.info("Scheduling started.");
+/*            if (configuration.getMasterPlan().getScanner().isActive()) {
                 if (!pluginConfiguration.verify()) {
                     return;
                 }
@@ -82,7 +86,7 @@ public class Main {
                 @Cleanup final FileOutputStream fos2 = new FileOutputStream(diffFile);
                 ioCorePlugin.getExtension().save(fos2, portScannerDiff23);
 
-                //System.out.println(portScannerDiff23.findPropertyChanges(PortScannerResult.class, ".*/port", null, null, null, null));
+                //System.out.println(portScannerDiff23.findPropertyChanges(PortScannerResult.class, "./port", null, null, null, null));
 
                 @Cleanup final FileInputStream fis2 = new FileInputStream(diffFile);
                 final PortScannerDiff resultsFromDiffFile = ioCorePlugin.getExtension().load(fis2, PortScannerDiff.class);
@@ -94,7 +98,7 @@ public class Main {
                 // TODO: do something useful with the results - e.g. test for exploits
             } else {
                 log.info("Scanning not enabled.");
-            }
+            }*/
         };
     }
 
@@ -140,6 +144,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        final ConfigurableApplicationContext configurableApplicationContext = SpringApplication.run(Main.class, args);
+        //configurableApplicationContext.close();
     }
 }

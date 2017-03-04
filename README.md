@@ -1,12 +1,13 @@
 # Tifoon #
 
-This is a super-duper advanced hacking and pentesting application.
+Port Scanner Diff Application.
 
 Based on an open source technologies, a flexible core and designed with extendability in mind.
 
+Tested on Windows, Linux and Mac OS X.
+
 ### Requirements ###
 
-* Linux, Mac OS X or Windows
 * Java 8
 
 ### Optional ###
@@ -14,20 +15,13 @@ Based on an open source technologies, a flexible core and designed with extendab
 * Local install of nmap, ..., etc.
 * A working Docker installation
 
-### Questions ###
-
-* IRC
-* Forum
-
 ### How to contribute ###
 
 * Please read the coding guidelines first!
 * Think in terms of generic principles
-* Produce clean, maintainable and readable code
+* Clean, maintainable and readable code, please
 * Create a pull-request
 
-### Lead Developers ###
+### Developer ###
 
-* bad_request
-* (The MiGhTy Lone)
-* s0niq
+* Jon Frydensbjerg (s0niq), ElixLOGIC

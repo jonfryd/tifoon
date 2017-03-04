@@ -17,7 +17,7 @@ public class ReflectionObjectTreeAwareTest {
     @Test
     public void testTracePathFromUnrelatedObjectReturnsNull() {
         final PortScannerResult portScannerResult = new PortScannerResult(0, 0, true, Collections.EMPTY_LIST);
-        portScannerResult.setId(1L);
+        portScannerResult.setId(UUID.randomUUID().toString());
 
         final NetworkResult unrelatedNetworkResult = new NetworkResult("network1", Collections.EMPTY_MAP);
 
@@ -29,7 +29,7 @@ public class ReflectionObjectTreeAwareTest {
     @Test
     public void testTracePathFromEntity() {
         final PortScannerResult portScannerResult = new PortScannerResult(0, 0, true, Collections.EMPTY_LIST);
-        portScannerResult.setId(1L);
+        portScannerResult.setId(UUID.randomUUID().toString());
 
         final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(portScannerResult.getNetworkResults());
 
@@ -51,7 +51,7 @@ public class ReflectionObjectTreeAwareTest {
         final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2, networkResult3);
 
         final PortScannerResult portScannerResult = new PortScannerResult(0, 0, true, networkResults);
-        portScannerResult.setId(1L);
+        portScannerResult.setId(UUID.randomUUID().toString());
 
         final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(networkResult3.getOpenHosts().get(0).getOpenPorts().get(0).getPort().getProtocol());
 
@@ -78,7 +78,7 @@ public class ReflectionObjectTreeAwareTest {
         final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2);
 
         final PortScannerResult portScannerResult = new PortScannerResult(0, 0, true, networkResults);
-        portScannerResult.setId(1L);
+        portScannerResult.setId(UUID.randomUUID().toString());
 
         final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(networkResult2.getOpenHosts().get(1));
 

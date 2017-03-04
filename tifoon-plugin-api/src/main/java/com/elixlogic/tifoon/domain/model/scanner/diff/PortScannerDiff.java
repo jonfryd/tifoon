@@ -42,6 +42,10 @@ public class PortScannerDiff implements Serializable {
         return portScannerDiff;
     }
 
+    public boolean isUnchanged() {
+        return entityChangeMap.isEmpty();
+    }
+
     public List<PropertyChange> findPropertyChanges(@NonNull final Class<? extends BaseEntity> _owner,
                                                     @Nullable final String _pathRegExPattern,
                                                     @Nullable final String _property,

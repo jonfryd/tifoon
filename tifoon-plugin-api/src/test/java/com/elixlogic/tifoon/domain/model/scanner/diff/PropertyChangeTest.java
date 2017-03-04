@@ -7,7 +7,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 public class PropertyChangeTest {
     @Test
     public void testConstructObjectAddition() {
-        final GlobalId globalId = new GlobalId(2L, "PortScannerResult/2#networkResults/1");
+        final GlobalId globalId = new GlobalId("2", "PortScannerResult/2#networkResults/1");
         final PropertyChange propertyChange = PropertyChange.addition(globalId, Type.OBJECT, null, null, null);
 
         assertThat(propertyChange.getGlobalId()).as("globalId").isEqualTo(globalId);
@@ -21,7 +21,7 @@ public class PropertyChangeTest {
 
     @Test
     public void testConstructObjectRemoval() {
-        final GlobalId globalId = new GlobalId(2L, "PortScannerResult/2#networkResults/1");
+        final GlobalId globalId = new GlobalId("2", "PortScannerResult/2#networkResults/1");
         final PropertyChange propertyChange = PropertyChange.removal(globalId, Type.OBJECT, null, null, null);
 
         assertThat(propertyChange.getGlobalId()).as("globalId").isEqualTo(globalId);
@@ -35,7 +35,7 @@ public class PropertyChangeTest {
 
     @Test
     public void testConstructObjectValueModification() {
-        final GlobalId globalId = new GlobalId(2L, "PortScannerResult/2#networkResults/1");
+        final GlobalId globalId = new GlobalId("2", "PortScannerResult/2#networkResults/1");
         final PropertyChange propertyChange = PropertyChange.valueModification(globalId, Type.OBJECT, null, null, null, null);
 
         assertThat(propertyChange.getGlobalId()).as("globalId").isEqualTo(globalId);
@@ -49,7 +49,7 @@ public class PropertyChangeTest {
 
     @Test
     public void testConstructCollectionAddition() {
-        final GlobalId globalId = new GlobalId(2L, "PortScannerResult/2#networkResults/1");
+        final GlobalId globalId = new GlobalId("2", "PortScannerResult/2#networkResults/1");
         final PropertyChange propertyChange = PropertyChange.addition(globalId, Type.COLLECTION, "openHosts", "0", "NetworkResult/#openHosts/0");
 
         assertThat(propertyChange.getGlobalId()).as("globalId").isEqualTo(globalId);
@@ -63,7 +63,7 @@ public class PropertyChangeTest {
 
     @Test
     public void testConstructCollectionRemoval() {
-        final GlobalId globalId = new GlobalId(2L, "PortScannerResult/2#networkResults/1");
+        final GlobalId globalId = new GlobalId("2", "PortScannerResult/2#networkResults/1");
         final PropertyChange propertyChange = PropertyChange.removal(globalId, Type.COLLECTION, "openHosts", "0", "NetworkResult/#openHosts/0");
 
         assertThat(propertyChange.getGlobalId()).as("globalId").isEqualTo(globalId);
@@ -77,7 +77,7 @@ public class PropertyChangeTest {
 
     @Test
     public void testConstructCollectionValueModification() {
-        final GlobalId globalId = new GlobalId(2L, "PortScannerResult/2#networkResults/1");
+        final GlobalId globalId = new GlobalId("2", "PortScannerResult/2#networkResults/1");
         final PropertyChange propertyChange = PropertyChange.valueModification(globalId, Type.COLLECTION, "openHosts", "0",
                 "NetworkResult/#openHosts/0",
                 "NetworkResult/#openHosts/1");

@@ -1,6 +1,6 @@
 masterplan:
   scanner:
     active: true
-    toolName: nmap
-  commandExecutor: process # 'docker' & 'process' supported
-  ioFormat: json
+    toolName: nmap # plugins: nmap
+  commandExecutor: process # plugins: docker, process
+  ioFormat: json # plugins: json, yaml
