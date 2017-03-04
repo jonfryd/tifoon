@@ -11,6 +11,7 @@ import com.elixlogic.tifoon.domain.service.scanner.PortScannerResultDiffService;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerService;
 import com.elixlogic.tifoon.infrastructure.config.PluginConfiguration;
 import com.elixlogic.tifoon.plugin.io.IoPlugin;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@SuppressFBWarnings(value = "OBL_UNSATISFIED_OBLIGATION", justification = "https://github.com/findbugsproject/findbugs/issues/98")
 public class PortScanSchedulerImpl implements PortScanScheduler {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 

@@ -144,7 +144,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        final ConfigurableApplicationContext configurableApplicationContext = SpringApplication.run(Main.class, args);
+        SpringApplication.run(Main.class, args);
         //configurableApplicationContext.close();
     }
 }
