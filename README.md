@@ -1,4 +1,4 @@
-# TheApp #
+# Tifoon #
 
 This is a super-duper advanced hacking and pentesting application.
 

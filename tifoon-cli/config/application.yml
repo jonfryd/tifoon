@@ -1,0 +1,11 @@
+spring:
+    main:
+        banner-mode: "off"
+
+logging:
+    level:
+        org.springframework: WARN
+        org.javers: WARN
+        org.polyjdbc: WARN
+        org.hibernate: WARN
+        com.elixlogic: INFO

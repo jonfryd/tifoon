@@ -1,0 +1,78 @@
+package com.elixlogic.tifoon.domain.service.scanner.impl;
+
+import com.elixlogic.tifoon.domain.model.scanner.NetworkResult;
+import com.elixlogic.tifoon.domain.model.scanner.PortScannerJob;
+import com.elixlogic.tifoon.domain.model.scanner.PortScannerResult;
+import com.elixlogic.tifoon.domain.service.scanner.PortScannerService;
+import com.elixlogic.tifoon.infrastructure.jpa.repository.PortScannerResultRepository;
+import com.elixlogic.tifoon.plugin.executer.ExecutorPlugin;
+import com.elixlogic.tifoon.plugin.scanner.ScannerPlugin;
+import com.elixlogic.tifoon.domain.model.plugin.CorePlugin;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+@Service
+@Slf4j
+public class PortScannerServiceImpl implements PortScannerService {
+    private final CorePlugin<ScannerPlugin> scannerCorePlugin;
+    private final CorePlugin<ExecutorPlugin> executorCorePlugin;
+
+    private final PortScannerResultRepository portScannerResultRepository;
+
+    @Autowired
+    public PortScannerServiceImpl(@Qualifier("scannerCorePlugin") final CorePlugin<ScannerPlugin> _scannerCorePlugin,
+                                  @Qualifier("executorCorePlugin") final CorePlugin<ExecutorPlugin> _executorCorePlugin,
+                                  final PortScannerResultRepository _portScannerResultRepository) {
+        scannerCorePlugin = _scannerCorePlugin;
+        executorCorePlugin = _executorCorePlugin;
+        portScannerResultRepository = _portScannerResultRepository;
+    }
+
+    @Nullable
+    private NetworkResult scanNetwork(@NonNull final PortScannerJob _request) {
+        Assert.isTrue(scannerCorePlugin.isInitialized(), "Scanner plugin must be initialized");
+        Assert.isTrue(executorCorePlugin.isInitialized(), "Executor plugin must be initialized");
+
+        log.info("Performing port scan against: " + _request.getNetworkId());
+
+        return scannerCorePlugin.getExtension().scan(_request, executorCorePlugin.getExtension());
+    }
+
+    @Override
+    public PortScannerResult scan(@NonNull final List<PortScannerJob> _request) {
+        final long start = System.currentTimeMillis();
+
+        final List<NetworkResult> networkResults = _request
+                .parallelStream()
+                .map(this::scanNetwork)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        // save and reload to populate all ids
+        final PortScannerResult portScannerResult = new PortScannerResult(
+                start,
+                System.currentTimeMillis(),
+                true,
+                networkResults);
+
+        return portScannerResult;
+    }
+
+    @Override
+    @Transactional
+    public PortScannerResult scanAndPersist(@NonNull final List<PortScannerJob> _request) {
+        final PortScannerResult portScannerResult = scan(_request);
+
+        return portScannerResultRepository.save(portScannerResult);
+    }
+}
