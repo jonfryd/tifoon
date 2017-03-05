@@ -16,9 +16,9 @@ public class PortScannerDiff implements Serializable {
     private final static Function<Class, String> CLASS_TO_MAP_KEY = Class::getCanonicalName;
 
     @Data
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class GenericChangeList {
+    public static class GenericChangeList implements Serializable {
         private List<PropertyChange> changes;
     }
 

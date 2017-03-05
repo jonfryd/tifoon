@@ -4,13 +4,14 @@ import com.elixlogic.tifoon.application.config.RootConfiguration;
 import com.elixlogic.tifoon.application.schedulers.PortScanScheduler;
 import com.elixlogic.tifoon.domain.mapper.DtoMapper;
 import com.elixlogic.tifoon.domain.model.plugin.CorePlugin;
-import com.elixlogic.tifoon.domain.model.scanner.PortScannerJob;
-import com.elixlogic.tifoon.domain.model.scanner.PortScannerResult;
+import com.elixlogic.tifoon.domain.model.scanner.*;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiff;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerResultDiffService;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerService;
 import com.elixlogic.tifoon.infrastructure.config.PluginConfiguration;
 import com.elixlogic.tifoon.plugin.io.IoPlugin;
+import com.elixlogic.tifoon.plugin.io.MapProperty;
+import com.google.common.io.Files;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +44,9 @@ public class PortScanSchedulerImpl implements PortScanScheduler {
 
     @Value("${tifoon.useInitialScanAsBaseline}")
     private boolean useInitialScanAsBaseline;
+
+    @Value("${tifoon.dynamicBaselineMode}")
+    private boolean dynamicBaselineMode;
 
     @Value("${tifoon.baselineFilename}")
     private String baselineFilename;
@@ -98,14 +104,24 @@ public class PortScanSchedulerImpl implements PortScanScheduler {
 
             final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(baselinePortScannerResult, portScannerResult);
 
-            // differs from baseline?
+            // TODO:
+            // - move masterplan config to application.yml
+            // - report diff (stats and details)
+            // - documentation
 
             if (!onlySaveReportOnChange || (first && useInitialScanAsBaseline)) {
                 log.info("Saving report.");
-                savePortScannerResult(portScannerResult);
+                saveResults(portScannerResult, portScannerDiff);
             } else if (!portScannerDiff.isUnchanged()) {
-                log.info("Change detected! Saving report.");
-                savePortScannerResult(portScannerResult);
+                log.warn("One or more changes DETECTED! Saving report.");
+                saveResults(portScannerResult, portScannerDiff);
+
+                if (dynamicBaselineMode) {
+                    baselinePortScannerResult = portScannerResult;
+                    log.info("Dynamic baseline is enabled; baseline changed.");
+                }
+            } else {
+                log.info("No changes detected.");
             }
 
             first = false;
@@ -124,41 +140,73 @@ public class PortScanSchedulerImpl implements PortScanScheduler {
 
             log.info("Loading baseline file: " + _baselineFilename);
 
-            final PortScannerResult portScannerResult = ioCorePlugin.getExtension().load(fis, PortScannerResult.class);
+            final String extension = Files.getFileExtension(file.getPath());
+            final IoPlugin ioPluginForExtension = pluginConfiguration.getIoPluginByExtension(extension);
 
-            log.info("Baseline port scan result loaded.");
+            if (ioPluginForExtension != null) {
+                // extra mapping meta-data required by YAML plugin, ignored by JSON plugin
+                // (Jackson is much smarter with regard to inferring types it seems)
+                final MapProperty openHostsMapProperty = new MapProperty(NetworkResult.class, "openHosts", String.class, OpenHost.class);
+                final MapProperty openPortsMapProperty = new MapProperty(OpenHost.class, "openPorts", Integer.class, Port.class);
+                final PortScannerResult portScannerResult = ioPluginForExtension.load(fis, PortScannerResult.class, Collections.emptyList(), Arrays.asList(openHostsMapProperty, openPortsMapProperty));
 
-            return portScannerResult;
+                if (portScannerResult != null) {
+                    log.info("Baseline port scan result loaded.");
+
+                    return portScannerResult;
+                } else {
+                    log.warn("Unable to deserialize scan result.");
+                }
+            } else {
+                log.warn("Unable to find registered I/O plugin for extension: " + extension);
+            }
         } catch (IOException _e) {
-            log.warn("failed to load baseline port scan result - reverting to initial scan result", _e);
-
-            return _initialPortScannerResult;
+            log.warn("Failed to load baseline port scan result", _e);
         }
+
+        log.info("Using initial result as baseline.");
+
+        return _initialPortScannerResult;
     }
 
-    private void savePortScannerResult(final PortScannerResult _portScannerResult) {
+    private void saveResults(final PortScannerResult _portScannerResult,
+                             final PortScannerDiff _portScannerDiff) {
         final LocalDateTime localDateTimeBeganAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(_portScannerResult.getBeganAt()), ZoneId.systemDefault());
         final String formattedBeganAt = localDateTimeBeganAt.format(DATE_TIME_FORMATTER);
 
-        final File file = new File("scans/port_scanner_report_" + formattedBeganAt + "." + ioCorePlugin.getSupports());
+        final File portScannerResultFile = new File("scans/port_scanner_report_" + formattedBeganAt + "." + ioCorePlugin.getExtension().getDefaultFileExtension());
 
+        saveObject(portScannerResultFile, _portScannerResult);
+
+        // only save diff when there are changes to report
+        if (!_portScannerDiff.isUnchanged()) {
+            final LocalDateTime baselineLocalDateTimeBeganAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(baselinePortScannerResult.getBeganAt()), ZoneId.systemDefault());
+            final String baselineFormattedBeganAt = baselineLocalDateTimeBeganAt.format(DATE_TIME_FORMATTER);
+
+            final File portScannerDiffFile = new File("scans/port_scanner_report_" + baselineFormattedBeganAt + "_diff_" + formattedBeganAt + "." + ioCorePlugin.getExtension().getDefaultFileExtension());
+
+            saveObject(portScannerDiffFile, _portScannerDiff);
+        }
+    }
+
+    private void saveObject(final File _portScannerResultFile, final Object _object) {
         try {
-            FileUtils.forceMkdirParent(file);
-            final boolean success = file.createNewFile();
+            FileUtils.forceMkdirParent(_portScannerResultFile);
+            final boolean success = _portScannerResultFile.createNewFile();
 
             if (!success) {
-                log.debug("output file already exists: {}", file.getPath());
+                log.debug("Output file already exists: {}", _portScannerResultFile.getPath());
             }
 
-            @Cleanup final FileOutputStream fos = new FileOutputStream(file);
+            @Cleanup final FileOutputStream fos = new FileOutputStream(_portScannerResultFile);
 
-            log.info("Saving file: " + file.getPath());
+            log.info("Saving file: " + _portScannerResultFile.getPath());
 
-            ioCorePlugin.getExtension().save(fos, _portScannerResult);
+            ioCorePlugin.getExtension().save(fos, _object);
 
             log.info("Port scan result saved.");
         } catch (IOException _e) {
-            log.error("failed to save port scan result", _e);
+            log.error("Failed to save port scan result", _e);
         }
     }
 }

@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -53,12 +54,11 @@ public class ReflectionObjectTreeAwareTest {
         final PortScannerResult portScannerResult = new PortScannerResult(0, 0, true, networkResults);
         portScannerResult.setId(UUID.randomUUID().toString());
 
-        final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(networkResult3.getOpenHosts().get(0).getOpenPorts().get(0).getPort().getProtocol());
+        final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(networkResult3.getOpenHosts().get("1.5.3.6").getOpenPorts().values().stream().collect(Collectors.toList()).get(0).getProtocol());
 
-        Java6Assertions.assertThat(path).as("object path from port1 protocol to root").containsExactly(
-                port1,
-                networkResult3.getOpenHosts().get(0).getOpenPorts().get(0),
-                networkResult3.getOpenHosts().get(0),
+        Java6Assertions.assertThat(path).as("object path from port2 protocol to root").containsExactly(
+                port2,
+                networkResult3.getOpenHosts().get("1.5.3.6"),
                 networkResult3,
                 portScannerResult);
     }
@@ -80,7 +80,7 @@ public class ReflectionObjectTreeAwareTest {
         final PortScannerResult portScannerResult = new PortScannerResult(0, 0, true, networkResults);
         portScannerResult.setId(UUID.randomUUID().toString());
 
-        final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(networkResult2.getOpenHosts().get(1));
+        final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(networkResult2.getOpenHosts().get("3.88.7.5"));
 
         Java6Assertions.assertThat(path).as("object path from host 3.88.7.5 to root").containsExactly(
                 networkResult2,

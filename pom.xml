@@ -7,7 +7,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Tifoon - Port Scanner Diff Application</name>
+    <name>Tifoon - Port Scanner-Diff Application</name>
     <url>https://github.com/jonfryd/tifoon</url>
 
     <modules>
@@ -15,7 +15,7 @@
         <module>tifoon-plugin-api</module>
         <module>tifoon-plugins</module>
         <module>tifoon-core</module>
-        <module>tifoon-cli</module>
+        <module>tifoon-app</module>
     </modules>
 
     <properties>
@@ -37,7 +37,7 @@
         <!-- Utility library versions -->
         <lombok.version>1.16.12</lombok.version>
         <guava.version>20.0</guava.version>
-        <javers.version>3.0.0</javers.version>
+        <javers.version>3.0.3</javers.version>
         <commons-lang3.version>3.5</commons-lang3.version>
         <commons-io.version>2.5</commons-io.version>
         <model-mapper.version>0.7.7</model-mapper.version>

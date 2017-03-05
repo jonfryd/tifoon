@@ -4,7 +4,10 @@ import com.elixlogic.tifoon.domain.model.object.ReflectionObjectTreeAware;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Data
@@ -12,13 +15,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class OpenHost extends ReflectionObjectTreeAware implements Serializable {
-    private String host;
-    private List<OpenPort> openPorts;
+    private Map<Integer, Port> openPorts;
 
-    public static OpenHost from(@NonNull final String _hostAddress, @NonNull final List<Port> _ports) {
-        return new OpenHost(_hostAddress, _ports
+    public static OpenHost from(@NonNull final List<Port> _ports) {
+        return new OpenHost(_ports
                 .stream()
-                .map(OpenPort::new)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toMap(Port::hashCode, Function.identity())));
     }
 }

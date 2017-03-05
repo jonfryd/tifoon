@@ -13,12 +13,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.plugin.core.config.EnablePluginRegistries;
 
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Configuration
 @EnablePluginRegistries({ExecutorPlugin.class, ScannerPlugin.class, IoPlugin.class})
 @Slf4j
 public class PluginConfiguration {
     private final CorePlugin<ScannerPlugin> scannerCorePlugin;
     private final CorePlugin<ExecutorPlugin> executorCorePlugin;
+    private final Map<String, IoPlugin> ioPluginsByExtension;
     private final CorePlugin<IoPlugin> ioCorePlugin;
 
     @Autowired
@@ -39,6 +45,15 @@ public class PluginConfiguration {
         executorCorePlugin = new CorePlugin<>(executorSupports, _executorPluginRegistry.getPluginFor(executorSupports));
 
         log.debug("IO plugins found: " + _ioPluginRegistry.getPlugins());
+
+        ioPluginsByExtension = new HashMap<>();
+
+        // TODO: rewrite to Java 8 stream mapping
+        for(final IoPlugin ioPlugin : _ioPluginRegistry.getPlugins()) {
+            for(final String extension : ioPlugin.getFileExtensionsHandled()) {
+                ioPluginsByExtension.put(extension, ioPlugin);
+            }
+        }
 
         final String ioSupports = _masterPlan.getIoFormat();
         ioCorePlugin = new CorePlugin<>(ioSupports, _ioPluginRegistry.getPluginFor(ioSupports));
@@ -74,5 +89,10 @@ public class PluginConfiguration {
     @Bean
     public CorePlugin<IoPlugin> ioCorePlugin() {
         return ioCorePlugin;
+    }
+
+    @Nullable
+    public IoPlugin getIoPluginByExtension(final String _extension) {
+        return ioPluginsByExtension.get(_extension);
     }
 }

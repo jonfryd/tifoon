@@ -21,16 +21,16 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = false)
 public class NetworkResult extends ReflectionObjectTreeAware implements Serializable {
-    public static class OpenHostsJsonConverter implements AttributeConverter<ArrayList<OpenHost>, byte[]> {
+    public static class OpenHostsJsonConverter implements AttributeConverter<HashMap<String, OpenHost>, byte[]> {
         private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
         static {
-            JavaTypeDescriptorRegistry.INSTANCE.addDescriptor(new SerializableTypeDescriptor<>(ArrayList.class));
+            JavaTypeDescriptorRegistry.INSTANCE.addDescriptor(new SerializableTypeDescriptor<>(HashMap.class));
         }
 
         @Override
         @Nullable
-        public byte[] convertToDatabaseColumn(@Nullable final ArrayList<OpenHost> _entityValue) {
+        public byte[] convertToDatabaseColumn(@Nullable final HashMap<String, OpenHost> _entityValue) {
             if (_entityValue == null) {
                 return null;
             }
@@ -43,13 +43,13 @@ public class NetworkResult extends ReflectionObjectTreeAware implements Serializ
         }
 
         @Override
-        public ArrayList<OpenHost> convertToEntityAttribute(@Nullable final byte[] _databaseValue) {
+        public HashMap<String, OpenHost> convertToEntityAttribute(@Nullable final byte[] _databaseValue) {
             if (_databaseValue == null) {
-                return new ArrayList<>();
+                return new HashMap<>();
             }
 
             try {
-                return OBJECT_MAPPER.readValue(_databaseValue, new TypeReference<List<OpenHost>>(){});
+                return OBJECT_MAPPER.readValue(_databaseValue, new TypeReference<Map<String, OpenHost>>(){});
             } catch (IOException _e) {
                 throw new RuntimeException("cannot deserialize open hosts from: " + Arrays.toString(_databaseValue), _e);
             }
@@ -60,16 +60,14 @@ public class NetworkResult extends ReflectionObjectTreeAware implements Serializ
 
     @NonNull
     @Convert(converter = OpenHostsJsonConverter.class)
-    private ArrayList<OpenHost> openHosts = new ArrayList<>();
+    private HashMap<String, OpenHost> openHosts = new HashMap<>();
 
     public NetworkResult(@NonNull final String _networkId,
                          @NonNull final Map<InetAddress, List<Port>> _openPortsMap) {
         networkId = _networkId;
-        openHosts = new ArrayList<>(
-                _openPortsMap
+        openHosts = new HashMap<>(_openPortsMap
                 .entrySet()
                 .stream()
-                .collect(Collectors.toMap(e -> e.getKey().getHostAddress(), e -> OpenHost.from(e.getKey().getHostAddress(), e.getValue())))
-                .values());
+                .collect(Collectors.toMap(e -> e.getKey().getHostAddress(), e -> OpenHost.from(e.getValue()))));
     }
 }

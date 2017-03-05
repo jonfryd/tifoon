@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class ReflectionObjectTreeAware implements ObjectTreeAware {
     @Override
@@ -45,6 +46,15 @@ public class ReflectionObjectTreeAware implements ObjectTreeAware {
         } else if (_value instanceof Collection) {
             // iterate collection
             for (final Object objectFromCollection : (Collection) _value) {
+                result = findValue(objectFromCollection, _objectToFind);
+
+                if (result != null) {
+                    break;
+                }
+            }
+        } else if (_value instanceof Map) {
+            // iterate values in map
+            for (final Object objectFromCollection : ((Map) _value).values()) {
                 result = findValue(objectFromCollection, _objectToFind);
 
                 if (result != null) {
