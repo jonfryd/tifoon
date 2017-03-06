@@ -22,6 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -47,6 +48,7 @@ public class PortScanSchedulerImpl {
     private final CorePlugin<IoPlugin> saveCorePlugin;
 
     private boolean firstScan = true;
+    @Nullable
     private PortScannerResult baselinePortScannerResult;
 
     @Autowired
