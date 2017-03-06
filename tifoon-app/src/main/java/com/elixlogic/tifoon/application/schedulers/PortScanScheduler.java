@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 @SuppressFBWarnings(value = "OBL_UNSATISFIED_OBLIGATION", justification = "https://github.com/findbugsproject/findbugs/issues/98")
-public class PortScanSchedulerImpl {
+public class PortScanScheduler {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     private final RootConfiguration rootConfiguration;
@@ -52,13 +52,13 @@ public class PortScanSchedulerImpl {
     private PortScannerResult baselinePortScannerResult;
 
     @Autowired
-    public PortScanSchedulerImpl(final RootConfiguration _rootConfiguration,
-                                 final DtoMapper _dtoMapper,
-                                 final PortScannerService _portScannerService,
-                                 final PortScannerResultRepository _portScannerResultRepository,
-                                 final PortScannerResultDiffService _portScannerResultDiffService,
-                                 final PluginConfiguration _pluginConfiguration,
-                                 @Qualifier("saveCorePlugin") final CorePlugin<IoPlugin> _saveCorePlugin) {
+    public PortScanScheduler(final RootConfiguration _rootConfiguration,
+                             final DtoMapper _dtoMapper,
+                             final PortScannerService _portScannerService,
+                             final PortScannerResultRepository _portScannerResultRepository,
+                             final PortScannerResultDiffService _portScannerResultDiffService,
+                             final PluginConfiguration _pluginConfiguration,
+                             @Qualifier("saveCorePlugin") final CorePlugin<IoPlugin> _saveCorePlugin) {
         rootConfiguration = _rootConfiguration;
         dtoMapper = _dtoMapper;
         portScannerService = _portScannerService;

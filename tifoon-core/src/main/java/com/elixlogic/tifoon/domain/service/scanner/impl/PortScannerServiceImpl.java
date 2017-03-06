@@ -4,7 +4,6 @@ import com.elixlogic.tifoon.domain.model.scanner.NetworkResult;
 import com.elixlogic.tifoon.domain.model.scanner.PortScannerJob;
 import com.elixlogic.tifoon.domain.model.scanner.PortScannerResult;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerService;
-import com.elixlogic.tifoon.infrastructure.jpa.repository.PortScannerResultRepository;
 import com.elixlogic.tifoon.plugin.executer.ExecutorPlugin;
 import com.elixlogic.tifoon.plugin.scanner.ScannerPlugin;
 import com.elixlogic.tifoon.domain.model.plugin.CorePlugin;
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;

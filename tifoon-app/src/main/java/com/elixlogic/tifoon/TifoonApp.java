@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Slf4j
 public class TifoonApp {
     public static void main(String[] args) {
+        // initialize and start the scheduler (see PortScanScheduler)
         SpringApplication.run(TifoonApp.class, args);
     }
 }
