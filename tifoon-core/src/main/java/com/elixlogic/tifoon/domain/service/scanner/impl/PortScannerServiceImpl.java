@@ -27,15 +27,11 @@ public class PortScannerServiceImpl implements PortScannerService {
     private final CorePlugin<ScannerPlugin> scannerCorePlugin;
     private final CorePlugin<ExecutorPlugin> executorCorePlugin;
 
-    private final PortScannerResultRepository portScannerResultRepository;
-
     @Autowired
     public PortScannerServiceImpl(@Qualifier("scannerCorePlugin") final CorePlugin<ScannerPlugin> _scannerCorePlugin,
-                                  @Qualifier("executorCorePlugin") final CorePlugin<ExecutorPlugin> _executorCorePlugin,
-                                  final PortScannerResultRepository _portScannerResultRepository) {
+                                  @Qualifier("executorCorePlugin") final CorePlugin<ExecutorPlugin> _executorCorePlugin) {
         scannerCorePlugin = _scannerCorePlugin;
         executorCorePlugin = _executorCorePlugin;
-        portScannerResultRepository = _portScannerResultRepository;
     }
 
     @Nullable
@@ -66,13 +62,5 @@ public class PortScannerServiceImpl implements PortScannerService {
                 networkResults);
 
         return portScannerResult;
-    }
-
-    @Override
-    @Transactional
-    public PortScannerResult scanAndPersist(@NonNull final List<PortScannerJob> _request) {
-        final PortScannerResult portScannerResult = scan(_request);
-
-        return portScannerResultRepository.save(portScannerResult);
     }
 }

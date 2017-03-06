@@ -1,4 +1,4 @@
-package com.elixlogic.tifoon.domain.model.masterplan;
+package com.elixlogic.tifoon.domain.model.core;
 
 import com.elixlogic.tifoon.domain.model.configuration.Validator;
 import lombok.Data;
@@ -6,19 +6,19 @@ import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Assert;
 
-@ConfigurationProperties(locations = {"classpath:masterplan.yml", "classpath:config/masterplan.yml", "file:masterplan.yml", "file:config/masterplan.yml"}, prefix = "masterplan")
+@ConfigurationProperties(prefix = "tifoon")
 @Data
 @NoArgsConstructor
-public class MasterPlan implements Validator {
+public class CoreSettings implements Validator {
     private Scanner scanner;
     private String commandExecutor;
-    private String ioFormat;
+    private String saveFormat;
 
     @Override
     public void validate() {
         Assert.notNull(scanner, "scanner cannot be null");
         Assert.hasLength(commandExecutor, "commandExecutor must have length");
-        Assert.hasLength(ioFormat, "ioFormat must have length");
+        Assert.hasLength(saveFormat, "saveFormat must have length");
 
         scanner.validate();
     }

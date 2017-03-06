@@ -1,7 +1,7 @@
 package com.elixlogic.tifoon.infrastructure.config;
 
 import com.elixlogic.tifoon.plugin.io.IoPlugin;
-import com.elixlogic.tifoon.domain.model.masterplan.MasterPlan;
+import com.elixlogic.tifoon.domain.model.core.CoreSettings;
 import com.elixlogic.tifoon.domain.model.plugin.CorePlugin;
 import com.elixlogic.tifoon.plugin.executer.ExecutorPlugin;
 import com.elixlogic.tifoon.plugin.scanner.ScannerPlugin;
@@ -16,7 +16,6 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Configuration
 @EnablePluginRegistries({ExecutorPlugin.class, ScannerPlugin.class, IoPlugin.class})
@@ -24,24 +23,23 @@ import java.util.stream.Collectors;
 public class PluginConfiguration {
     private final CorePlugin<ScannerPlugin> scannerCorePlugin;
     private final CorePlugin<ExecutorPlugin> executorCorePlugin;
+    private final CorePlugin<IoPlugin> saveCorePlugin;
     private final Map<String, IoPlugin> ioPluginsByExtension;
-    private final CorePlugin<IoPlugin> ioCorePlugin;
 
     @Autowired
-    public PluginConfiguration(final MasterPlan _masterPlan,
+    public PluginConfiguration(final CoreSettings _coreSettings,
                                @Qualifier("scannerPluginRegistry") final PluginRegistry<ScannerPlugin, String> _scannerPluginRegistry,
                                @Qualifier("executorPluginRegistry") final PluginRegistry<ExecutorPlugin, String> _executorPluginRegistry,
                                @Qualifier("ioPluginRegistry") final PluginRegistry<IoPlugin, String> _ioPluginRegistry) {
         // plugins are wrapped in CorePlugin objects to prevent circular Spring dependencies caused by adding Plugin beans here
-
         log.debug("Scanner plugins found: " + _scannerPluginRegistry.getPlugins());
 
-        final String scannerSupports = _masterPlan.getScanner().getToolName();
+        final String scannerSupports = _coreSettings.getScanner().getToolName();
         scannerCorePlugin = new CorePlugin<>(scannerSupports, _scannerPluginRegistry.getPluginFor(scannerSupports));
 
         log.debug("Executor plugins found: " + _executorPluginRegistry.getPlugins());
 
-        final String executorSupports = _masterPlan.getCommandExecutor();
+        final String executorSupports = _coreSettings.getCommandExecutor();
         executorCorePlugin = new CorePlugin<>(executorSupports, _executorPluginRegistry.getPluginFor(executorSupports));
 
         log.debug("IO plugins found: " + _ioPluginRegistry.getPlugins());
@@ -55,8 +53,8 @@ public class PluginConfiguration {
             }
         }
 
-        final String ioSupports = _masterPlan.getIoFormat();
-        ioCorePlugin = new CorePlugin<>(ioSupports, _ioPluginRegistry.getPluginFor(ioSupports));
+        final String ioSupports = _coreSettings.getSaveFormat();
+        saveCorePlugin = new CorePlugin<>(ioSupports, _ioPluginRegistry.getPluginFor(ioSupports));
     }
 
     public boolean verify() {
@@ -68,8 +66,8 @@ public class PluginConfiguration {
             log.error(String.format("Executor plugin which supports '%s' not initialized", executorCorePlugin.getSupports()));
             return false;
         }
-        if (!ioCorePlugin.isInitialized()) {
-            log.error(String.format("IO plugin which supports '%s' not initialized", ioCorePlugin.getSupports()));
+        if (!saveCorePlugin.isInitialized()) {
+            log.error(String.format("IO plugin which supports '%s' not initialized", saveCorePlugin.getSupports()));
             return false;
         }
 
@@ -87,8 +85,8 @@ public class PluginConfiguration {
     }
 
     @Bean
-    public CorePlugin<IoPlugin> ioCorePlugin() {
-        return ioCorePlugin;
+    public CorePlugin<IoPlugin> saveCorePlugin() {
+        return saveCorePlugin;
     }
 
     @Nullable

@@ -1,14 +1,19 @@
 tifoon:
-    scanRateSeconds: 10
-    onlySaveReportOnChange: true
-    useInitialScanAsBaseline: false
-    dynamicBaselineMode: false
-    baselineFilename: scans/port_scanner_report_20170305_225722.json
+  scanner:
+    active: true # false -> dry-run mode
+    toolName: nmap # nmap
+  commandExecutor: process # docker, process
+  saveFormat: json # json, yaml
+  scanRateSeconds: 10 # scan rate (in seconds)
+  onlySaveReportOnChange: true
+  dynamicBaselineMode: false # dynamically create a new baseline when a change is detected (be careful!)
+  useInitialScanAsBaseline: false # true when seeding/boot-strapping new install, normally false
+  baselineFilename: scans/port_scanner_report_20170305_225722.json
 
 logging:
-    level:
-        org.springframework: WARN
-        org.javers: WARN
-        org.polyjdbc: WARN
-        org.hibernate: WARN
-        com.elixlogic: INFO
+  level:
+    org.springframework: WARN
+    org.javers: WARN
+    org.polyjdbc: WARN
+    org.hibernate: WARN
+    com.elixlogic: INFO

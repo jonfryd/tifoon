@@ -8,7 +8,4 @@ import java.util.List;
 
 public interface PortScannerService {
     PortScannerResult scan(List<PortScannerJob> _request);
-
-    @Transactional
-    PortScannerResult scanAndPersist(List<PortScannerJob> _request);
 }

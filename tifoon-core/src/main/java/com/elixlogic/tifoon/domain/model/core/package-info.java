@@ -1,4 +1,4 @@
 @ParametersAreNonnullByDefault
-package com.elixlogic.tifoon.domain.model.masterplan;
+package com.elixlogic.tifoon.domain.model.core;
 
 import javax.annotation.ParametersAreNonnullByDefault;

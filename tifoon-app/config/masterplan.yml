@@ -1,6 +1,0 @@
-masterplan:
-  scanner:
-    active: true
-    toolName: nmap # plugins: nmap
-  commandExecutor: process # plugins: docker, process
-  ioFormat: json # plugins: json, yaml
