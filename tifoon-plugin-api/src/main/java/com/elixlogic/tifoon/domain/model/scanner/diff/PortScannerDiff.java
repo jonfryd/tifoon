@@ -1,6 +1,7 @@
 package com.elixlogic.tifoon.domain.model.scanner.diff;
 
 import com.elixlogic.tifoon.domain.model.object.BaseEntity;
+import com.elixlogic.tifoon.domain.model.scanner.PortScannerResult;
 import lombok.*;
 
 import javax.annotation.Nonnull;
@@ -22,11 +23,17 @@ public class PortScannerDiff implements Serializable {
         private List<PropertyChange> changes;
     }
 
+    private String oldPortScannerResultId;
+    private String newPortScannerResultId;
     @Nonnull
     private Map<String, GenericChangeList> entityChangeMap = Collections.unmodifiableMap(new HashMap<>());
 
-    public static PortScannerDiff from(@NonNull final Map<Class<? extends BaseEntity>, Collection<PropertyChange>> _entityChangeMap) {
+    public static PortScannerDiff from(@Nullable final String _oldPortScannerResultId,
+                                       @Nullable final String _newPortScannerResultId,
+                                       @NonNull final Map<Class<? extends BaseEntity>, Collection<PropertyChange>> _entityChangeMap) {
         final PortScannerDiff portScannerDiff = new PortScannerDiff();
+        portScannerDiff.oldPortScannerResultId = _oldPortScannerResultId;
+        portScannerDiff.newPortScannerResultId = _newPortScannerResultId;
 
         portScannerDiff.setEntityChangeMap(_entityChangeMap.entrySet()
                 .stream()

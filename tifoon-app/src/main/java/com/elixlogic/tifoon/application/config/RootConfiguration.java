@@ -1,5 +1,6 @@
 package com.elixlogic.tifoon.application.config;
         
+import com.elixlogic.tifoon.domain.model.app.AppSettings;
 import com.elixlogic.tifoon.domain.model.core.CoreSettings;
 import com.elixlogic.tifoon.domain.model.network.Network;
 import lombok.Getter;

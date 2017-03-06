@@ -10,16 +10,21 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.introspector.Property;
+import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
 
 import javax.annotation.Nullable;
+import java.beans.IntrospectionException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 public class YamlIoPlugin extends AbstractIoPlugin {
@@ -29,6 +34,7 @@ public class YamlIoPlugin extends AbstractIoPlugin {
 
     private static class SkipEmptyRepresenter extends Representer {
         @Override
+        @Nullable
         protected NodeTuple representJavaBeanProperty(Object javaBean, Property property,
                                                       Object propertyValue, Tag customTag) {
             NodeTuple tuple = super.representJavaBeanProperty(javaBean, property, propertyValue,
@@ -44,7 +50,7 @@ public class YamlIoPlugin extends AbstractIoPlugin {
                         return null;// skip empty lists
                     }
                 }
-                if (Tag.MAP.equals(valueNode.getTag())) {
+                if (Tag.MAP.equals(valueNode.getTag()) && valueNode instanceof MappingNode) {
                     MappingNode seq = (MappingNode) valueNode;
                     if (seq.getValue().isEmpty()) {
                         return null;// skip empty maps
@@ -52,6 +58,13 @@ public class YamlIoPlugin extends AbstractIoPlugin {
                 }
             }
             return tuple;
+        }
+    }
+
+    private static class UnsortedPropertyUtils extends PropertyUtils {
+        @Override
+        protected Set<Property> createPropertySet(Class<?> type, BeanAccess bAccess) throws IntrospectionException {
+            return new LinkedHashSet<>(getPropertiesMap(type, BeanAccess.FIELD).values());
         }
     }
 
@@ -97,6 +110,7 @@ public class YamlIoPlugin extends AbstractIoPlugin {
         // Hide root bean type
         // http://stackoverflow.com/questions/19246027/how-to-hide-bean-type-in-snakeyaml
         final Representer hideRootTagRepresenter = new SkipEmptyRepresenter();
+        hideRootTagRepresenter.setPropertyUtils(new UnsortedPropertyUtils());
         hideRootTagRepresenter.addClassTag(_object.getClass(), Tag.MAP);
 
         final DumperOptions dumperOptions;

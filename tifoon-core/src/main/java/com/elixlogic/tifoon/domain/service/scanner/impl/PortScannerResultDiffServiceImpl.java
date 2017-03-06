@@ -36,8 +36,8 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
     private static class ChangesHolder {
         private final SetMultimap<Class<? extends BaseEntity>, PropertyChange> changesMultimap = LinkedHashMultimap.create();
 
-        public void addChange(final Class<? extends BaseEntity> _baseEntityClass,
-                              final PropertyChange _propertyChange) {
+        void addChange(final Class<? extends BaseEntity> _baseEntityClass,
+                       final PropertyChange _propertyChange) {
             changesMultimap.put(_baseEntityClass, _propertyChange);
         }
     }
@@ -88,7 +88,7 @@ public class PortScannerResultDiffServiceImpl implements PortScannerResultDiffSe
             diffNetwork(changesHolder, diff, _oldResult, _newResult, oldNetworkResult, newNetworkResult);
         }
 
-        return PortScannerDiff.from(changesHolder.getChangesMultimap().asMap());
+        return PortScannerDiff.from(_oldResult.getId(), _newResult.getId(), changesHolder.getChangesMultimap().asMap());
     }
 
     private void diffNetwork(@NonNull final ChangesHolder _changesHolder,

@@ -43,7 +43,7 @@ public class PortScannerDiffTest {
         final Map<Class<? extends BaseEntity>, Collection<PropertyChange>> classPropertyChangesMap = new HashMap<>();
         classPropertyChangesMap.put(PortScannerResult.class, Arrays.asList(propertyChange0, propertyChange1, propertyChange2, propertyChange3, propertyChange4, propertyChange5));
 
-        portScannerDiff = PortScannerDiff.from(classPropertyChangesMap);
+        portScannerDiff = PortScannerDiff.from("fakePortScannerResultId1", "fakePortScannerResultId2", classPropertyChangesMap);
     }
 
     @Test

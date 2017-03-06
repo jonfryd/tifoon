@@ -2,11 +2,12 @@ package com.elixlogic.tifoon.domain.model.scanner;
 
 import com.elixlogic.tifoon.domain.model.object.BaseEntity;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
@@ -26,6 +27,7 @@ public class PortScannerResult extends BaseEntity implements Serializable {
     @Embedded
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
+    @Cascade(CascadeType.ALL)
     private List<NetworkResult> networkResults = Collections.unmodifiableList(new ArrayList<>());
 
     public void setNetworkResults(@Nullable final List<NetworkResult> _networkResults) {

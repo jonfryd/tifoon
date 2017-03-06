@@ -5,8 +5,11 @@ import com.elixlogic.tifoon.domain.mapper.DtoMapper;
 import com.elixlogic.tifoon.domain.model.plugin.CorePlugin;
 import com.elixlogic.tifoon.domain.model.scanner.*;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiff;
+import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiffDetails;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerResultDiffService;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerService;
+import com.elixlogic.tifoon.domain.service.scanner.PortScannerStatsService;
+import com.elixlogic.tifoon.domain.util.TimeHelper;
 import com.elixlogic.tifoon.infrastructure.config.PluginConfiguration;
 import com.elixlogic.tifoon.infrastructure.jpa.repository.PortScannerResultRepository;
 import com.elixlogic.tifoon.plugin.io.IoPlugin;
@@ -14,6 +17,7 @@ import com.elixlogic.tifoon.plugin.io.MapProperty;
 import com.google.common.io.Files;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Cleanup;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,13 +37,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @SuppressFBWarnings(value = "OBL_UNSATISFIED_OBLIGATION", justification = "https://github.com/findbugsproject/findbugs/issues/98")
 public class PortScanScheduler {
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
-
     private final RootConfiguration rootConfiguration;
     private final DtoMapper dtoMapper;
     private final PortScannerService portScannerService;
     private final PortScannerResultRepository portScannerResultRepository;
     private final PortScannerResultDiffService portScannerResultDiffService;
+    private final PortScannerStatsService portScannerStatsService;
     private final PluginConfiguration pluginConfiguration;
     private final CorePlugin<IoPlugin> saveCorePlugin;
 
@@ -57,6 +56,7 @@ public class PortScanScheduler {
                              final PortScannerService _portScannerService,
                              final PortScannerResultRepository _portScannerResultRepository,
                              final PortScannerResultDiffService _portScannerResultDiffService,
+                             final PortScannerStatsService _portScannerStatsService,
                              final PluginConfiguration _pluginConfiguration,
                              @Qualifier("saveCorePlugin") final CorePlugin<IoPlugin> _saveCorePlugin) {
         rootConfiguration = _rootConfiguration;
@@ -64,6 +64,7 @@ public class PortScanScheduler {
         portScannerService = _portScannerService;
         portScannerResultRepository = _portScannerResultRepository;
         portScannerResultDiffService = _portScannerResultDiffService;
+        portScannerStatsService = _portScannerStatsService;
         pluginConfiguration = _pluginConfiguration;
         saveCorePlugin = _saveCorePlugin;
 
@@ -90,7 +91,7 @@ public class PortScanScheduler {
             // scan and save to in-memory H2 DB repository (generates primary IDs)...
             // For now it's complete overkill to use Spring Data JPA for the sole purpose of generating an ID, but
             // down the line my gut feeling is that it is worth the effort, since we can easily persist
-            // scans to physical DBMS (MySQL, PostgreSQL, etc)
+            // scans to physical DBMS (MySQL, PostgreSQL, etc). JPA and JaVers are buddies, which is important, too.
             final PortScannerResult portScannerResult = portScannerResultRepository.save(portScannerService.scan(portScannerJobs));
 
             if (firstScan) {
@@ -101,16 +102,15 @@ public class PortScanScheduler {
 
             final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(baselinePortScannerResult, portScannerResult);
 
-            // TODO:
-            // - report diff (stats and details)
-            // - documentation
+            final PortScannerDiffDetails portScannerDiffDetails = portScannerStatsService.createDetails(baselinePortScannerResult, portScannerResult, portScannerDiff);
+            log.info(portScannerDiffDetails.toString());
 
             if (!rootConfiguration.getAppSettings().isOnlySaveReportOnChange() || (firstScan && rootConfiguration.getAppSettings().isUseInitialScanAsBaseline())) {
                 log.info("Saving report.");
-                saveResults(portScannerResult, portScannerDiff);
+                saveResults(portScannerResult, portScannerDiff, portScannerDiffDetails);
             } else if (!portScannerDiff.isUnchanged()) {
                 log.warn("One or more changes DETECTED! Saving report.");
-                saveResults(portScannerResult, portScannerDiff);
+                saveResults(portScannerResult, portScannerDiff, portScannerDiffDetails);
 
                 if (rootConfiguration.getAppSettings().isDynamicBaselineMode()) {
                     baselinePortScannerResult = portScannerResult;
@@ -131,7 +131,8 @@ public class PortScanScheduler {
         }
     }
 
-    private PortScannerResult loadBaselinePortScannerResult(final String _baselineFilename, final PortScannerResult _initialPortScannerResult) {
+    private PortScannerResult loadBaselinePortScannerResult(@NonNull final String _baselineFilename,
+                                                            @NonNull final PortScannerResult _initialPortScannerResult) {
         final File file = new File(_baselineFilename);
 
         try {
@@ -168,10 +169,10 @@ public class PortScanScheduler {
         return _initialPortScannerResult;
     }
 
-    private void saveResults(final PortScannerResult _portScannerResult,
-                             final PortScannerDiff _portScannerDiff) {
-        final LocalDateTime localDateTimeBeganAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(_portScannerResult.getBeganAt()), ZoneId.systemDefault());
-        final String formattedBeganAt = localDateTimeBeganAt.format(DATE_TIME_FORMATTER);
+    private void saveResults(@NonNull final PortScannerResult _portScannerResult,
+                             @NonNull final PortScannerDiff _portScannerDiff,
+                             @NonNull final PortScannerDiffDetails _portScannerDiffDetails) {
+        final String formattedBeganAt = TimeHelper.formatTimestamp(_portScannerResult.getBeganAt());
 
         final File portScannerResultFile = new File("scans/port_scanner_report_" + formattedBeganAt + "." + saveCorePlugin.getExtension().getDefaultFileExtension());
 
@@ -179,16 +180,16 @@ public class PortScanScheduler {
 
         // only save diff when there are changes to report
         if (!_portScannerDiff.isUnchanged()) {
-            final LocalDateTime baselineLocalDateTimeBeganAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(baselinePortScannerResult.getBeganAt()), ZoneId.systemDefault());
-            final String baselineFormattedBeganAt = baselineLocalDateTimeBeganAt.format(DATE_TIME_FORMATTER);
+            final String baselineFormattedBeganAt = TimeHelper.formatTimestamp(baselinePortScannerResult.getBeganAt());
 
             final File portScannerDiffFile = new File("scans/port_scanner_report_" + baselineFormattedBeganAt + "_diff_" + formattedBeganAt + "." + saveCorePlugin.getExtension().getDefaultFileExtension());
 
-            saveObject(portScannerDiffFile, _portScannerDiff);
+            saveObject(portScannerDiffFile, _portScannerDiffDetails);
         }
     }
 
-    private void saveObject(final File _portScannerResultFile, final Object _object) {
+    private void saveObject(@NonNull final File _portScannerResultFile,
+                            @NonNull final Object _objectToPersist) {
         try {
             FileUtils.forceMkdirParent(_portScannerResultFile);
             final boolean success = _portScannerResultFile.createNewFile();
@@ -201,7 +202,7 @@ public class PortScanScheduler {
 
             log.info("Saving file: " + _portScannerResultFile.getPath());
 
-            saveCorePlugin.getExtension().save(fos, _object);
+            saveCorePlugin.getExtension().save(fos, _objectToPersist);
 
             log.info("Port scan result saved.");
         } catch (IOException _e) {

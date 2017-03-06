@@ -73,23 +73,25 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
             final OnePassParser opp = new OnePassParser();
             final NMapRun nmapRun = opp.parse(new String(_result, StandardCharsets.UTF_8), OnePassParser.STRING_INPUT);
 
-            for(Host host : nmapRun.getHosts()) {
-                final List<Port> openPorts = host.getPorts().getPorts().stream()
-                        .filter(port -> port.getState().getState().equals("open"))
-                        .map(port -> Port.from(mapProtocol(port.getProtocol()), (int) port.getPortId()))
-                        .collect(Collectors.toList());
+            if (nmapRun != null) {
+                for(Host host : nmapRun.getHosts()) {
+                    final List<Port> openPorts = host.getPorts().getPorts().stream()
+                            .filter(port -> port.getState().getState().equals("open"))
+                            .map(port -> Port.from(mapProtocol(port.getProtocol()), (int) port.getPortId()))
+                            .collect(Collectors.toList());
 
-                if (openPorts.isEmpty()) {
-                    // nothing to see here, carry on, please... :)
-                    continue;
-                }
+                    if (openPorts.isEmpty()) {
+                        // nothing to see here, carry on, please... :)
+                        continue;
+                    }
 
-                for(Address address : host.getAddresses()) {
-                    try {
-                        final InetAddress inetAddress = InetAddress.getByName(address.getAddr());
-                        openPortsMap.put(inetAddress, openPorts);
-                    } catch (UnknownHostException _e) {
-                        // ignore
+                    for(Address address : host.getAddresses()) {
+                        try {
+                            final InetAddress inetAddress = InetAddress.getByName(address.getAddr());
+                            openPortsMap.put(inetAddress, openPorts);
+                        } catch (UnknownHostException _e) {
+                            // ignore
+                        }
                     }
                 }
             }

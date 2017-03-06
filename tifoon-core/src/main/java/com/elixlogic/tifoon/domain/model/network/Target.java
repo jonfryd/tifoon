@@ -18,6 +18,7 @@ public class Target implements Validator {
     @Override
     public void validate() {
         Assert.hasLength(networkId, "networkId must have length");
+        Assert.doesNotContain(networkId, "/", "slash not allowed in networkIds");
         Assert.notEmpty(addresses, "addresses must not be empty");
         Assert.notEmpty(ports, "ports must not be empty");
     }

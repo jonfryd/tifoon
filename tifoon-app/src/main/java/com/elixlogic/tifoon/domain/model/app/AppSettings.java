@@ -1,4 +1,4 @@
-package com.elixlogic.tifoon.application.config;
+package com.elixlogic.tifoon.domain.model.app;
 
 import com.elixlogic.tifoon.domain.model.configuration.Validator;
 import lombok.Data;
