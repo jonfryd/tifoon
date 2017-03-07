@@ -149,7 +149,7 @@ public class PortScannerStatsServiceImpl implements PortScannerStatsService {
         final Matcher matcher = pattern.matcher(_propertyChange.getGlobalId().getSelector());
         Assert.isTrue(matcher.find(), "Could not find network result in selector");
 
-        final int resultIndex = Integer.valueOf(matcher.group().split("/")[1]);
+        final Integer resultIndex = Integer.valueOf(matcher.group().split("/")[1]);
         return _portScannerResult.getNetworkResults().get(resultIndex);
     }
 
