@@ -18,7 +18,14 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // must be protected for JPA
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@Builder
 public class PortScannerResult extends BaseEntity implements Serializable {
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Nullable
+    private String id;
+
     private long beganAt;
     private long endedAt;
     private boolean success;

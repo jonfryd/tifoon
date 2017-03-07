@@ -52,13 +52,11 @@ public class PortScannerServiceImpl implements PortScannerService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        // save and reload to populate all ids
-        final PortScannerResult portScannerResult = new PortScannerResult(
-                start,
-                System.currentTimeMillis(),
-                true,
-                networkResults);
-
-        return portScannerResult;
+        return PortScannerResult.builder()
+                .beganAt(start)
+                .endedAt(System.currentTimeMillis())
+                .success(true)
+                .networkResults(networkResults)
+                .build();
     }
 }

@@ -1,22 +1,7 @@
 network:
   targets:
-    - networkId: My Macs 1
+    - networkId: Jon@Home
       addresses:
-        - google.dk
-        - dr.dk
+        - raspberrypi.jonf
       ports:
-        - 80
-        - 443
-    - networkId: My Macs 2
-      addresses:
-        - 10.32.3.32
-        - 10.32.3.33
-        - 10.32.3.34
-      ports:
-        - 80
-    - networkId: Raspberry Pi 3 Server
-      addresses:
-        - stylepit.dk
-      ports:
-        - 443
-
+        - 1-334

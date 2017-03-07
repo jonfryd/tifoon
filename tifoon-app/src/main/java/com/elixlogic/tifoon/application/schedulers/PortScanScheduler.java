@@ -28,9 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Component
@@ -101,9 +100,7 @@ public class PortScanScheduler {
             }
 
             final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(baselinePortScannerResult, portScannerResult);
-
             final PortScannerDiffDetails portScannerDiffDetails = portScannerStatsService.createDetails(baselinePortScannerResult, portScannerResult, portScannerDiff);
-            log.info(portScannerDiffDetails.toString());
 
             if (!rootConfiguration.getAppSettings().isOnlySaveReportOnChange() || (firstScan && rootConfiguration.getAppSettings().isUseInitialScanAsBaseline())) {
                 log.info("Saving report.");
@@ -176,20 +173,80 @@ public class PortScanScheduler {
 
         final File portScannerResultFile = new File("scans/port_scanner_report_" + formattedBeganAt + "." + saveCorePlugin.getExtension().getDefaultFileExtension());
 
-        saveObject(portScannerResultFile, _portScannerResult);
+        saveObject(portScannerResultFile, _portScannerResult, Collections.emptyList());
 
         // only save diff when there are changes to report
         if (!_portScannerDiff.isUnchanged()) {
-            final String baselineFormattedBeganAt = TimeHelper.formatTimestamp(baselinePortScannerResult.getBeganAt());
+            logDiffDetails(_portScannerDiffDetails);
 
+            final String baselineFormattedBeganAt = TimeHelper.formatTimestamp(baselinePortScannerResult.getBeganAt());
             final File portScannerDiffFile = new File("scans/port_scanner_report_" + baselineFormattedBeganAt + "_diff_" + formattedBeganAt + "." + saveCorePlugin.getExtension().getDefaultFileExtension());
 
-            saveObject(portScannerDiffFile, _portScannerDiffDetails);
+            saveObject(portScannerDiffFile, _portScannerDiffDetails, Collections.singletonList(Protocol.class));
         }
     }
 
+    private static void logDiffDetails(@NonNull final PortScannerDiffDetails _portScannerDiffDetails) {
+        final AtomicInteger changeGenerator = new AtomicInteger();
+
+        conditionallyLogCollection(changeGenerator, "New network ids", _portScannerDiffDetails.getNewNetworkIds());
+        conditionallyLogCollection(changeGenerator, "Removed network ids", _portScannerDiffDetails.getRemovedNetworkIds());
+        conditionallyLogCollection(changeGenerator, "Network ids with changes", _portScannerDiffDetails.getChangedNetworkIds());
+
+        conditionallyLogOpenHostsMap(changeGenerator, "New hosts with open ports discovered", _portScannerDiffDetails.getNewOpenHostsMap());
+        conditionallyLogOpenHostsMap(changeGenerator, "Hosts no longer with open ports", _portScannerDiffDetails.getRemovedOpenHostsMap());
+        conditionallyLogOpenHostsMap(changeGenerator, "Hosts with open port changes", _portScannerDiffDetails.getChangedOpenHostsMap());
+
+        conditionallyLogOpenPortsTree(changeGenerator, "New open ports discovered", _portScannerDiffDetails.getNewOpenPortsTree());
+        conditionallyLogOpenPortsTree(changeGenerator, "Ports no longer open", _portScannerDiffDetails.getRemovedOpenPortsTree());
+    }
+
+    private static void conditionallyLogCollection(@NonNull final AtomicInteger _generator,
+                                                   @NonNull final String _label,
+                                                   @NonNull final Collection _collection) {
+        if (!_collection.isEmpty()) {
+            final String changePrefix = generateNextChangePrefix(_generator, _label);
+
+            log.warn(changePrefix.concat(": {}"), _collection.toString());
+        }
+    }
+
+    private static void conditionallyLogOpenHostsMap(@NonNull final AtomicInteger _generator,
+                                                     @NonNull final String _label,
+                                                     @NonNull final Map<String, List<String>> _map) {
+        if (!_map.isEmpty()) {
+            for(final Map.Entry<String, List<String>> entry : _map.entrySet()) {
+                final String changePrefix = generateNextChangePrefix(_generator, _label);
+
+                log.warn(changePrefix.concat(": networkId={}, hosts={}"), entry.getKey(), entry.getValue().toString());
+            }
+        }
+    }
+
+    private static void conditionallyLogOpenPortsTree(@NonNull final AtomicInteger _generator,
+                                                      @NonNull final String _label,
+                                                      @NonNull final Map<String, Map<String, Map<Protocol, List<Integer>>>> _tree) {
+        if (!_tree.isEmpty()) {
+            for(Map.Entry<String, Map<String, Map<Protocol, List<Integer>>>> networkSet : _tree.entrySet()) {
+                for(final Map.Entry<String, Map<Protocol, List<Integer>>> openHostSet : networkSet.getValue().entrySet()) {
+                    for(final Map.Entry<Protocol, List<Integer>> openPortSet : openHostSet.getValue().entrySet()) {
+                        final String changePrefix = generateNextChangePrefix(_generator, _label);
+
+                        log.warn(changePrefix.concat(": networkId={}, host={}, protocol={}, ports={}"), networkSet.getKey(), openHostSet.getKey(), openPortSet.getKey(), openPortSet.getValue());
+                    }
+                }
+            }
+        }
+    }
+
+    private static String generateNextChangePrefix(@NonNull final AtomicInteger _generator,
+                                                   @NonNull final String _label) {
+        return "Change #" + _generator.incrementAndGet() + " -> " + _label;
+    }
+
     private void saveObject(@NonNull final File _portScannerResultFile,
-                            @NonNull final Object _objectToPersist) {
+                            @NonNull final Object _objectToPersist,
+                            @NonNull final List<Class<?>> _asStringClasses) {
         try {
             FileUtils.forceMkdirParent(_portScannerResultFile);
             final boolean success = _portScannerResultFile.createNewFile();
@@ -202,9 +259,7 @@ public class PortScanScheduler {
 
             log.info("Saving file: " + _portScannerResultFile.getPath());
 
-            saveCorePlugin.getExtension().save(fos, _objectToPersist);
-
-            log.info("Port scan result saved.");
+            saveCorePlugin.getExtension().save(fos, _objectToPersist, _asStringClasses);
         } catch (IOException _e) {
             log.error("Failed to save port scan result", _e);
         }

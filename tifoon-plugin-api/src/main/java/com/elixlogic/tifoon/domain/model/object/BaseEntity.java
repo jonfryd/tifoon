@@ -10,10 +10,5 @@ import javax.persistence.*;
 @Data
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = false)
-public class BaseEntity extends ReflectionObjectTreeAware {
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Nullable
-    private String id;
+public abstract class BaseEntity extends ReflectionObjectTreeAware {
 }

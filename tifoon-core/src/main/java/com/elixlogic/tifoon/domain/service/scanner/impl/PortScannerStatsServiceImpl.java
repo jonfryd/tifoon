@@ -1,12 +1,10 @@
 package com.elixlogic.tifoon.domain.service.scanner.impl;
 
-import com.elixlogic.tifoon.domain.model.scanner.NetworkResult;
-import com.elixlogic.tifoon.domain.model.scanner.OpenHost;
-import com.elixlogic.tifoon.domain.model.scanner.Port;
-import com.elixlogic.tifoon.domain.model.scanner.PortScannerResult;
+import com.elixlogic.tifoon.domain.model.scanner.*;
 import com.elixlogic.tifoon.domain.model.scanner.diff.*;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerStatsService;
-import com.elixlogic.tifoon.domain.util.TimeHelper;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 import lombok.NonNull;
 import org.apache.commons.lang3.tuple.Pair;
 import org.modelmapper.internal.util.Assert;
@@ -34,120 +32,119 @@ public class PortScannerStatsServiceImpl implements PortScannerStatsService {
         final List<PropertyChange> newOpenHostPropertyChanges = _portScannerDiff.findPropertyChanges(PortScannerResult.class, "networkResults/\\d+", "openHosts", null, Type.MAP, Operation.ADDITION);
         final List<PropertyChange> removedOpenHostPropertyChanges = _portScannerDiff.findPropertyChanges(PortScannerResult.class, "networkResults/\\d+", "openHosts", null, Type.MAP, Operation.REMOVAL);
 
-        final Set<String> newOpenHostKeys = mapOpenHostsToKeys(newOpenHostPropertyChanges, _newPortScannerResult);
-        final Set<String> removedOpenHostKeys = mapOpenHostsToKeys(removedOpenHostPropertyChanges, _newPortScannerResult);
+        final Multimap<String, String> newOpenHostsMultimap = mapOpenHosts(newOpenHostPropertyChanges, _newPortScannerResult);
+        final Multimap<String, String> removedOpenHostsMultimap = mapOpenHosts(removedOpenHostPropertyChanges, _newPortScannerResult);
 
         // find open ports added / removed
         final List<PropertyChange> newOpenPortPropertyChanges = _portScannerDiff.findPropertyChanges(PortScannerResult.class, "networkResults/\\d+/openHosts/.*", "openPorts", null, Type.MAP, Operation.ADDITION);
         final List<PropertyChange> removedOpenPortPropertyChanges = _portScannerDiff.findPropertyChanges(PortScannerResult.class, "networkResults/\\d+/openHosts/.*", "openPorts", null, Type.MAP, Operation.REMOVAL);
 
-        final Set<String> newOpenPortKeys = mapOpenPortsToKeys(newOpenPortPropertyChanges, _newPortScannerResult);
-        final Set<String> removedOpenPortKeys = mapOpenPortsToKeys(removedOpenPortPropertyChanges, _oldPortScannerResult);
+        final Map<String, Map<String, Multimap<Protocol, Integer>>> newOpenPortsTree = mapOpenPorts(newOpenPortPropertyChanges, _newPortScannerResult);
+        final Map<String, Map<String, Multimap<Protocol, Integer>>> removedOpenPortsTree = mapOpenPorts(removedOpenPortPropertyChanges, _oldPortScannerResult);
 
         // determine changed open hosts
-        final Set<String> allOpenPortKeys = new HashSet<>(newOpenPortKeys);
-        allOpenPortKeys.addAll(removedOpenPortKeys);
+        final Multimap<String, String> changedOpenHostsMultimap = TreeMultimap.create();
 
-        final Set<String> changedOpenHostKeys = new TreeSet<>();
-
-        for(final String key : allOpenPortKeys) {
-            final StringJoiner stringJoiner = new StringJoiner("/");
-            final String[] keySplits = key.split("/");
-
-            changedOpenHostKeys.add(stringJoiner.add(keySplits[0]).add(keySplits[1]).toString());
+        for(final Map.Entry<String, Map<String, Multimap<Protocol, Integer>>> entry : newOpenPortsTree.entrySet()) {
+            changedOpenHostsMultimap.putAll(entry.getKey(), entry.getValue().keySet());
+        }
+        for(final Map.Entry<String, Map<String, Multimap<Protocol, Integer>>> entry : removedOpenPortsTree.entrySet()) {
+            changedOpenHostsMultimap.putAll(entry.getKey(), entry.getValue().keySet());
         }
 
         // determine changed networks
-        final Set<String> allOpenHostKeys = new HashSet<>(newOpenHostKeys);
-        allOpenHostKeys.addAll(removedOpenHostKeys);
-        allOpenHostKeys.addAll(changedOpenHostKeys);
+        final Set<String> allOpenHostKeys = new HashSet<>(newOpenHostsMultimap.keySet());
+        allOpenHostKeys.addAll(removedOpenHostsMultimap.keySet());
+        allOpenHostKeys.addAll(changedOpenHostsMultimap.keySet());
 
         final Set<String> changedNetworkIds = new TreeSet<>();
 
         for(final String key : allOpenHostKeys) {
-            final String[] keySplits = key.split("/");
-
-            changedNetworkIds.add(keySplits[0]);
+            changedNetworkIds.add(key);
         }
 
         return PortScannerDiffDetails.builder()
                 .oldPortScannerResultId(_oldPortScannerResult.getId())
-                .oldPortScanBeganAtTimestamp(TimeHelper.formatTimestamp(_oldPortScannerResult.getBeganAt()))
+                .oldPortScanBeganAt(_oldPortScannerResult.getBeganAt())
                 .newPortScannerResultId(_newPortScannerResult.getId())
-                .newPortScanBeganAtTimestamp(TimeHelper.formatTimestamp(_newPortScannerResult.getBeganAt()))
+                .newPortScanBeganAt(_newPortScannerResult.getBeganAt())
                 .newNetworkIds(newNetworkIds.stream().collect(Collectors.toList()))
                 .removedNetworkIds(removedNetworkIds.stream().collect(Collectors.toList()))
                 .changedNetworkIds(changedNetworkIds.stream().collect(Collectors.toList()))
-                .newOpenHostKeys(newOpenHostKeys.stream().collect(Collectors.toList()))
-                .removedOpenHostKeys(removedOpenHostKeys.stream().collect(Collectors.toList()))
-                .changedOpenHostKeys(changedOpenHostKeys.stream().collect(Collectors.toList()))
-                .newOpenPortKeys(newOpenPortKeys.stream().collect(Collectors.toList()))
-                .removedOpenPortKeys(removedOpenPortKeys.stream().collect(Collectors.toList()))
+                .newOpenHostsMap(toMapOfLists(newOpenHostsMultimap))
+                .removedOpenHostsMap(toMapOfLists(removedOpenHostsMultimap))
+                .changedOpenHostsMap(toMapOfLists(changedOpenHostsMultimap))
+                .newOpenPortsTree(toStringListTree(newOpenPortsTree))
+                .removedOpenPortsTree(toStringListTree(removedOpenPortsTree))
                 .build();
     }
 
-    private Set<String> mapNetworkResultsToIds(@NonNull final List<PropertyChange> _propertyChanges,
-                                               @NonNull final PortScannerResult _portScannerResult) {
+    private static Map<String, Map<String, Map<Protocol, List<Integer>>>> toStringListTree(@NonNull final Map<String, Map<String, Multimap<Protocol, Integer>>> _map) {
+        // yeah... it sure ain't super pretty, but gets the job done!
+        final Map<String, Map<String, Map<Protocol, List<Integer>>>> result = new TreeMap<>();
+
+        for(final Map.Entry<String, Map<String, Multimap<Protocol, Integer>>> networkSet : _map.entrySet()) {
+            result.put(networkSet.getKey(), new TreeMap<>());
+            final Map<String, Map<Protocol, List<Integer>>> openHostToOpenPorts = result.get(networkSet.getKey());
+
+            for(final Map.Entry<String, Multimap<Protocol, Integer>> openHostSet : networkSet.getValue().entrySet()) {
+                openHostToOpenPorts.put(openHostSet.getKey(), toMapOfLists(openHostSet.getValue()));
+            }
+        }
+
+        return result;
+    }
+
+    private static <K, V> Map<K, List<V>> toMapOfLists(@NonNull final Multimap<K, V> _multimap) {
+        final Map<K, List<V>> mapOfLists = new TreeMap<>();
+        _multimap.asMap().forEach((k, v) -> mapOfLists.put(k, new ArrayList<>(v)));
+
+        return mapOfLists;
+    }
+
+    private static Set<String> mapNetworkResultsToIds(@NonNull final List<PropertyChange> _propertyChanges,
+                                                      @NonNull final PortScannerResult _portScannerResult) {
         return new TreeSet<>(_propertyChanges.stream()
                 .map(p -> getNetworkId(p, _portScannerResult))
                 .collect(Collectors.toList()));
     }
 
-    private Set<String> mapOpenPortsToKeys(@NonNull final List<PropertyChange> _propertyChanges,
-                                            @NonNull final PortScannerResult _portScannerResult) {
-        final List<String> result = new ArrayList<>();
+    private static Map<String, Map<String, Multimap<Protocol, Integer>>> mapOpenPorts(@NonNull final List<PropertyChange> _propertyChanges,
+                                                                                      @NonNull final PortScannerResult _portScannerResult) {
+        final Map<String, Map<String, Multimap<Protocol, Integer>>> result = new TreeMap<>();
 
         for(final PropertyChange propertyChange : _propertyChanges) {
+            final String networkId = getNetworkId(propertyChange, _portScannerResult);
             final Pair<String, OpenHost> openHost = getOpenHost(propertyChange, _portScannerResult);
-            final int portKey = Integer.parseInt(propertyChange.getKey());
+            final Port port = openHost.getValue().getOpenPorts().get(Integer.parseInt(propertyChange.getKey()));
 
-            result.add(createOpenPortKey(openHost.getKey(), openHost.getValue().getOpenPorts().get(portKey), propertyChange, _portScannerResult));
+            result.putIfAbsent(networkId, new TreeMap<>());
+            final Map<String, Multimap<Protocol, Integer>> openHostToOpenPortsMultimap = result.get(networkId);
+
+            openHostToOpenPortsMultimap.putIfAbsent(openHost.getKey(), TreeMultimap.create());
+            final Multimap<Protocol, Integer> openPortsMultimap = openHostToOpenPortsMultimap.get(openHost.getKey());
+
+            openPortsMultimap.put(port.getProtocol(), port.getPortNumber());
         }
 
-        return new TreeSet<>(result);
+        return result;
     }
 
-    private String createOpenPortKey(@NonNull final String _openHost,
-                                     @NonNull final Port _port,
-                                     @NonNull final PropertyChange _propertyChange,
-                                     @NonNull final PortScannerResult _portScannerResult) {
-        final StringJoiner stringJoiner = new StringJoiner("/");
+    private static Multimap<String, String> mapOpenHosts(@NonNull final List<PropertyChange> _propertyChanges,
+                                                         @NonNull final PortScannerResult _portScannerResult) {
+        final TreeMultimap<String, String> result = TreeMultimap.create();
+        _propertyChanges.forEach(p -> result.put(getNetworkId(p, _portScannerResult), p.getKey()));
 
-        return stringJoiner
-                .add(getNetworkId(_propertyChange, _portScannerResult))
-                .add(_openHost)
-                .add(_port.getProtocol().toString())
-                .add(String.valueOf(_port.getPortNumber()))
-                .toString();
+        return result;
     }
 
-    private Set<String> mapOpenHostsToKeys(@NonNull final List<PropertyChange> _propertyChanges,
-                                           @NonNull final PortScannerResult _portScannerResult) {
-        return new TreeSet<>(_propertyChanges.stream()
-                .map(p -> createOpenHostKey(p.getKey(), p, _portScannerResult))
-                .collect(Collectors.toList()));
+    private static String getNetworkId(@NonNull final PropertyChange _propertyChange,
+                                       @NonNull final PortScannerResult _portScannerResult) {
+        return getNetworkResult(_propertyChange, _portScannerResult).getNetworkId();
     }
 
-    private String createOpenHostKey(@NonNull final String _openHost,
-                                     @NonNull final PropertyChange _propertyChange,
-                                     @NonNull final PortScannerResult _portScannerResult) {
-        final StringJoiner stringJoiner = new StringJoiner("/");
-
-        return stringJoiner
-                .add(getNetworkId(_propertyChange, _portScannerResult))
-                .add(_openHost)
-                .toString();
-    }
-
-    private String getNetworkId(@NonNull final PropertyChange _propertyChange,
-                                @NonNull final PortScannerResult _portScannerResult) {
-        final NetworkResult networkResult = getNetworkResult(_propertyChange, _portScannerResult);
-
-        return networkResult.getNetworkId();
-    }
-
-    private NetworkResult getNetworkResult(@NonNull final PropertyChange _propertyChange,
-                                           @NonNull final PortScannerResult _portScannerResult) {
+    private static NetworkResult getNetworkResult(@NonNull final PropertyChange _propertyChange,
+                                                  @NonNull final PortScannerResult _portScannerResult) {
         final Pattern pattern = Pattern.compile("#networkResults/\\d+");
         final Matcher matcher = pattern.matcher(_propertyChange.getGlobalId().getSelector());
         Assert.isTrue(matcher.find(), "Could not find network result in selector");
@@ -156,8 +153,8 @@ public class PortScannerStatsServiceImpl implements PortScannerStatsService {
         return _portScannerResult.getNetworkResults().get(resultIndex);
     }
 
-    private Pair<String, OpenHost> getOpenHost(@NonNull final PropertyChange _propertyChange,
-                                               @NonNull final PortScannerResult _portScannerResult) {
+    private static Pair<String, OpenHost> getOpenHost(@NonNull final PropertyChange _propertyChange,
+                                                      @NonNull final PortScannerResult _portScannerResult) {
         final Pattern pattern = Pattern.compile("#networkResults/\\d+/openHosts/.*");
         final Matcher matcher = pattern.matcher(_propertyChange.getGlobalId().getSelector());
         Assert.isTrue(matcher.find(), "Could not find open host in selector");

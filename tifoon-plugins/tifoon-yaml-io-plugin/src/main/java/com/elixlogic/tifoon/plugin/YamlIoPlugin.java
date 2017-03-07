@@ -29,29 +29,30 @@ import java.util.Set;
 @Slf4j
 public class YamlIoPlugin extends AbstractIoPlugin {
     private static final String PROVIDES = "yaml";
-
     private static final List<String> EXTENSIONS_HANDLED = ImmutableList.of("yml", PROVIDES);
 
     private static class SkipEmptyRepresenter extends Representer {
         @Override
         @Nullable
-        protected NodeTuple representJavaBeanProperty(Object javaBean, Property property,
-                                                      Object propertyValue, Tag customTag) {
-            NodeTuple tuple = super.representJavaBeanProperty(javaBean, property, propertyValue,
-                    customTag);
-            Node valueNode = tuple.getValueNode();
+        protected NodeTuple representJavaBeanProperty(final Object _javaBean,
+                                                      final Property _property,
+                                                      final Object _propertyValue,
+                                                      final Tag _customTag) {
+            final NodeTuple tuple = super.representJavaBeanProperty(_javaBean, _property, _propertyValue, _customTag);
+            final Node valueNode = tuple.getValueNode();
+
             if (Tag.NULL.equals(valueNode.getTag())) {
                 return null;// skip 'null' values
             }
             if (valueNode instanceof CollectionNode) {
                 if (Tag.SEQ.equals(valueNode.getTag())) {
-                    SequenceNode seq = (SequenceNode) valueNode;
+                    final SequenceNode seq = (SequenceNode) valueNode;
                     if (seq.getValue().isEmpty()) {
                         return null;// skip empty lists
                     }
                 }
                 if (Tag.MAP.equals(valueNode.getTag()) && valueNode instanceof MappingNode) {
-                    MappingNode seq = (MappingNode) valueNode;
+                    final MappingNode seq = (MappingNode) valueNode;
                     if (seq.getValue().isEmpty()) {
                         return null;// skip empty maps
                     }
@@ -63,8 +64,9 @@ public class YamlIoPlugin extends AbstractIoPlugin {
 
     private static class UnsortedPropertyUtils extends PropertyUtils {
         @Override
-        protected Set<Property> createPropertySet(Class<?> type, BeanAccess bAccess) throws IntrospectionException {
-            return new LinkedHashSet<>(getPropertiesMap(type, BeanAccess.FIELD).values());
+        protected Set<Property> createPropertySet(final Class<?> _type,
+                                                  final BeanAccess _beanAccess) throws IntrospectionException {
+            return new LinkedHashSet<>(getPropertiesMap(_type, BeanAccess.FIELD).values());
         }
     }
 
@@ -106,12 +108,18 @@ public class YamlIoPlugin extends AbstractIoPlugin {
 
     @Override
     public void save(@NonNull final OutputStream _outputStream,
-                     @NonNull final Object _object) {
+                     @NonNull final Object _object,
+                     @NonNull final List<Class<?>> _asStringClasses) {
         // Hide root bean type
         // http://stackoverflow.com/questions/19246027/how-to-hide-bean-type-in-snakeyaml
         final Representer hideRootTagRepresenter = new SkipEmptyRepresenter();
         hideRootTagRepresenter.setPropertyUtils(new UnsortedPropertyUtils());
         hideRootTagRepresenter.addClassTag(_object.getClass(), Tag.MAP);
+
+        // deeply entrenched enums need to explicitly tagged as strings :-/
+        for(final Class<?> clazz : _asStringClasses) {
+            hideRootTagRepresenter.addClassTag(clazz, Tag.STR);
+        }
 
         final DumperOptions dumperOptions;
         dumperOptions = new DumperOptions();

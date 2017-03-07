@@ -13,10 +13,12 @@ public interface IoPlugin extends Plugin<String>, MetadataProvider {
     @Nullable
     <T> T load(InputStream _inputStream,
                Class<T> _rootClass,
-               @NonNull final List<ListProperty> _listProperties,
-               @NonNull final List<MapProperty> _mapProperties);
+               List<ListProperty> _listProperties,
+               List<MapProperty> _mapProperties);
 
-    void save(OutputStream _outputStream, Object _object);
+    void save(OutputStream _outputStream,
+              Object _object,
+              List<Class<?>> _asStringClasses);
 
     String getDefaultFileExtension();
 

@@ -18,14 +18,13 @@ import java.util.List;
 @Slf4j
 public class JsonIoPlugin extends AbstractIoPlugin {
     private static final String PROVIDES = "json";
-
     private static final List<String> EXTENSIONS_HANDLED = ImmutableList.of(PROVIDES);
 
     private final ObjectMapper mapper;
 
     public JsonIoPlugin() {
         mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     }
 
     @Override
@@ -52,7 +51,8 @@ public class JsonIoPlugin extends AbstractIoPlugin {
 
     @Override
     public void save(@NonNull final OutputStream _outputStream,
-                     @NonNull final Object _object) {
+                     @NonNull final Object _object,
+                     @NonNull final List<Class<?>> _asStringClasses) {
         try {
             log.debug("Saving json");
 
