@@ -34,7 +34,7 @@ public class PortScannerResultDiffServiceImplTest {
     public void testComplexNoChange() throws UnknownHostException {
         final Port port1 = Port.from(Protocol.TCP, 23);
         final Port port2 = Port.from(Protocol.UDP, 132);
-        final Port port3 = Port.from(Protocol.STCP, 1234);
+        final Port port3 = Port.from(Protocol.SCTP, 1234);
 
         final Map<InetAddress, List<Port>> inetAddressPortMap = new HashMap<>();
         inetAddressPortMap.put(InetAddress.getByName("1.5.3.6"), Arrays.asList(port1, port2));
@@ -55,7 +55,7 @@ public class PortScannerResultDiffServiceImplTest {
     public void testMissingNetworkResult() throws UnknownHostException {
         final Port port1 = Port.from(Protocol.TCP, 23);
         final Port port2 = Port.from(Protocol.UDP, 132);
-        final Port port3 = Port.from(Protocol.STCP, 1234);
+        final Port port3 = Port.from(Protocol.SCTP, 1234);
 
         final Map<InetAddress, List<Port>> inetAddressPortMap = new HashMap<>();
         inetAddressPortMap.put(InetAddress.getByName("1.5.3.6"), Arrays.asList(port1, port2));

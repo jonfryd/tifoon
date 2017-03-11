@@ -37,6 +37,6 @@ public class PortRangeTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void throwsWhenConstructingInvalidRange() {
-        PortRange.from(Protocol.STCP, 500, 450);
+        PortRange.from(Protocol.SCTP, 500, 450);
     }
 }

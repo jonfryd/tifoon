@@ -33,6 +33,10 @@
             <artifactId>javers-spring-boot-starter-sql</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.elixlogic</groupId>
             <artifactId>tifoon-common</artifactId>
             <version>${project.parent.version}</version>

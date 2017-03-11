@@ -2,6 +2,6 @@ network:
   targets:
     - networkId: Jon@Home
       addresses:
-        - raspberrypi.jonf
+        - 192.168.84.34
       ports:
-        - 1-334
+        - 1-70

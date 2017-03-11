@@ -107,7 +107,7 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
             case "udp":
                 return Protocol.UDP;
             case "stcp":
-                return Protocol.STCP;
+                return Protocol.SCTP;
             case "ip":
                 return Protocol.IP;
             default:

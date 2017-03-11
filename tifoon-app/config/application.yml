@@ -11,6 +11,7 @@ tifoon:
   baselineFilename: scans/port_scanner_report_20170307_170306.yml
 
 logging:
+  file: tifoon.log
   level:
     org.springframework: WARN
     org.javers: WARN

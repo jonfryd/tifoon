@@ -42,6 +42,7 @@
         <commons-io.version>2.5</commons-io.version>
         <model-mapper.version>0.7.7</model-mapper.version>
         <jackson-databind.version>2.8.5</jackson-databind.version>
+        <opencsv.version>3.9</opencsv.version>
 
         <!-- Testing -->
         <mockito.version>2.7.6</mockito.version>
@@ -108,6 +109,11 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson-databind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.opencsv</groupId>
+                <artifactId>opencsv</artifactId>
+                <version>${opencsv.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

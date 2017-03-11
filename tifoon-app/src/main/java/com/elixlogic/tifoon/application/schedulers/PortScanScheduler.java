@@ -2,10 +2,12 @@ package com.elixlogic.tifoon.application.schedulers;
 
 import com.elixlogic.tifoon.application.config.RootConfiguration;
 import com.elixlogic.tifoon.domain.mapper.DtoMapper;
+import com.elixlogic.tifoon.domain.model.network.IanaServiceEntry;
 import com.elixlogic.tifoon.domain.model.plugin.CorePlugin;
 import com.elixlogic.tifoon.domain.model.scanner.*;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiff;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiffDetails;
+import com.elixlogic.tifoon.domain.service.scanner.KnownPortsLookupService;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerResultDiffService;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerService;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerStatsService;
@@ -14,6 +16,7 @@ import com.elixlogic.tifoon.infrastructure.config.PluginConfiguration;
 import com.elixlogic.tifoon.infrastructure.jpa.repository.PortScannerResultRepository;
 import com.elixlogic.tifoon.plugin.io.IoPlugin;
 import com.elixlogic.tifoon.plugin.io.MapProperty;
+import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Cleanup;
@@ -42,6 +45,7 @@ public class PortScanScheduler {
     private final PortScannerResultRepository portScannerResultRepository;
     private final PortScannerResultDiffService portScannerResultDiffService;
     private final PortScannerStatsService portScannerStatsService;
+    private final KnownPortsLookupService knownPortsLookupService;
     private final PluginConfiguration pluginConfiguration;
     private final CorePlugin<IoPlugin> saveCorePlugin;
 
@@ -56,6 +60,7 @@ public class PortScanScheduler {
                              final PortScannerResultRepository _portScannerResultRepository,
                              final PortScannerResultDiffService _portScannerResultDiffService,
                              final PortScannerStatsService _portScannerStatsService,
+                             final KnownPortsLookupService _knownPortsLookupService,
                              final PluginConfiguration _pluginConfiguration,
                              @Qualifier("saveCorePlugin") final CorePlugin<IoPlugin> _saveCorePlugin) {
         rootConfiguration = _rootConfiguration;
@@ -64,6 +69,7 @@ public class PortScanScheduler {
         portScannerResultRepository = _portScannerResultRepository;
         portScannerResultDiffService = _portScannerResultDiffService;
         portScannerStatsService = _portScannerStatsService;
+        knownPortsLookupService = _knownPortsLookupService;
         pluginConfiguration = _pluginConfiguration;
         saveCorePlugin = _saveCorePlugin;
 
@@ -186,7 +192,7 @@ public class PortScanScheduler {
         }
     }
 
-    private static void logDiffDetails(@NonNull final PortScannerDiffDetails _portScannerDiffDetails) {
+    private void logDiffDetails(@NonNull final PortScannerDiffDetails _portScannerDiffDetails) {
         final AtomicInteger changeGenerator = new AtomicInteger();
 
         conditionallyLogCollection(changeGenerator, "New network ids", _portScannerDiffDetails.getNewNetworkIds());
@@ -223,7 +229,7 @@ public class PortScanScheduler {
         }
     }
 
-    private static void conditionallyLogOpenPortsTree(@NonNull final AtomicInteger _generator,
+    private void conditionallyLogOpenPortsTree(@NonNull final AtomicInteger _generator,
                                                       @NonNull final String _label,
                                                       @NonNull final Map<String, Map<String, Map<Protocol, List<Integer>>>> _tree) {
         if (!_tree.isEmpty()) {
@@ -231,12 +237,33 @@ public class PortScanScheduler {
                 for(final Map.Entry<String, Map<Protocol, List<Integer>>> openHostSet : networkSet.getValue().entrySet()) {
                     for(final Map.Entry<Protocol, List<Integer>> openPortSet : openHostSet.getValue().entrySet()) {
                         final String changePrefix = generateNextChangePrefix(_generator, _label);
+                        final List<String> portNumbersWithServices = decoratePortNumbersWithServiceNames(openPortSet.getKey(), openPortSet.getValue());
 
-                        log.warn(changePrefix.concat(": networkId={}, host={}, protocol={}, ports={}"), networkSet.getKey(), openHostSet.getKey(), openPortSet.getKey(), openPortSet.getValue());
+                        log.warn(changePrefix.concat(": networkId={}, host={}, protocol={}, ports={}"), networkSet.getKey(), openHostSet.getKey(), openPortSet.getKey(), portNumbersWithServices);
                     }
                 }
             }
         }
+    }
+
+    private List<String> decoratePortNumbersWithServiceNames(final Protocol _protocol, final List<Integer> _portNumbers) {
+        final List<String> result = new ArrayList<>();
+
+        for(Integer portNumber : _portNumbers) {
+            final Optional<List<IanaServiceEntry>> ianaServiceEntries = knownPortsLookupService.getServiceByName(Port.from(_protocol, portNumber));
+
+            if (ianaServiceEntries.isPresent()) {
+                final String serviceNames = ianaServiceEntries.get().stream()
+                        .map(s -> s.getServiceName())
+                        .collect(Collectors.joining(", "));
+
+                result.add(String.valueOf(portNumber) + " (" + serviceNames + ")");
+            } else {
+                result.add(String.valueOf(portNumber));
+            }
+        }
+
+        return result;
     }
 
     private static String generateNextChangePrefix(@NonNull final AtomicInteger _generator,
