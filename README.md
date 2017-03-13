@@ -1,10 +1,20 @@
-# Tifoon: Port Scanner Diff Application
+# Tifoon: Open Network Ports Monitoring
 
+This is an attempt to create an application in Java which can effectively monitor open ports in
+networks of host machines/devices by comparing consecutive scans against a known "good" baseline.
 
+Open services/ports is a significant security threat, which is why monitoring what ports are open and
+exposed makes it easier to manage this risk and stay alert if something change. This could potentially
+indicate that a host has been compromised by a trojan/worm, although there could be many benign reasons
+for such an event, of course.
+
+Currently Tifoon relies on the world class `nmap` port scanner from which it reads the output, as well
+as a diff algorithm using [JaVers](http://javers.org/) for determining changes to open ports reported
+in a concise, easy to read manner.
 
 # Building
 
-JDK 8 and Maven 3 is required to build from command line.
+JDK 8 and Maven 3 is required to build Tifoon from command line.
 
 Clone the repository and execute Maven from the root directory:
 
@@ -13,13 +23,13 @@ Clone the repository and execute Maven from the root directory:
     $ mvn clean install
 
 This will build all required modules, installs them in the local Maven repository and create a ZIP
-file in the `tifoon-app/target` subdirectory for distribution. If you desire, copy the distro to
-another directory elsewhere on your system and extract it.
+file in the `tifoon-app/target` subdirectory for distribution. If desired, copy the distro to
+another directory elsewhere on your system and extract it there.
 
 # Usage
 
-Ensure you have some flavor of Java 8 installed before proceeding. Oracle's JRE and OpenJDK have been
-tested on Windows, Linux and Mac OS X.
+Ensure you have some flavor of Java 8 Runtime Environment installed before proceeding. Oracle's JRE and
+OpenJDK have been tested on Windows, Linux and Mac OS X.
 
 Also, one of the following is a prerequisite to perform any port scanning:
 
@@ -62,8 +72,11 @@ while the application is running are not detected.
 
 ### `config/application.yml`
 
-Defines the behaviour of the application. The config file includes a comment at the end, which briefly
-explains the purpose of each option.
+Defines the behaviour of the application. The config file includes a comment at the end of each
+property line which briefly explains the purpose of each option. The output format can be set to
+either YAML or JSON, nmap can be executed by either local process or Docker, and a number of
+options controls how Tifoon deals with the baseline, like whether it is created on the initial scan
+or loaded from a previous scan file.
 
 This is a Spring Boot application which means that Tifoon inherits a bunch of [customisation options](http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html).
 One example is related to logging and you will see a few properties related to logging already exposed,
@@ -71,18 +84,18 @@ namely the name of the log file and log levels for various packages.
 
 ### `config/network.yml`
 
-This is list of networks to be monitored. Each network consists of an arbitrary number of hosts, and
-the set of ports to be scanned for every host in this network. Example:
+This is list of networks and hosts to be monitored. Each network consists of an arbitrary number of hosts,
+and the set of ports to be scanned for every host in this network. Example:
 
       ports:
         - 20-25
         - 153
         - 900-999
 
-Scan TCP ports 20 to 25, 153 and 900 to 999.
+Results in all of TCP ports 20 to 25, 153 and 900 to 999 being scanned.
 
-If a hostname (and not a IPv4 address) is provided for any host, the IPv4 is resolved on startup by
-DNS lookup on startup (resolution is final and not redone on consecutive scan).
+If a hostname (and not a IPv4 address) is provided for any host, the IPv4 address is resolved on startup
+by DNS lookup on startup (resolution is final and not redone on consecutive scan).
 
 Of course, all hosts could technically speaking be on the same physical network but grouped into
 logical networks.
@@ -92,9 +105,10 @@ protocol supported as of this moment.
 
 ### `config/docker.yml`
 
-This config file is only used when the docker command executor enabled. It specifies how commands are
-mapped to Docker containers. A default mapping specifies a fallback container image to be used if
-no mapping is found in the `customImages` list.
+This config file is only used when the docker command executor enabled. It specifies how commands
+for scanner plugins (currently only `nmap` is supported) are mapped to Docker containers. A default
+mapping specifies a fallback container image to be used if no mapping is found in the `customImages`
+list.
 
 # Design
 
@@ -124,10 +138,10 @@ the community for free, making Java coding productive and a lot of fun.
 
 # TODO
 
-Tifoon is still in its infancy, but I have several ideas for how this baby can grow in the future.
-For example...
+Tifoon is still in its infancy, but I have several ideas for how this baby can grow in the future:
 
 * Support for specifying ranges of hosts
+* Define pre-defined sets of "top ports" for fast scanning of the most critical services
 * UDP and SCTP protocols scanning
 * Add "convenience launchers" for common operating systems
 * IPv6 support
@@ -137,13 +151,13 @@ For example...
 * Add the option of defining sets of ports which can be easily referred to in scan targets
 * Alternative scanner plugins, e.g. Robert David Graham's [masscan](https://github.com/robertdavidgraham/masscan) looks like an excellent addition
 * REST web application
-* A proper frontend
-* PDF/HTML reporting
+* A proper frontend (AngularJS)
+* PDF/HTML reporting (DynamicReports/JasperReports)
 
 # How to contribute
 
 All contributions are greatly appreciated; i.e. bug reports, feature suggestions, grammar corrections,
-etc.
+encouragements, whatever.
 
 If you are a developer you are more than welcome to tag along for the ride by creating pull-requests,
 but please keep these common sense coding guidelines in mind:
@@ -159,4 +173,4 @@ in ways that are "unsurprising" to the general audience.
 
 # Author
 
-This tool was created by Jon Frydensbjerg - email: jonf@elixlogic.com
+This application created by Jon Frydensbjerg - email: jonf@elixlogic.com
