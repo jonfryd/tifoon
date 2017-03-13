@@ -179,7 +179,7 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
                             super.onNext(frame);
                         }
                     })
-                    .awaitCompletion(30, TimeUnit.SECONDS); // TODO: scan times might be a lot high in real life
+                    .awaitCompletion(30, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             // ignore
         }
