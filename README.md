@@ -12,6 +12,9 @@ Currently Tifoon relies on the world class `nmap` port scanner from which it rea
 as a diff algorithm using [JaVers](http://javers.org/) for determining changes to open ports reported
 in a concise, easy to read manner.
 
+Tifoon is fully functional in its present state, however, additional features and convenience is coming
+soon.
+
 # Building
 
 JDK 8 and Maven 3 is required to build Tifoon from command line.
@@ -38,13 +41,13 @@ Also, one of the following is a prerequisite to perform any port scanning:
 
 From command line, Tifoon can be extracted from the ZIP archive and launched via three simple steps:
 
-    $ unzip tifoon-app-1.0-dist.zip
-    $ cd tifoon-app-1.0-dist/
-    $ java -jar tifoon-app-1.0-SNAPSHOT.jar
+    $ unzip tifoon-app-0.5-dist.zip
+    $ cd tifoon-app-0.5-dist/
+    $ java -jar tifoon-app-0.5-SNAPSHOT.jar
 
-With its "factory settings" the local host (IP 127.0.0.1) is a complete TCP port scan is scheduled
+With its "factory settings" the local host (IP address 127.0.0.1) is a complete TCP port scan is scheduled
 for every hour. For the second and later scans, the result is automatically checked ("diffed") against
-the initial scan for any changes compared to the baseline.
+the initial scan for any changes compared to the baseline and the specific changes are reported.
 
 This behaviour can, of course, be adjusted to include any number of networks and hosts as described in
 the configuration section below.
@@ -134,7 +137,7 @@ Check the `pom.xml` files for an exhaustive list.
 Thanks to the open source community for sharing their work with the world. More power to you guys!
 
 Also, big props to JetBrains for making the wonderful IntelliJ IDEA Community available to
-the community for free, making Java coding productive and a lot of fun.
+developers for free, making Java coding productive and a lot of fun.
 
 # TODO
 
