@@ -121,7 +121,7 @@ execution are loaded and registered on startup from JAR files in the `plugins` s
 
 ## 3rd party libraries used
 
-Tifoon rests on the work and shoulders of giants. The key libraries used are:
+Tifoon stands on the shoulders of giants. The key libraries used are:
 
 * [Spring Boot](https://projects.spring.io/spring-boot/)
 * [Spring Plugin](https://github.com/spring-projects/spring-plugin)
