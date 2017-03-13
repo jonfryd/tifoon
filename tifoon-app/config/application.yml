@@ -4,10 +4,10 @@ tifoon:
     toolName: nmap # nmap
   commandExecutor: process # docker, process
   saveFormat: yaml # json, yaml
-  scanRateSeconds: 30 # scan rate (in seconds)
+  scanRateSeconds: 3600 # scan rate (in seconds)
   onlySaveReportOnChange: true
   dynamicBaselineMode: false # dynamically create a new baseline when a change is detected (be careful!)
-  useInitialScanAsBaseline: false # true when seeding/boot-strapping new install, normally false
+  useInitialScanAsBaseline: true # true when seeding/boot-strapping new install, normally false
   baselineFilename: scans/port_scanner_report_20170307_170306.yml
 
 logging:

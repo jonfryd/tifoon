@@ -1,7 +1,7 @@
 network:
   targets:
-    - networkId: Jon@Home
+    - networkId: Localhost
       addresses:
-        - 192.168.84.34
+        - 127.0.0.1
       ports:
-        - 1-70
+        - 0-65535 # full TCP scan

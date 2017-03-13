@@ -45,7 +45,6 @@
         <opencsv.version>3.9</opencsv.version>
 
         <!-- Testing -->
-        <mockito.version>2.7.6</mockito.version>
         <junit.version>4.12</junit.version>
     </properties>
 
