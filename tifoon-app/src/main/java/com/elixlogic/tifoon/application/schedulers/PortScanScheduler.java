@@ -7,7 +7,7 @@ import com.elixlogic.tifoon.domain.model.plugin.CorePlugin;
 import com.elixlogic.tifoon.domain.model.scanner.*;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiff;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiffDetails;
-import com.elixlogic.tifoon.domain.service.scanner.KnownPortsLookupService;
+import com.elixlogic.tifoon.domain.service.scanner.WellKnownPortsLookupService;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerResultDiffService;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerService;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerStatsService;
@@ -16,7 +16,6 @@ import com.elixlogic.tifoon.infrastructure.config.PluginConfiguration;
 import com.elixlogic.tifoon.infrastructure.jpa.repository.PortScannerResultRepository;
 import com.elixlogic.tifoon.plugin.io.IoPlugin;
 import com.elixlogic.tifoon.plugin.io.MapProperty;
-import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Cleanup;
@@ -45,7 +44,7 @@ public class PortScanScheduler {
     private final PortScannerResultRepository portScannerResultRepository;
     private final PortScannerResultDiffService portScannerResultDiffService;
     private final PortScannerStatsService portScannerStatsService;
-    private final KnownPortsLookupService knownPortsLookupService;
+    private final WellKnownPortsLookupService wellKnownPortsLookupService;
     private final PluginConfiguration pluginConfiguration;
     private final CorePlugin<IoPlugin> saveCorePlugin;
 
@@ -60,7 +59,7 @@ public class PortScanScheduler {
                              final PortScannerResultRepository _portScannerResultRepository,
                              final PortScannerResultDiffService _portScannerResultDiffService,
                              final PortScannerStatsService _portScannerStatsService,
-                             final KnownPortsLookupService _knownPortsLookupService,
+                             final WellKnownPortsLookupService _wellKnownPortsLookupService,
                              final PluginConfiguration _pluginConfiguration,
                              @Qualifier("saveCorePlugin") final CorePlugin<IoPlugin> _saveCorePlugin) {
         rootConfiguration = _rootConfiguration;
@@ -69,7 +68,7 @@ public class PortScanScheduler {
         portScannerResultRepository = _portScannerResultRepository;
         portScannerResultDiffService = _portScannerResultDiffService;
         portScannerStatsService = _portScannerStatsService;
-        knownPortsLookupService = _knownPortsLookupService;
+        wellKnownPortsLookupService = _wellKnownPortsLookupService;
         pluginConfiguration = _pluginConfiguration;
         saveCorePlugin = _saveCorePlugin;
 
@@ -250,7 +249,7 @@ public class PortScanScheduler {
         final List<String> result = new ArrayList<>();
 
         for(Integer portNumber : _portNumbers) {
-            final Optional<List<IanaServiceEntry>> ianaServiceEntries = knownPortsLookupService.getServiceByName(Port.from(_protocol, portNumber));
+            final Optional<List<IanaServiceEntry>> ianaServiceEntries = wellKnownPortsLookupService.getServiceByName(Port.from(_protocol, portNumber));
 
             if (ianaServiceEntries.isPresent()) {
                 final String serviceNames = ianaServiceEntries.get().stream()

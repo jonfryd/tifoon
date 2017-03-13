@@ -6,6 +6,6 @@ import com.elixlogic.tifoon.domain.model.scanner.Port;
 import java.util.List;
 import java.util.Optional;
 
-public interface KnownPortsLookupService {
+public interface WellKnownPortsLookupService {
     Optional<List<IanaServiceEntry>> getServiceByName(Port _port);
 }

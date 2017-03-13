@@ -4,7 +4,7 @@ import com.elixlogic.tifoon.domain.model.network.IanaServiceEntries;
 import com.elixlogic.tifoon.domain.model.network.IanaServiceEntry;
 import com.elixlogic.tifoon.domain.model.scanner.Port;
 import com.elixlogic.tifoon.domain.model.scanner.Protocol;
-import com.elixlogic.tifoon.domain.service.scanner.KnownPortsLookupService;
+import com.elixlogic.tifoon.domain.service.scanner.WellKnownPortsLookupService;
 import com.elixlogic.tifoon.infrastructure.config.PluginConfiguration;
 import com.elixlogic.tifoon.plugin.io.IoPlugin;
 import com.google.common.base.Preconditions;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class KnownPortsLookupServiceImpl implements KnownPortsLookupService {
+public class WellKnownPortsLookupServiceImpl implements WellKnownPortsLookupService {
     private static final String SERVICE_NAMES_PORT_NUMBERS_YML = "service-names-port-numbers.yml";
 
     private static final boolean loadFromUrlAndConvertToLocalFile = false; // set to true when occasionally creating an updated version, otherwise keep at false
@@ -34,7 +34,7 @@ public class KnownPortsLookupServiceImpl implements KnownPortsLookupService {
     private final Map<Port, List<IanaServiceEntry>> portIanaServiceMap;
 
     @Autowired
-    public KnownPortsLookupServiceImpl(final PluginConfiguration _pluginConfiguration) {
+    public WellKnownPortsLookupServiceImpl(final PluginConfiguration _pluginConfiguration) {
         yamlIoPlugin = Preconditions.checkNotNull(_pluginConfiguration.getIoPluginByExtension("yml"), "YAML plugin not found");
 
         portIanaServiceMap = initMapping(loadIanaServiceEntries());
