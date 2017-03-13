@@ -204,7 +204,7 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
 
             return IOUtils.toByteArray(tarIn);
         } catch (IOException _e) {
-            log.error("Could not read file", _e);
+            log.error("Could not read file from container", _e);
             return null;
         }
     }
