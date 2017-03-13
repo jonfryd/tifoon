@@ -1,3 +1,5 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # Tifoon: Open Network Ports Monitoring
 
 This is an attempt to create an application in Java which can effectively monitor open ports in
