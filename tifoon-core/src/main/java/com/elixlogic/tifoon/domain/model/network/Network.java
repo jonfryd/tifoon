@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-@ConfigurationProperties(locations = {"classpath:network.yml", "classpath:config/network.yml", "file:network.yml", "file:config/network.yml"}, prefix = "network")
+@ConfigurationProperties(prefix = "network")
 @Data
 @NoArgsConstructor
 public class Network implements Validator {

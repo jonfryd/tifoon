@@ -10,7 +10,7 @@ import org.springframework.util.Assert;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@ConfigurationProperties(locations = {"classpath:docker.yml", "classpath:config/docker.yml", "file:docker.yml", "file:config/docker.yml"}, prefix = "docker")
+@ConfigurationProperties(prefix = "docker")
 @Data
 @NoArgsConstructor
 public class DockerConfiguration implements Validator {

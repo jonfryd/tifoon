@@ -1,16 +1,28 @@
 package com.elixlogic.tifoon;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.SpringApplication;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @SpringBootApplication
 @EnableScheduling
-@Slf4j
 public class TifoonApp {
     public static void main(String[] args) {
+        // provide a comma-separated list of config files due to Spring Boot 1.5 changes to @ConfigurationProperties
+        final Collection<File> files = FileUtils.listFiles(new File("config/"), new String[]{"yml"}, false);
+        final String configFilesCommaSeparated = files.stream()
+                .map(f -> FilenameUtils.removeExtension(f.getName()))
+                .collect(Collectors.joining(","));
+
         // initialize and start the scheduler (see PortScanScheduler)
-        SpringApplication.run(TifoonApp.class, args);
+        new SpringApplicationBuilder(TifoonApp.class)
+                .properties("spring.config.name=" + configFilesCommaSeparated)
+                .run(args);
     }
 }

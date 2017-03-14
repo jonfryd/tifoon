@@ -126,7 +126,7 @@
                     <systemProperties>
                         <systemProperty>
                             <key>loader.config.location</key>
-                            <value>classpath:application.properties</value>
+                            <value>classpath:loader.properties</value>
                         </systemProperty>
                     </systemProperties>
                 </configuration>

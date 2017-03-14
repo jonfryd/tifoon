@@ -10,4 +10,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tifoon-common</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+    </dependencies>
 </project>
