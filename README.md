@@ -15,8 +15,7 @@ Currently Tifoon relies on the world class `nmap` port scanner from which it rea
 as a diff algorithm using [JaVers](http://javers.org/) for determining changes to open ports reported
 in a concise, easy to read manner.
 
-Tifoon is fully functional in its present state, however, additional features and convenience is coming
-soon.
+Tifoon is fully functional in its present state. Additional features and convenience is coming soon, though.
 
 # Building
 
@@ -73,7 +72,7 @@ GIT project:
 ## Configuration
 
 Three configuration files are used to define the behaviour of Tifoon. All files are in YAML format and
-should be easy to modify with any text editor. These files are loaded once and for all startup. Changes
+should be easy to modify with any text editor. These files are loaded once and for all startup. Config changes
 while the application is running are not detected.
 
 ### `config/application.yml`
@@ -120,7 +119,9 @@ list.
 
 Tifoon is based on an open source technologies, domain-driven design, a flexible core and designed with
 extendability in mind by programming against abstractions. Plugins for I/O, scanning and command
-execution are loaded and registered on startup from JAR files in the `plugins` subdirectory.
+execution are created as Spring Boot "uber jars", loaded and registered on startup from files in the `plugins` 
+subdirectory via a special class loader. This approach is preferred over "shaded jars" in order to avoid 
+making license infringements.
 
 ## 3rd party libraries used
 
@@ -163,10 +164,10 @@ Tifoon is still in its infancy, but I have several ideas for how this baby can g
 # How to contribute
 
 All contributions are greatly appreciated; i.e. bug reports, feature suggestions, grammar corrections,
-encouragements, whatever.
+whatever.
 
-If you are a developer you are more than welcome to tag along for the ride by creating pull-requests,
-but please keep these common sense coding guidelines in mind:
+You are welcome to tag along for the ride by creating pull-requests, but please keep these common sense 
+coding guidelines in mind:
 
 * Clean, maintainable and readable code, please
 * Embrace the beauty of simplicity in design
@@ -174,8 +175,8 @@ but please keep these common sense coding guidelines in mind:
 * Try to apply well-known design principles and patterns where applicable
 * Write testable code and unit tests for critical functionality
 
-We want to ensure well-crafted software, which is robust, relies on reasonable defaults and behaves
-in ways that are "unsurprising" to the general audience.
+We want to ensure robust software, which relies on reasonable defaults and behaves in ways that are 
+"unsurprising" to the general audience.
 
 # Author
 
