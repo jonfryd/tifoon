@@ -11,6 +11,7 @@ import com.elixlogic.tifoon.infrastructure.config.PluginConfiguration;
 import com.elixlogic.tifoon.plugin.io.IoPlugin;
 import com.elixlogic.tifoon.plugin.io.MapProperty;
 import com.google.common.io.Files;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Cleanup;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@SuppressFBWarnings(value = "OBL_UNSATISFIED_OBLIGATION", justification = "https://github.com/findbugsproject/findbugs/issues/98")
 public class PortScannerFileIOServiceImpl implements PortScannerFileIOService {
     private final PortScannerLoggingService portScannerLoggingService;
     private final PluginConfiguration pluginConfiguration;
