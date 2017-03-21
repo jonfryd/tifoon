@@ -229,8 +229,8 @@ public class PortScanScheduler {
     }
 
     private void conditionallyLogOpenPortsTree(@NonNull final AtomicInteger _generator,
-                                                      @NonNull final String _label,
-                                                      @NonNull final Map<String, Map<String, Map<Protocol, List<Integer>>>> _tree) {
+                                               @NonNull final String _label,
+                                               @NonNull final Map<String, Map<String, Map<Protocol, List<Integer>>>> _tree) {
         if (!_tree.isEmpty()) {
             for(Map.Entry<String, Map<String, Map<Protocol, List<Integer>>>> networkSet : _tree.entrySet()) {
                 for(final Map.Entry<String, Map<Protocol, List<Integer>>> openHostSet : networkSet.getValue().entrySet()) {
