@@ -58,7 +58,24 @@ Scans and diffs are saved to the `scans/` folder (gets created automatically whe
 is the current default, but JSON is supported, as well.
 
 A log file `tifoon.log` is maintained, as well, which contains all standard output produced by Tifoon
-for auditing and debugging purposes.
+for auditing and debugging purposes. Sample output:
+
+    2017-03-21 17:13:03.800  INFO 35803 --- [Launcher.main()] com.elixlogic.tifoon.TifoonApp           : Starting TifoonApp on imac.jonf with PID 35803 (/Users/jon/Source/tifoon/tifoon-app/target/classes started by jon in /Users/jon/Source/tifoon/tifoon-app)
+    2017-03-21 17:13:03.804  INFO 35803 --- [Launcher.main()] com.elixlogic.tifoon.TifoonApp           : No active profile set, falling back to default profiles: default
+    2017-03-21 17:13:18.079  INFO 35803 --- [Launcher.main()] com.elixlogic.tifoon.TifoonApp           : Started TifoonApp in 15.239 seconds (JVM running for 33.741)
+    2017-03-21 17:13:18.087  INFO 35803 --- [pool-4-thread-1] c.e.t.a.schedulers.PortScanScheduler     : Scanning...
+    2017-03-21 17:13:18.102  INFO 35803 --- [pool-4-thread-1] c.e.t.d.s.s.impl.PortScannerServiceImpl  : Performing port scan against: Jons network
+    2017-03-21 17:13:18.116  INFO 35803 --- [pool-4-thread-1] c.e.tifoon.plugin.ProcessExecutorPlugin  : Executing process: [nmap -oX nmap_scan_result_855c46d7-4f92-4c2e-b07e-70edbed56bb1.xml -p 0-1023 127.0.0.1 192.168.84.34]
+    2017-03-21 17:13:28.495  INFO 35803 --- [pool-4-thread-1] e.t.d.s.s.i.PortScannerFileIOServiceImpl : Loading file: scans/port_scanner_report_20170321_155933.yml
+    2017-03-21 17:13:28.545  INFO 35803 --- [pool-4-thread-1] e.t.d.s.s.i.PortScannerFileIOServiceImpl : Port scan result loaded.
+    2017-03-21 17:13:28.660  WARN 35803 --- [pool-4-thread-1] c.e.t.a.schedulers.PortScanScheduler     : One or more changes DETECTED!
+    2017-03-21 17:13:28.661  INFO 35803 --- [pool-4-thread-1] c.e.t.a.schedulers.PortScanScheduler     : Saving report.
+    2017-03-21 17:13:28.684  INFO 35803 --- [pool-4-thread-1] e.t.d.s.s.i.PortScannerFileIOServiceImpl : Saving file: scans/port_scanner_report_20170321_171318.yml
+    2017-03-21 17:13:28.715  WARN 35803 --- [pool-4-thread-1] .t.d.s.s.i.PortScannerLoggingServiceImpl : Change #1 -> Network ids with changes: [Jons network]
+    2017-03-21 17:13:28.719  WARN 35803 --- [pool-4-thread-1] .t.d.s.s.i.PortScannerLoggingServiceImpl : Change #2 -> Hosts with open port changes: networkId=Jons network, hosts=[127.0.0.1]
+    2017-03-21 17:13:28.720  WARN 35803 --- [pool-4-thread-1] .t.d.s.s.i.PortScannerLoggingServiceImpl : Change #3 -> Ports no longer open: networkId=Jons network, host=127.0.0.1, protocol=TCP, ports=[88 (kerberos)]
+    2017-03-21 17:13:28.721  INFO 35803 --- [pool-4-thread-1] e.t.d.s.s.i.PortScannerFileIOServiceImpl : Saving file: scans/port_scanner_report_20170321_155933_diff_20170321_171318.yml
+    2017-03-21 17:13:28.734  INFO 35803 --- [pool-4-thread-1] c.e.t.a.schedulers.PortScanScheduler     : Scanning completed.
 
 Tifoon runs forever until stopped (CTRL + C) or killed. It might be a good idea to launch Tifoon within
 a Linux/UNIX `screen` so it runs in the background in a way that is detached from your terminal.
