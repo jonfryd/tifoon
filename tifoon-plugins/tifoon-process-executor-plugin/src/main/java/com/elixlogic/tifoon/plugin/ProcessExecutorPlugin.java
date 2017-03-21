@@ -40,7 +40,7 @@ public class ProcessExecutorPlugin extends AbstractExecutorPlugin {
 
             final Process process = new ProcessBuilder(commandWithArguments).start();
 
-            if (process.waitFor(30, TimeUnit.SECONDS)) {
+            if (process.waitFor(30, TimeUnit.MINUTES)) {
                 if (process.exitValue() == 0) {
                     final File outputFile = new File(_outputFile);
 
