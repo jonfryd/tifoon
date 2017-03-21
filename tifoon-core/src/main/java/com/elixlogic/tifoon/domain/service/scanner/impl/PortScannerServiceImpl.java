@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +30,6 @@ public class PortScannerServiceImpl implements PortScannerService {
         executorCorePlugin = _executorCorePlugin;
     }
 
-    @Nullable
     private NetworkResult scanNetwork(@NonNull final PortScannerJob _request) {
         Assert.isTrue(scannerCorePlugin.isInitialized(), "Scanner plugin must be initialized");
         Assert.isTrue(executorCorePlugin.isInitialized(), "Executor plugin must be initialized");
@@ -49,14 +46,13 @@ public class PortScannerServiceImpl implements PortScannerService {
         final List<NetworkResult> networkResults = _request
                 .parallelStream()
                 .map(this::scanNetwork)
-                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         return PortScannerResult.builder()
                 .beganAt(start)
                 .endedAt(System.currentTimeMillis())
-                .success(true)
                 .networkResults(networkResults)
+                .status(PortScannerResult.calculateStatus(networkResults))
                 .build();
     }
 }

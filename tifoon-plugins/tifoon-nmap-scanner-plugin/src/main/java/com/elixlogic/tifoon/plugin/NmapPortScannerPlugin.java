@@ -16,9 +16,7 @@ import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,7 +41,7 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
         catch (Exception _e) {
             log.error("Error running nmap", _e);
 
-            return null;
+            return new NetworkResult(_request.getNetworkId(), false, Collections.EMPTY_MAP);
         }
     }
 
@@ -67,37 +65,39 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
 
     private NetworkResult mapXmlToPortScannerResult(@NonNull final String _description,
                                                     @Nullable final byte[] _result) {
+        if (_result == null) {
+            return new NetworkResult(_description, false, Collections.EMPTY_MAP);
+        }
+
         final Map<InetAddress, List<Port>> openPortsMap = Maps.newHashMap();
 
-        if (_result != null) {
-            final OnePassParser opp = new OnePassParser();
-            final NMapRun nmapRun = opp.parse(new String(_result, StandardCharsets.UTF_8), OnePassParser.STRING_INPUT);
+        final OnePassParser opp = new OnePassParser();
+        final NMapRun nmapRun = opp.parse(new String(_result, StandardCharsets.UTF_8), OnePassParser.STRING_INPUT);
 
-            if (nmapRun != null) {
-                for(Host host : nmapRun.getHosts()) {
-                    final List<Port> openPorts = host.getPorts().getPorts().stream()
-                            .filter(port -> port.getState().getState().equals("open"))
-                            .map(port -> Port.from(mapProtocol(port.getProtocol()), (int) port.getPortId()))
-                            .collect(Collectors.toList());
+        if (nmapRun != null) {
+            for(Host host : nmapRun.getHosts()) {
+                final List<Port> openPorts = host.getPorts().getPorts().stream()
+                        .filter(port -> port.getState().getState().equals("open"))
+                        .map(port -> Port.from(mapProtocol(port.getProtocol()), (int) port.getPortId()))
+                        .collect(Collectors.toList());
 
-                    if (openPorts.isEmpty()) {
-                        // nothing to see here, carry on, please... :)
-                        continue;
-                    }
+                if (openPorts.isEmpty()) {
+                    // nothing to see here, carry on, please... :)
+                    continue;
+                }
 
-                    for(Address address : host.getAddresses()) {
-                        try {
-                            final InetAddress inetAddress = InetAddress.getByName(address.getAddr());
-                            openPortsMap.put(inetAddress, openPorts);
-                        } catch (UnknownHostException _e) {
-                            // ignore
-                        }
+                for(Address address : host.getAddresses()) {
+                    try {
+                        final InetAddress inetAddress = InetAddress.getByName(address.getAddr());
+                        openPortsMap.put(inetAddress, openPorts);
+                    } catch (UnknownHostException _e) {
+                        // ignore
                     }
                 }
             }
         }
 
-        return new NetworkResult(_description, openPortsMap);
+        return new NetworkResult(_description, true, openPortsMap);
     }
 
     private Protocol mapProtocol(@NonNull final String _protocol) {

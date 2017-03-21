@@ -57,14 +57,17 @@ public class NetworkResult extends ReflectionObjectTreeAware implements Serializ
     }
 
     private String networkId;
+    private boolean success;
 
     @NonNull
     @Convert(converter = OpenHostsJsonConverter.class)
     private HashMap<String, OpenHost> openHosts = new HashMap<>();
 
     public NetworkResult(@NonNull final String _networkId,
+                         final boolean _success,
                          @NonNull final Map<InetAddress, List<Port>> _openPortsMap) {
         networkId = _networkId;
+        success = _success;
         openHosts = new HashMap<>(_openPortsMap
                 .entrySet()
                 .stream()

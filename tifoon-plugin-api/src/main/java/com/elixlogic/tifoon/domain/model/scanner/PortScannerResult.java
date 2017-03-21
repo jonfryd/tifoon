@@ -5,12 +5,14 @@ import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.CascadeType;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Entity
@@ -28,7 +30,7 @@ public class PortScannerResult extends BaseEntity implements Serializable {
 
     private long beganAt;
     private long endedAt;
-    private boolean success;
+    private PortScannerStatus status;
 
     @NonNull
     @Embedded
@@ -39,6 +41,28 @@ public class PortScannerResult extends BaseEntity implements Serializable {
 
     public void setNetworkResults(@Nullable final List<NetworkResult> _networkResults) {
         networkResults = _networkResults != null ? _networkResults : Collections.unmodifiableList(new ArrayList<>());
+    }
+
+    @Nonnull
+    public static PortScannerStatus calculateStatus(@NonNull final List<NetworkResult> _networkResults) {
+        if (_networkResults.isEmpty()) {
+            return PortScannerStatus.DONE;
+        } else {
+            final long successCount = _networkResults
+                    .stream()
+                    .map(NetworkResult::isSuccess)
+                    .filter(Predicate.isEqual(true))
+                    .count();
+
+            if (successCount == 0) {
+                return PortScannerStatus.FAILURE;
+            } else if (successCount < _networkResults.size()) {
+                // partially done
+                return PortScannerStatus.INCOMPLETE;
+            } else {
+                return PortScannerStatus.DONE;
+            }
+        }
     }
 
     public long calcExecutionTimeMillis() {

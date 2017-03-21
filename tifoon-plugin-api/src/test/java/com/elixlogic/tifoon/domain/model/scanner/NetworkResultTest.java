@@ -25,6 +25,13 @@ public class NetworkResultTest {
     }
 
     @Test
+    public void testCanConstructWithSuccessFalse() {
+        final NetworkResult networkResult = new NetworkResult("test", false, Collections.EMPTY_MAP);
+
+        Java6Assertions.assertThat(networkResult.isSuccess()).as("object should be valid with success=false").isEqualTo(false);
+    }
+
+    @Test
     public void testJsonConverterWithOpenHosts() throws IOException {
         final Port port1 = Port.from(Protocol.TCP, 23);
         final Port port2 = Port.from(Protocol.TCP, 132);
@@ -34,7 +41,7 @@ public class NetworkResultTest {
         inetAddressPortMap.put(InetAddress.getByName("1.5.3.6"), Arrays.asList(port1, port2));
         inetAddressPortMap.put(InetAddress.getByName("35.74.52.5"), Collections.singletonList(port3));
 
-        final NetworkResult networkResult = new NetworkResult("test", inetAddressPortMap);
+        final NetworkResult networkResult = new NetworkResult("test", true, inetAddressPortMap);
 
         final HashMap<String, OpenHost> openHosts = networkResult.getOpenHosts();
 
@@ -45,7 +52,7 @@ public class NetworkResultTest {
 
     @Test
     public void testJsonConverterWithNoOpenHosts() throws IOException {
-        final NetworkResult networkResult = new NetworkResult("test", Collections.EMPTY_MAP);
+        final NetworkResult networkResult = new NetworkResult("test", true, Collections.EMPTY_MAP);
 
         final HashMap<String, OpenHost> openHosts = networkResult.getOpenHosts();
 
@@ -74,7 +81,7 @@ public class NetworkResultTest {
 
     @Test(expected = NullPointerException.class)
     public void throwsWhenSettingNullOpenHosts() throws IOException {
-        final NetworkResult networkResult = new NetworkResult("test", Collections.EMPTY_MAP);
+        final NetworkResult networkResult = new NetworkResult("test", true, Collections.EMPTY_MAP);
         networkResult.setOpenHosts(null);
     }
 }

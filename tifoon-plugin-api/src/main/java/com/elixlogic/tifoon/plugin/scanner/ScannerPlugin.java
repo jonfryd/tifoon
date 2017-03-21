@@ -9,6 +9,5 @@ import org.springframework.plugin.metadata.MetadataProvider;
 import javax.annotation.Nullable;
 
 public interface ScannerPlugin extends Plugin<String>, MetadataProvider {
-    @Nullable
     NetworkResult scan(PortScannerJob _request, ExecutorPlugin _executorPlugin);
 }

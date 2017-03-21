@@ -1,9 +1,6 @@
 package com.elixlogic.tifoon.domain.model.object;
 
-import com.elixlogic.tifoon.domain.model.scanner.NetworkResult;
-import com.elixlogic.tifoon.domain.model.scanner.Port;
-import com.elixlogic.tifoon.domain.model.scanner.PortScannerResult;
-import com.elixlogic.tifoon.domain.model.scanner.Protocol;
+import com.elixlogic.tifoon.domain.model.scanner.*;
 import org.assertj.core.api.Java6Assertions;
 import org.junit.Test;
 
@@ -17,9 +14,9 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 public class ReflectionObjectTreeAwareTest {
     @Test
     public void testTracePathFromUnrelatedObjectReturnsNull() {
-        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, true, Collections.EMPTY_LIST);
+        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST);
 
-        final NetworkResult unrelatedNetworkResult = new NetworkResult("network1", Collections.EMPTY_MAP);
+        final NetworkResult unrelatedNetworkResult = new NetworkResult("network1", true, Collections.EMPTY_MAP);
 
         final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(unrelatedNetworkResult);
 
@@ -28,7 +25,7 @@ public class ReflectionObjectTreeAwareTest {
 
     @Test
     public void testTracePathFromEntity() {
-        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, true, Collections.EMPTY_LIST);
+        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST);
 
         final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(portScannerResult.getNetworkResults());
 
@@ -43,13 +40,13 @@ public class ReflectionObjectTreeAwareTest {
         final Map<InetAddress, List<Port>> inetAddressPortMap = new HashMap<>();
         inetAddressPortMap.put(InetAddress.getByName("1.5.3.6"), Arrays.asList(port1, port2));
 
-        final NetworkResult networkResult1 = new NetworkResult("network1", Collections.EMPTY_MAP);
-        final NetworkResult networkResult2 = new NetworkResult("network2", Collections.EMPTY_MAP);
-        final NetworkResult networkResult3 = new NetworkResult("network3", inetAddressPortMap);
+        final NetworkResult networkResult1 = new NetworkResult("network1", true, Collections.EMPTY_MAP);
+        final NetworkResult networkResult2 = new NetworkResult("network2", true, Collections.EMPTY_MAP);
+        final NetworkResult networkResult3 = new NetworkResult("network3", true, inetAddressPortMap);
 
         final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2, networkResult3);
 
-        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, true, networkResults);
+        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, PortScannerStatus.DONE, networkResults);
 
         final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(networkResult3.getOpenHosts().get("1.5.3.6").getOpenPorts().values().stream().collect(Collectors.toList()).get(0).getProtocol());
 
@@ -69,12 +66,12 @@ public class ReflectionObjectTreeAwareTest {
         inetAddressPortMap.put(InetAddress.getByName("1.5.3.6"), Collections.singletonList(port1));
         inetAddressPortMap.put(InetAddress.getByName("3.88.7.5"), Collections.singletonList(port2));
 
-        final NetworkResult networkResult1 = new NetworkResult("network1", Collections.EMPTY_MAP);
-        final NetworkResult networkResult2 = new NetworkResult("network2", inetAddressPortMap);
+        final NetworkResult networkResult1 = new NetworkResult("network1", true, Collections.EMPTY_MAP);
+        final NetworkResult networkResult2 = new NetworkResult("network2", true, inetAddressPortMap);
 
         final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2);
 
-        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, true, networkResults);
+        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, PortScannerStatus.DONE, networkResults);
 
         final List<ObjectTreeAware> path = portScannerResult.traceObjectPath(networkResult2.getOpenHosts().get("3.88.7.5"));
 

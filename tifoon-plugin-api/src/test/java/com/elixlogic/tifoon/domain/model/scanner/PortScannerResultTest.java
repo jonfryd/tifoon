@@ -40,9 +40,9 @@ public class PortScannerResultTest {
 
     @Test
     public void returnsValidMapByNetworkId() {
-        final NetworkResult networkResult1 = new NetworkResult("network1", Collections.EMPTY_MAP);
-        final NetworkResult networkResult2 = new NetworkResult("network2", Collections.EMPTY_MAP);
-        final NetworkResult networkResult3 = new NetworkResult("network3", Collections.EMPTY_MAP);
+        final NetworkResult networkResult1 = new NetworkResult("network1", true, Collections.EMPTY_MAP);
+        final NetworkResult networkResult2 = new NetworkResult("network2", true, Collections.EMPTY_MAP);
+        final NetworkResult networkResult3 = new NetworkResult("network3", true, Collections.EMPTY_MAP);
 
         final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2, networkResult3);
 
@@ -54,6 +54,45 @@ public class PortScannerResultTest {
 
         assertThat(networkResultMap.size()).as("map size incorrect").isEqualTo(3);
         Assertions.assertThat(networkResultMap.values()).as("should contain network1, network2, network3").contains(networkResult1, networkResult2, networkResult3);
+    }
+
+    @Test
+    public void calculatesDoneStatusCorrectly() {
+        final NetworkResult networkResult1 = new NetworkResult("network1", true, Collections.EMPTY_MAP);
+        final NetworkResult networkResult2 = new NetworkResult("network2", true, Collections.EMPTY_MAP);
+        final NetworkResult networkResult3 = new NetworkResult("network3", true, Collections.EMPTY_MAP);
+
+        final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2, networkResult3);
+
+        portScannerResult.setStatus(PortScannerResult.calculateStatus(networkResults));
+
+        Assertions.assertThat(portScannerResult.getStatus()).as("should be DONE").isEqualTo(PortScannerStatus.DONE);
+    }
+
+    @Test
+    public void calculatesIncompleteStatusCorrectly() {
+        final NetworkResult networkResult1 = new NetworkResult("network1", true, Collections.EMPTY_MAP);
+        final NetworkResult networkResult2 = new NetworkResult("network2", false, Collections.EMPTY_MAP);
+        final NetworkResult networkResult3 = new NetworkResult("network3", true, Collections.EMPTY_MAP);
+
+        final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2, networkResult3);
+
+        portScannerResult.setStatus(PortScannerResult.calculateStatus(networkResults));
+
+        Assertions.assertThat(portScannerResult.getStatus()).as("should be INCOMPLETE").isEqualTo(PortScannerStatus.INCOMPLETE);
+    }
+
+    @Test
+    public void calculatesFailureStatusCorrectly() {
+        final NetworkResult networkResult1 = new NetworkResult("network1", false, Collections.EMPTY_MAP);
+        final NetworkResult networkResult2 = new NetworkResult("network2", false, Collections.EMPTY_MAP);
+        final NetworkResult networkResult3 = new NetworkResult("network3", false, Collections.EMPTY_MAP);
+
+        final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2, networkResult3);
+
+        portScannerResult.setStatus(PortScannerResult.calculateStatus(networkResults));
+
+        Assertions.assertThat(portScannerResult.getStatus()).as("should be FAILURE").isEqualTo(PortScannerStatus.FAILURE);
     }
 
     @Test(expected = UnsupportedOperationException.class)
