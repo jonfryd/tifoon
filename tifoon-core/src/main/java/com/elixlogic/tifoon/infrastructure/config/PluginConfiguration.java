@@ -1,11 +1,13 @@
 package com.elixlogic.tifoon.infrastructure.config;
 
+import com.elixlogic.tifoon.domain.model.configuration.Validator;
 import com.elixlogic.tifoon.plugin.io.IoPlugin;
 import com.elixlogic.tifoon.domain.model.core.CoreSettings;
 import com.elixlogic.tifoon.domain.model.plugin.CorePlugin;
 import com.elixlogic.tifoon.plugin.executer.ExecutorPlugin;
 import com.elixlogic.tifoon.plugin.scanner.ScannerPlugin;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +22,7 @@ import java.util.Map;
 @Configuration
 @EnablePluginRegistries({ExecutorPlugin.class, ScannerPlugin.class, IoPlugin.class})
 @Slf4j
-public class PluginConfiguration {
+public class PluginConfiguration implements Validator {
     private final CorePlugin<ScannerPlugin> scannerCorePlugin;
     private final CorePlugin<ExecutorPlugin> executorCorePlugin;
     private final CorePlugin<IoPlugin> saveCorePlugin;
@@ -57,21 +59,11 @@ public class PluginConfiguration {
         saveCorePlugin = new CorePlugin<>(ioSupports, _ioPluginRegistry.getPluginFor(ioSupports));
     }
 
-    public boolean verify() {
-        if (!scannerCorePlugin.isInitialized()) {
-            log.error(String.format("Scanner plugin which supports '%s' not initialized", scannerCorePlugin.getSupports()));
-            return false;
-        }
-        if (!executorCorePlugin.isInitialized()) {
-            log.error(String.format("Executor plugin which supports '%s' not initialized", executorCorePlugin.getSupports()));
-            return false;
-        }
-        if (!saveCorePlugin.isInitialized()) {
-            log.error(String.format("IO plugin which supports '%s' not initialized", saveCorePlugin.getSupports()));
-            return false;
-        }
-
-        return true;
+    @Override
+    public void validate() {
+        Assert.isTrue(scannerCorePlugin.isInitialized(),"Scanner plugin which supports '%s' not initialized", scannerCorePlugin.getSupports());
+        Assert.isTrue(executorCorePlugin.isInitialized(), "Executor plugin which supports '%s' not initialized", executorCorePlugin.getSupports());
+        Assert.isTrue(saveCorePlugin.isInitialized(), "IO plugin which supports '%s' not initialized", saveCorePlugin.getSupports());
     }
 
     @Bean
