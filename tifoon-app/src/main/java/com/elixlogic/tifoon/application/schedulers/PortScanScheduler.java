@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-@SuppressFBWarnings(value = "OBL_UNSATISFIED_OBLIGATION", justification = "https://github.com/findbugsproject/findbugs/issues/98")
 public class PortScanScheduler {
     private final RootConfiguration rootConfiguration;
     private final DtoMapper dtoMapper;
