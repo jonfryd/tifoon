@@ -5,8 +5,8 @@ tifoon:
   reporting:
     savePdf: true # save PDF report to local file system?
     saveHtml: true # save HTML report to local file system?
-    emailPdf: true # e-mail PDF report as attachment?
-    emailHtml: true # e-mail HTML report?
+    emailPdf: false # e-mail PDF report as attachment?
+    emailHtml: false # e-mail HTML report?
   mail:
     sender: tifoon@foobar.com # e-mail address of sender
     recipient: executive@foobar.com # e-mail address of recipient
