@@ -52,9 +52,9 @@ Also, one of the following is a prerequisite to perform any port scanning:
 
 From command line, Tifoon can be extracted from the ZIP archive and launched via three simple steps:
 
-    $ unzip tifoon-app-0.6-dist.zip
-    $ cd tifoon-app-0.6-dist/
-    $ java -jar tifoon-app-0.6-SNAPSHOT.jar
+    $ unzip tifoon-app-0.6.1-dist.zip
+    $ cd tifoon-app-0.6.1/
+    $ java -jar tifoon-app-0.6.1.jar
 
 With its "factory settings" the local host (IP address 127.0.0.1) is a complete TCP port scan is scheduled
 for every hour. For the second and later scans, the result is automatically checked ("diffed") against
