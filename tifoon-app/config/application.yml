@@ -2,13 +2,21 @@ tifoon:
   scanner:
     active: true # false -> dry-run mode
     toolName: nmap # nmap
+  reporting:
+    savePdf: true # save PDF report to local file system?
+    saveHtml: true # save HTML report to local file system?
+    emailPdf: true # e-mail PDF report as attachment?
+    emailHtml: true # e-mail HTML report?
+  mail:
+    sender: tifoon@foobar.com # e-mail address of sender
+    recipient: executive@foobar.com # e-mail address of recipient
   commandExecutor: process # docker, process
   saveFormat: yaml # json, yaml
   scanRateSeconds: 3600 # scan rate (in seconds)
   onlySaveReportOnChange: true # true -> only save if current scan differs from baseline
   dynamicBaselineMode: false # dynamically create a new baseline when a change is detected
   useInitialScanAsBaseline: true # true when seeding/boot-strapping new install, normally false
-  baselineFilename: scans/port_scanner_report_20170307_170306.yml
+  baselineFilename: scans/port_scanner_report_20170401_170045.yml
 
 logging:
   file: tifoon.log
@@ -18,3 +26,41 @@ logging:
     org.polyjdbc: WARN
     org.hibernate: WARN
     com.elixlogic: INFO
+
+spring:
+  mail:
+    host: 127.0.0.1
+
+#-------------------------------------------------------------------------------------------------
+#
+# Basic Spring Boot mail config for unauthenticated, unencrypted SMTP on port 25
+#
+#spring:
+#  mail:
+#    host: mymailserver.mylan
+#
+#-------------------------------------------------------------------------------------------------
+#
+# Untested mail config for gmail with TLS and authentication (http://stackoverflow.com/questions/31721298/spring-boot-1-2-5-release-sending-e-mail-via-gmail-smtp)
+#
+#spring:
+#  mail:
+#    host: smtp.gmail.com
+#    username: *****@gmail.com
+#    password: ****
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          ssl.enable: true
+#          socketFactory.port: 465
+#          socketFactory.class: javax.net.ssl.SSLSocketFactory
+#          socketFactory.fallback: false
+#-------------------------------------------------------------------------------------------------
+#
+# Dummy mail configuration (keeps Spring happy), if no mail sending is enabled
+#
+#spring:
+#  mail:
+#    host: 127.0.0.1
+#

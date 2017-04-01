@@ -5,9 +5,10 @@ import com.elixlogic.tifoon.domain.mapper.DtoMapper;
 import com.elixlogic.tifoon.domain.model.scanner.*;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiff;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiffDetails;
+import com.elixlogic.tifoon.domain.service.reporting.ReportingService;
 import com.elixlogic.tifoon.domain.service.scanner.*;
 import com.elixlogic.tifoon.infrastructure.jpa.repository.PortScannerResultRepository;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
+import javax.mail.MessagingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,7 @@ public class PortScanScheduler {
     private final PortScannerResultDiffService portScannerResultDiffService;
     private final PortScannerStatsService portScannerStatsService;
     private final PortScannerFileIOService portScannerFileIOService;
+    private final ReportingService reportingService;
 
     private boolean firstScan = true;
     @Nullable
@@ -40,7 +43,8 @@ public class PortScanScheduler {
                              final PortScannerResultRepository _portScannerResultRepository,
                              final PortScannerResultDiffService _portScannerResultDiffService,
                              final PortScannerStatsService _portScannerStatsService,
-                             final PortScannerFileIOService _portScannerFileIOService) {
+                             final PortScannerFileIOService _portScannerFileIOService,
+                             final ReportingService _reportingService) throws MessagingException {
         rootConfiguration = _rootConfiguration;
         dtoMapper = _dtoMapper;
         portScannerService = _portScannerService;
@@ -48,6 +52,7 @@ public class PortScanScheduler {
         portScannerResultDiffService = _portScannerResultDiffService;
         portScannerStatsService = _portScannerStatsService;
         portScannerFileIOService = _portScannerFileIOService;
+        reportingService = _reportingService;
 
         log.debug(_rootConfiguration.getAppSettings().toString());
         log.debug(_rootConfiguration.getCoreSettings().toString());
@@ -100,6 +105,16 @@ public class PortScanScheduler {
             if (saveReport) {
                 log.info("Saving report.");
                 portScannerFileIOService.savePortScannerResults("scans/port_scanner_report_", baselinePortScannerResult, portScannerResult, portScannerDiff, portScannerDiffDetails);
+
+                // save HTML and/or PDF
+                reportingService.report(
+                        rootConfiguration.getCoreSettings(),
+                        rootConfiguration.getAppSettings(),
+                        "scans/port_scanner_report_",
+                        portScannerJobs,
+                        portScannerResult,
+                        portScannerDiff,
+                        portScannerDiffDetails);
             }
 
             // clean-up step - remove scan from in-memory repository

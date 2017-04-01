@@ -6,10 +6,14 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Port extends ReflectionObjectTreeAware implements Serializable {
+    public static Comparator<Port> BY_PROTOCOL_THEN_PORT_NUMBER = Comparator.comparing(Port::getProtocol)
+            .thenComparing(Comparator.comparing(Port::getPortNumber));
+
     private Protocol protocol;
     private int portNumber;
 

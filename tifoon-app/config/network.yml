@@ -1,7 +1,17 @@
 network:
   targets:
-    - networkId: Localhost
+    - networkId: My office
       addresses:
         - 127.0.0.1
+        - 192.168.84.34
       ports:
-        - 0-65535 # full TCP scan
+        - 0-1023 # reserved ports TCP scan
+    - networkId: WWW servers on the interweb
+      addresses:
+        - www.dr.dk
+        - google.dk
+        - yahoo.com
+        - linkedin.com
+      ports:
+        - 80
+        - 443

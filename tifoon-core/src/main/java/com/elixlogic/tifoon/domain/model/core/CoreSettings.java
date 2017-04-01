@@ -14,6 +14,9 @@ public class CoreSettings implements Validator {
     private String commandExecutor;
     private String saveFormat;
 
+    private Mail mail;
+    private Reporting reporting;
+
     @Override
     public void validate() {
         Assert.notNull(scanner, "scanner cannot be null");
@@ -21,5 +24,10 @@ public class CoreSettings implements Validator {
         Assert.hasLength(saveFormat, "saveFormat must have length");
 
         scanner.validate();
+        reporting.validate();
+
+        if (reporting.isEmailHtml() || reporting.isEmailPdf()) {
+            mail.validate();
+        }
     }
 }

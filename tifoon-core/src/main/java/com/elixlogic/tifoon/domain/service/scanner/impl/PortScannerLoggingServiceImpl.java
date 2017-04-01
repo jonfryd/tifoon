@@ -5,10 +5,11 @@ import com.elixlogic.tifoon.domain.model.scanner.Port;
 import com.elixlogic.tifoon.domain.model.scanner.Protocol;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiffDetails;
 import com.elixlogic.tifoon.domain.service.scanner.PortScannerLoggingService;
-import com.elixlogic.tifoon.domain.service.scanner.WellKnownPortsLookupService;
+import com.elixlogic.tifoon.domain.service.reporting.WellKnownPortsLookupService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,27 +20,33 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PortScannerLoggingServiceImpl implements PortScannerLoggingService {
     private final WellKnownPortsLookupService wellKnownPortsLookupService;
+    private final ApplicationContext applicationContext;
 
     @Autowired
-    public PortScannerLoggingServiceImpl(final WellKnownPortsLookupService _wellKnownPortsLookupService) {
+    public PortScannerLoggingServiceImpl(final WellKnownPortsLookupService _wellKnownPortsLookupService,
+                                         final ApplicationContext _applicationContext) {
         wellKnownPortsLookupService = _wellKnownPortsLookupService;
+        applicationContext = _applicationContext;
     }
 
     @Override
     public void logDiffDetails(final PortScannerDiffDetails _portScannerDiffDetails) {
         final AtomicInteger changeGenerator = new AtomicInteger();
 
-        conditionallyLogCollection(changeGenerator, "New network ids", _portScannerDiffDetails.getNewNetworkIds());
-        conditionallyLogCollection(changeGenerator, "Removed network ids", _portScannerDiffDetails.getRemovedNetworkIds());
-        conditionallyLogCollection(changeGenerator, "Network ids with changes", _portScannerDiffDetails.getChangedNetworkIds());
+        conditionallyLogCollection(changeGenerator, getLabel("newNetworks"), _portScannerDiffDetails.getNewNetworkIds());
+        conditionallyLogCollection(changeGenerator, getLabel("removedNetworks"), _portScannerDiffDetails.getRemovedNetworkIds());
+        conditionallyLogCollection(changeGenerator, getLabel("changedNetworks"), _portScannerDiffDetails.getChangedNetworkIds());
 
-        conditionallyLogOpenHostsMap(changeGenerator, "New hosts with open ports discovered", _portScannerDiffDetails.getNewOpenHostsMap());
-        conditionallyLogOpenHostsMap(changeGenerator, "Hosts no longer with open ports", _portScannerDiffDetails.getRemovedOpenHostsMap());
-        conditionallyLogOpenHostsMap(changeGenerator, "Hosts with open port changes", _portScannerDiffDetails.getChangedOpenHostsMap());
+        conditionallyLogOpenHostsMap(changeGenerator, getLabel("newOpenHosts"), _portScannerDiffDetails.getNewOpenHostsMap());
+        conditionallyLogOpenHostsMap(changeGenerator, getLabel("removedOpenHosts"), _portScannerDiffDetails.getRemovedOpenHostsMap());
+        conditionallyLogOpenHostsMap(changeGenerator, getLabel("changedOpenHosts"), _portScannerDiffDetails.getChangedOpenHostsMap());
 
-        conditionallyLogOpenPortsTree(changeGenerator, "New open ports discovered", _portScannerDiffDetails.getNewOpenPortsTree());
-        conditionallyLogOpenPortsTree(changeGenerator, "Ports no longer open", _portScannerDiffDetails.getRemovedOpenPortsTree());
+        conditionallyLogOpenPortsTree(changeGenerator, getLabel("newOpenPorts"), _portScannerDiffDetails.getNewOpenPortsTree());
+        conditionallyLogOpenPortsTree(changeGenerator, getLabel("removedOpenPorts"), _portScannerDiffDetails.getRemovedOpenPortsTree());
+    }
 
+    private String getLabel(@NonNull final String _messagePropertySuffix) {
+        return applicationContext.getMessage("report.changes." + _messagePropertySuffix, null, Locale.ENGLISH);
     }
 
     private static void conditionallyLogCollection(@NonNull final AtomicInteger _generator,
@@ -81,11 +88,12 @@ public class PortScannerLoggingServiceImpl implements PortScannerLoggingService 
         }
     }
 
-    private List<String> decoratePortNumbersWithServiceNames(final Protocol _protocol, final List<Integer> _portNumbers) {
+    private List<String> decoratePortNumbersWithServiceNames(@NonNull final Protocol _protocol,
+                                                             @NonNull final List<Integer> _portNumbers) {
         final List<String> result = new ArrayList<>();
 
         for(Integer portNumber : _portNumbers) {
-            final Optional<List<IanaServiceEntry>> ianaServiceEntries = wellKnownPortsLookupService.getServiceByName(Port.from(_protocol, portNumber));
+            final Optional<List<IanaServiceEntry>> ianaServiceEntries = wellKnownPortsLookupService.getServices(Port.from(_protocol, portNumber));
 
             if (ianaServiceEntries.isPresent()) {
                 final String serviceNames = ianaServiceEntries.get().stream()

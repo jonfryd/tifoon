@@ -35,6 +35,10 @@ public class PortRange {
         return getLowPort().getPortNumber() == getHighPort().getPortNumber();
     }
 
+    public Protocol getProtocol() {
+        return lowPort.getProtocol(); // or highPort - doesn't matter
+    }
+
     @Nonnull
     public String toSingleOrIntervalString() {
         // is single?

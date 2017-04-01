@@ -1,4 +1,4 @@
-package com.elixlogic.tifoon.domain.model.app;
+package com.elixlogic.tifoon.domain.model.core;
 
 import com.elixlogic.tifoon.domain.model.configuration.Validator;
 import lombok.Data;
@@ -10,6 +10,7 @@ import org.springframework.util.Assert;
 @Data
 @NoArgsConstructor
 public class AppSettings implements Validator {
+    private int scanRateSeconds;
     private boolean onlySaveReportOnChange;
     private boolean useInitialScanAsBaseline;
     private boolean dynamicBaselineMode;
@@ -17,6 +18,7 @@ public class AppSettings implements Validator {
 
     @Override
     public void validate() {
+        Assert.isTrue(scanRateSeconds > 0, "scanRateSeconds must be > 0");
         Assert.hasLength(baselineFilename, "baselineFilename must have length");
     }
 }

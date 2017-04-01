@@ -4,6 +4,5 @@ public enum Protocol {
     TCP,
     UDP,
     SCTP,
-    IP,
-    All
+    IP
 }

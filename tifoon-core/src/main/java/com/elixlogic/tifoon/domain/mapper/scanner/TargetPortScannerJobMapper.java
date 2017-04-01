@@ -25,7 +25,7 @@ public class TargetPortScannerJobMapper extends AbstractConverter<Target, PortSc
     private PortRange convertStringToPortRange(@NonNull final String _stringRange) {
         final String[] tokens = _stringRange.split("-");
         Assert.isTrue(tokens.length >= 1 && tokens.length <= 2, "one or two tokens allowed");
-        final Protocol protocol = Protocol.All;
+        final Protocol protocol = Protocol.TCP;
 
         if (tokens.length == 1) {
             return PortRange.singular(protocol, Integer.parseInt(tokens[0]));

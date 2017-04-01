@@ -1,16 +1,17 @@
-package com.elixlogic.tifoon.domain.service.scanner.impl;
+package com.elixlogic.tifoon.domain.service.reporting.impl;
 
 import com.elixlogic.tifoon.domain.model.network.IanaServiceEntries;
 import com.elixlogic.tifoon.domain.model.network.IanaServiceEntry;
 import com.elixlogic.tifoon.domain.model.scanner.Port;
 import com.elixlogic.tifoon.domain.model.scanner.Protocol;
-import com.elixlogic.tifoon.domain.service.scanner.WellKnownPortsLookupService;
+import com.elixlogic.tifoon.domain.service.reporting.WellKnownPortsLookupService;
 import com.elixlogic.tifoon.infrastructure.config.PluginConfiguration;
 import com.elixlogic.tifoon.plugin.io.IoPlugin;
 import com.google.common.base.Preconditions;
 import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -40,7 +41,7 @@ public class WellKnownPortsLookupServiceImpl implements WellKnownPortsLookupServ
         portIanaServiceMap = initMapping(loadIanaServiceEntries());
     }
 
-    private Map<Port, List<IanaServiceEntry>> initMapping(final IanaServiceEntries _ianaServiceEntries) {
+    private Map<Port, List<IanaServiceEntry>> initMapping(@NonNull final IanaServiceEntries _ianaServiceEntries) {
         return _ianaServiceEntries.getIanaServiceEntries()
                 .stream()
                 .collect(Collectors.groupingBy(
@@ -88,7 +89,27 @@ public class WellKnownPortsLookupServiceImpl implements WellKnownPortsLookupServ
     }
 
     @Override
-    public Optional<List<IanaServiceEntry>> getServiceByName(final Port _port) {
+    public Optional<List<IanaServiceEntry>> getServices(@NonNull final Port _port) {
         return Optional.ofNullable(portIanaServiceMap.get(_port));
+    }
+
+    @Override
+    public String getFormattedServiceNames(@NonNull final Protocol _protocol,
+                                           final int _portNumber) {
+        final Optional<List<IanaServiceEntry>> ianaServiceEntries = getServices(Port.from(_protocol, _portNumber));
+
+        return ianaServiceEntries.map(_ianaServiceEntries -> _ianaServiceEntries.stream()
+                .map(IanaServiceEntry::getServiceName)
+                .collect(Collectors.joining(", ")))
+                .orElse("");
+    }
+
+    @Override
+    public String getSingleFormattedServiceDescription(@NonNull final Protocol _protocol,
+                                                       final int _portNumber) {
+        final Optional<List<IanaServiceEntry>> ianaServiceEntries = getServices(Port.from(_protocol, _portNumber));
+
+        return ianaServiceEntries.map(_ianaServiceEntries -> _ianaServiceEntries.iterator().next().getDescription())
+                .orElse("");
     }
 }
