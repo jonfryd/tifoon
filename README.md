@@ -17,6 +17,15 @@ in a concise, easy to read manner.
 
 Tifoon is fully functional in its present state. Additional features and convenience is coming soon, though.
 
+# Features
+
+* Scan a configurable list of networks via nmap TCP stealth port scanning
+* Runs scheduled scans with a fixed period using either a local nmap install or Docker (nmap image downloaded automatically)
+* Determine changes to a configurable baseline
+* Save scan results as YAML or JSON files
+* <NEW> HTML and PDF report generation - [sample PDF report](samples/sample_report.pdf)
+* <NEW> Report e-mailing (HTML mails with optional PDF attachment)
+
 # Building
 
 JDK 8 and Maven 3 is required to build Tifoon from command line.
@@ -43,9 +52,9 @@ Also, one of the following is a prerequisite to perform any port scanning:
 
 From command line, Tifoon can be extracted from the ZIP archive and launched via three simple steps:
 
-    $ unzip tifoon-app-0.5-dist.zip
-    $ cd tifoon-app-0.5-dist/
-    $ java -jar tifoon-app-0.5-SNAPSHOT.jar
+    $ unzip tifoon-app-0.6-dist.zip
+    $ cd tifoon-app-0.6-dist/
+    $ java -jar tifoon-app-0.6-SNAPSHOT.jar
 
 With its "factory settings" the local host (IP address 127.0.0.1) is a complete TCP port scan is scheduled
 for every hour. For the second and later scans, the result is automatically checked ("diffed") against
@@ -150,6 +159,8 @@ Tifoon stands on the shoulders of giants. The key libraries used are:
 * [Guava](https://github.com/google/guava)
 * [Lombok](https://projectlombok.org/)
 * [nmap4j](https://sourceforge.net/projects/nmap4j/)
+* [Thymeleaf](http://www.thymeleaf.org/)
+* [Flying Saucer](https://github.com/flyingsaucerproject/flyingsaucer)
 
 Check the `pom.xml` files for an exhaustive list.
 
@@ -176,7 +187,6 @@ Tifoon is still in its infancy, but I have several ideas for how this baby can g
 * Alternative scanner plugins, e.g. Robert David Graham's [masscan](https://github.com/robertdavidgraham/masscan) looks like an excellent addition
 * REST web application
 * A proper frontend (AngularJS)
-* PDF/HTML reporting (DynamicReports/JasperReports)
 
 # How to contribute
 
