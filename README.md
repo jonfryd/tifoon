@@ -23,7 +23,7 @@ Tifoon is fully functional in its present state. Additional features and conveni
 * Runs scheduled scans with a fixed period using either a local nmap install or Docker (nmap image downloaded automatically)
 * Determine changes to a configurable baseline
 * Save scan results as YAML or JSON files
-* <NEW> HTML and PDF report generation - [sample PDF report](samples/sample_report.pdf)
+* <NEW> [HTML](samples/sample_report.html) and [PDF](samples/sample_report.pdf) report generation
 * <NEW> Report e-mailing (HTML mails with optional PDF attachment)
 
 # Building
