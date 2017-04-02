@@ -90,7 +90,7 @@ Tifoon runs forever until stopped (CTRL + C) or killed. It might be a good idea 
 a Linux/UNIX `screen` so it runs in the background in a way that is detached from your terminal.
 
 TCP SYN stealth scanning is used when executing Tifoon with root/administrator privileges; unprivileged 
-execution results in the slower (sometimes much slower!) TCP connect scanning being used. 
+execution results TCP connect scanning being used, which generates more "noise" in log files.
 
 It is also possible to run the application directly with Maven's Exec plugin. From the root of the cloned
 GIT project:
