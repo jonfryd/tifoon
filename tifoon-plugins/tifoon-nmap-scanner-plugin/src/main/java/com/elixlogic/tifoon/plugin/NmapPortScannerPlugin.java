@@ -18,6 +18,7 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class NmapPortScannerPlugin extends AbstractScannerPlugin {
@@ -59,10 +60,13 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
                 .map(InetAddress::getHostAddress)
                 .collect(Collectors.toList());
 
-        final List<String> argumentsList = Lists.newArrayList(Optional.ofNullable(_additionalParameters).orElse(""),
-                "-oX", _scanResultFilename,
-                "-p", nmapPortRanges);
+        final List<String> additionalParameters = Stream.of(Optional.ofNullable(_additionalParameters).orElse("")
+                .split(" "))
+                .collect(Collectors.toList());
+
+        final List<String> argumentsList = Lists.newArrayList("-oX", _scanResultFilename, "-p", nmapPortRanges);
         argumentsList.addAll(targetHosts);
+        argumentsList.addAll(0, additionalParameters);
 
         return argumentsList.toArray(new String[argumentsList.size()]);
     }
