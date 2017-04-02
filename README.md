@@ -178,10 +178,11 @@ developers for free, making Java coding productive and a lot of fun.
 
 Tifoon is still in its infancy, but I have several ideas for how this baby can grow in the future:
 
+* Add ability to pass additional custom arguments to scanner (**DONE** in 0.7.0-SNAPSHOT)
+* Add "convenience launchers" for common operating systems
+* UDP and SCTP protocols scanning
 * Support for specifying ranges of hosts
 * Define pre-defined sets of "top ports" for fast scanning of the most critical services
-* UDP and SCTP protocols scanning
-* Add "convenience launchers" for common operating systems
 * IPv6 support
 * Banner grabbing and OS detection
 * Optionally save scans and diffs to a database instead of as local files (JPA mapping is done already)
