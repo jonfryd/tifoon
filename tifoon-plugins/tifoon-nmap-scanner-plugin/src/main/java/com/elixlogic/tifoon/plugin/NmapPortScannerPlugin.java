@@ -30,10 +30,11 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
 
     @Override
     public NetworkResult scan(@NonNull final PortScannerJob _request,
-                              @NonNull final ExecutorPlugin _executorPlugin) {
+                              @NonNull final ExecutorPlugin _executorPlugin,
+                              @Nullable final String _additionalParameters) {
         try {
             final String scanResultFilename = String.format("nmap_scan_result_%s.xml", UUID.randomUUID().toString());
-            final String[] commandWithArguments = buildNmapCommandWithArguments(_request, scanResultFilename);
+            final String[] commandWithArguments = buildNmapCommandWithArguments(_request, scanResultFilename, _additionalParameters);
             final byte result[] = _executorPlugin.dispatch("nmap", commandWithArguments, scanResultFilename);
 
             return mapXmlToPortScannerResult(_request.getNetworkId(), result);
@@ -46,7 +47,8 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
     }
 
     private String[] buildNmapCommandWithArguments(@NonNull final PortScannerJob _request,
-                                                   @NonNull final String _scanResultFilename) {
+                                                   @NonNull final String _scanResultFilename,
+                                                   @Nullable final String _additionalParameters) {
         final String nmapPortRanges = _request.getPortRanges()
                 .stream()
                 .map(PortRange::toSingleOrIntervalString)
@@ -57,7 +59,9 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
                 .map(InetAddress::getHostAddress)
                 .collect(Collectors.toList());
 
-        final List<String> argumentsList = Lists.newArrayList("-oX", _scanResultFilename, "-p", nmapPortRanges);
+        final List<String> argumentsList = Lists.newArrayList(Optional.ofNullable(_additionalParameters).orElse(""),
+                "-oX", _scanResultFilename,
+                "-p", nmapPortRanges);
         argumentsList.addAll(targetHosts);
 
         return argumentsList.toArray(new String[argumentsList.size()]);

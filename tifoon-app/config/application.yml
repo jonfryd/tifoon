@@ -2,6 +2,7 @@ tifoon:
   scanner:
     active: true # false -> dry-run mode
     toolName: nmap # nmap
+    additionalParameters: # additional custom parameters provided to the scanner (refer to nmap documentation for options)
   reporting:
     savePdf: true # save PDF report to local file system?
     saveHtml: true # save HTML report to local file system?

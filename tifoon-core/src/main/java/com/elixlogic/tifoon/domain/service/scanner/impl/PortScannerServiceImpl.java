@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,22 +31,23 @@ public class PortScannerServiceImpl implements PortScannerService {
         executorCorePlugin = _executorCorePlugin;
     }
 
-    private NetworkResult scanNetwork(@NonNull final PortScannerJob _request) {
+    private NetworkResult scanNetwork(@NonNull final PortScannerJob _request, @Nullable final String _additionalParameters) {
         Assert.isTrue(scannerCorePlugin.isInitialized(), "Scanner plugin must be initialized");
         Assert.isTrue(executorCorePlugin.isInitialized(), "Executor plugin must be initialized");
 
         log.info("Performing port scan against: " + _request.getNetworkId());
 
-        return scannerCorePlugin.getExtension().scan(_request, executorCorePlugin.getExtension());
+        return scannerCorePlugin.getExtension().scan(_request, executorCorePlugin.getExtension(), _additionalParameters);
     }
 
     @Override
-    public PortScannerResult scan(@NonNull final List<PortScannerJob> _request) {
+    public PortScannerResult scan(@NonNull final List<PortScannerJob> _request,
+                                  @Nullable final String _additionalParameters) {
         final long start = System.currentTimeMillis();
 
         final List<NetworkResult> networkResults = _request
                 .parallelStream()
-                .map(this::scanNetwork)
+                .map(nr -> scanNetwork(nr, _additionalParameters))
                 .collect(Collectors.toList());
 
         return PortScannerResult.builder()

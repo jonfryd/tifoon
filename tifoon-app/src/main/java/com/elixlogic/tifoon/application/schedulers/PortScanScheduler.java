@@ -74,7 +74,7 @@ public class PortScanScheduler {
             // For now it's complete overkill to use Spring Data JPA for the sole purpose of generating an ID, but
             // down the line my gut feeling is that it is worth the effort, since we can easily persist
             // scans to physical DBMS (MySQL, PostgreSQL, etc). JPA and JaVers are buddies, which is important, too.
-            final PortScannerResult portScannerResult = portScannerResultRepository.save(portScannerService.scan(portScannerJobs));
+            final PortScannerResult portScannerResult = portScannerResultRepository.save(portScannerService.scan(portScannerJobs, rootConfiguration.getCoreSettings().getScanner().getAdditionalParameters()));
 
             if (firstScan) {
                 baselinePortScannerResult = rootConfiguration.getAppSettings().isUseInitialScanAsBaseline() ?

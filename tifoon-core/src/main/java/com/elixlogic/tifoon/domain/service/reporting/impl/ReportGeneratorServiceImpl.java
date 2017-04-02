@@ -61,6 +61,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
         final Map<String, String> criticalApplicationSettings = new LinkedHashMap<>();
         criticalApplicationSettings.put("config.tifoon.scanner.active", String.valueOf(_coreSettings.getScanner().isActive()));
         criticalApplicationSettings.put("config.tifoon.scanner.toolName", _coreSettings.getScanner().getToolName());
+        criticalApplicationSettings.put("config.tifoon.scanner.additionalParameters", _coreSettings.getScanner().getAdditionalParameters());
         criticalApplicationSettings.put("config.tifoon.commandExecutor", _coreSettings.getCommandExecutor());
         criticalApplicationSettings.put("config.tifoon.scanRateSeconds", String.valueOf(_appSettings.getScanRateSeconds()));
         criticalApplicationSettings.put("config.tifoon.onlySaveReportOnChange", String.valueOf(_appSettings.isOnlySaveReportOnChange()));
