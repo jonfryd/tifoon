@@ -45,9 +45,9 @@ another directory elsewhere on your system and extract it there.
 Ensure you have some flavor of Java 8 Runtime Environment installed before proceeding. Oracle's JRE and
 OpenJDK have been tested on Windows, Linux and Mac OS X.
 
-Also, one of the following is a prerequisite to perform any port scanning:
+Also, either of the following is a prerequisite to perform any port scanning:
 
-1. Local install of nmap
+1. A local install of nmap
 2. A working local Docker installation (Tifoon will pull and use an nmap container image automatically)
 
 From command line, Tifoon can be extracted from the ZIP archive and launched via three simple steps:
