@@ -19,7 +19,7 @@ Tifoon is fully functional in its present state. Additional features and conveni
 
 # Features
 
-* Scan a configurable list of networks via nmap TCP stealth port scanning
+* Scan a configurable list of networks via nmap TCP SYN stealth port scanning (requires executing Tifoon with root/administrator privileges)
 * Runs periodic scans using either a local nmap install or Docker (nmap image downloaded automatically)
 * Determine exact changes compared to a configurable baseline
 * Save scan results as YAML or JSON files
