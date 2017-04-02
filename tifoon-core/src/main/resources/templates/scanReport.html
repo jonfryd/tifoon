@@ -91,6 +91,14 @@
             <td th:text="|#{report.summary.changesDetected}:|">Changes detected:</td>
             <td class="warn" th:class="${changesDetected} ? 'warn'" th:text="#{${changesDetected}}">Yes</td>
         </tr>
+        <tr>
+            <td th:text="|#{report.summary.startedBy}:|">Started by:</td>
+            <td th:text="${startedBy}">johndoe</td>
+        </tr>
+        <tr>
+            <td th:text="|#{report.summary.executedFrom}:|">Executed from:</td>
+            <td th:text="${executedFrom}">johndoe</td>
+        </tr>
     </table>
 </div>
 

@@ -23,6 +23,8 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 @Service
@@ -67,6 +69,8 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
         criticalApplicationSettings.put("config.tifoon.baselineFilename", _appSettings.getBaselineFilename());
 
         ctx.setVariable("applicationVersion", version);
+        ctx.setVariable("startedBy", System.getProperty("user.name"));
+        ctx.setVariable("executedFrom", getLocalMachineHostname());
         ctx.setVariable("scanStartTime", scanBeganAt);
         ctx.setVariable("scanEndTime", scanEndedAt);
         ctx.setVariable("scanStatus", _portScannerResult.getStatus());
@@ -78,6 +82,16 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
         ctx.setVariable("wellKnownPortsLookupService", wellKnownPortsLookupService);
 
         return templateEngine.process("scanReport", ctx);
+    }
+
+    private static String getLocalMachineHostname() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException _e) {
+            log.warn("Unable to retrieve local machine hostname", _e);
+
+            return "";
+        }
     }
 
     @Override
