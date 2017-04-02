@@ -19,9 +19,9 @@ Tifoon is fully functional in its present state. Additional features and conveni
 
 # Features
 
-* Scan a configurable list of networks via nmap TCP stealth port scanning
-* Runs scheduled scans with a fixed period using either a local nmap install or Docker (nmap image downloaded automatically)
-* Determine changes to a configurable baseline
+* Scan a configurable list of networks via nmap for open TCP ports
+* Runs periodic scans using either a local nmap install or Docker (nmap image downloaded automatically)
+* Determine exact changes compared to a configurable baseline
 * Save scan results as YAML or JSON files
 * **NEW**: [HTML](http://htmlpreview.github.com/?https://github.com/jonfryd/tifoon/blob/master/samples/sample_report.html) and [PDF](samples/sample_report.pdf) report generation
 * **NEW**: Report e-mailing (HTML mails with optional PDF attachment)
@@ -88,6 +88,9 @@ for auditing and debugging purposes. Sample output:
 
 Tifoon runs forever until stopped (CTRL + C) or killed. It might be a good idea to launch Tifoon within
 a Linux/UNIX `screen` so it runs in the background in a way that is detached from your terminal.
+
+TCP SYN stealth scanning is used when executing Tifoon with root/administrator privileges; unprivileged 
+execution results TCP connect scanning being used, which generates more "noise" in log files.
 
 It is also possible to run the application directly with Maven's Exec plugin. From the root of the cloned
 GIT project:
