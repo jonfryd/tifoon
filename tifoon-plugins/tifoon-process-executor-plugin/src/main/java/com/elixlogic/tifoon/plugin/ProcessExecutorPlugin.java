@@ -1,6 +1,7 @@
 package com.elixlogic.tifoon.plugin;
 
 import com.elixlogic.tifoon.plugin.executer.AbstractExecutorPlugin;
+import lombok.Cleanup;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -38,7 +39,7 @@ public class ProcessExecutorPlugin extends AbstractExecutorPlugin {
                     .collect(Collectors.joining(" ","[","]"));
             log.info("Executing process: " + formattedCommand);
 
-            final Process process = new ProcessBuilder(commandWithArguments).start();
+            @Cleanup("destroy") final Process process = new ProcessBuilder(commandWithArguments).start();
 
             if (process.waitFor(30, TimeUnit.MINUTES)) {
                 if (process.exitValue() == 0) {
