@@ -3,10 +3,25 @@
     <title>Tifoon Scan Report</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style>
+        .small { font-size: xx-small; }
+        .line { border-bottom: 1px solid black; }
+
+        #page-header {
+           display: inline;
+        }
+        #page-footer{
+           text-align: right;
+        }
+
+        div.nobreak {
+            page-break-inside: avoid;
+        }
+
         div.network {
             border: solid;
             border-width: 1px 1px 1px 1px;
             padding: 8px 8px 8px 8px;
+            page-break-inside: avoid;
         }
 
         h1.title { text-align: center; }
@@ -35,14 +50,15 @@
         tr th { text-align: left; }
 
         table.network {
+            -fs-table-paginate: paginate;
             border-style: solid;
-            border-color: #779;
-            border-collapse: collapse;
+            border-color: #DDE;
+            border-spacing: 0;
             border-width: 1px 1px 1px 1px;
         }
         th.network {
             background: #DEF;
-            border-color: #779;
+            border-color: #99B;
             border-style: solid;
             border-width: 1px 1px 1px 1px;
             padding: 4px 4px 4px 4px;
@@ -50,181 +66,231 @@
         }
 
         tr.network:nth-child(even) td {
-            border-color: #779;
+            border-color: #99B;
             border-style: solid;
             border-width: 1px 1px 1px 1px;
             background: #DDD;
             padding: 2px 2px 2px 2px;
         }
         tr.network:nth-child(odd) td {
-            border-color: #779;
+            border-color: #99B;
             border-style: solid;
             border-width: 1px 1px 1px 1px;
             padding: 2px 2px 2px 2px;
         }
+
+        @page {
+            size: A4;
+            background: white;
+
+            @top-center {
+                content: element(current);
+            }
+
+            @bottom-right {
+                content: element(footer);
+            }
+        }
+
+        .break { page-break-after: always; }
+
+        span.page:before { content: counter(page); }
+        span.pagecount:before { content: counter(pages); }
+        span.align-left { float: left; }
+        span.align-right { float: right; }
     </style>
 </head>
 <body style="font-family: Liberation Serif;">
 
-<h1 class="title">Tifoon Scan Report</h1>
-<h5 class="subtitle">Open Network Ports Monitoring (v0.6.0-SNAPSHOT)</h5>
-
 <div>
-    <h2>Summary</h2>
+    
 
-    <table>
-        <tr>
-            <td>Scan started at:</td>
-            <td>01 April 2017, 17:23:55</td>
-        </tr>
-        <tr>
-            <td>Scan ended at:</td>
-            <td>01 April 2017, 17:24:05</td>
-        </tr>
-        <tr>
-            <td>Scan status:</td>
-            <td>Complete</td>
-        </tr>
-        <tr>
-            <td>Changes detected:</td>
-            <td class="warn">Yes</td>
-        </tr>
-    </table>
-</div>
+    
 
-<div>
-    <h2>Configuration</h2>
+    <h1 class="title">Tifoon Scan Report</h1>
+    <h5 class="subtitle">Open Network Ports Monitoring (v0.7.0-SNAPSHOT)</h5>
 
-    <h3>Application Settings</h3>
+    <div>
+        <h2>Summary</h2>
 
-    <table>
-        <tr>
-            <th>Setting</th>
-            <th>Value</th>
-        </tr>
-        <tr>
-            <td>Scanner active:</td>
-            <td>true</td>
-        </tr>
-        <tr>
-            <td>Scanner tool name:</td>
-            <td>nmap</td>
-        </tr>
-        <tr>
-            <td>Command executor:</td>
-            <td>process</td>
-        </tr>
-        <tr>
-            <td>Scan rate (in seconds):</td>
-            <td>3600</td>
-        </tr>
-        <tr>
-            <td>Only save on changes:</td>
-            <td>true</td>
-        </tr>
-        <tr>
-            <td>Dynamic baseline mode enabled:</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Use initial scan as baseline:</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Baseline filename:</td>
-            <td>scans/port_scanner_report_20170401_170045.yml</td>
-        </tr>
-    </table>
+        <table>
+            <tr>
+                <td>Scan started at:</td>
+                <td>03 April 2017, 13:44:45</td>
+            </tr>
+            <tr>
+                <td>Scan ended at:</td>
+                <td>03 April 2017, 13:44:56</td>
+            </tr>
+            <tr>
+                <td>Scan status:</td>
+                <td>Complete</td>
+            </tr>
+            <tr>
+                <td>Changes detected:</td>
+                <td class="warn">Yes</td>
+            </tr>
+            <tr>
+                <td>Started by:</td>
+                <td>jon</td>
+            </tr>
+            <tr>
+                <td>Executed from:</td>
+                <td>imac.jonf</td>
+            </tr>
+        </table>
+    </div>
 
-    <h3>Networks Scanned</h3>
+    <div>
+        <h2>Configuration</h2>
 
-    <p>
-        <div class="network">
-            <h4 class="network">My office</h4>
+        <h3>Application Settings</h3>
 
-            <table class="network">
-                <tr>
-                    <th class="network">IP address</th>
-                    <th class="network">Host name</th>
-                </tr>
-                <tr class="network">
-                    <td>127.0.0.1</td>
-                    <td>localhost</td>
-                </tr>
-                <tr class="network">
-                    <td>192.168.84.34</td>
-                    <td>raspberrypi.jonf</td>
-                </tr>
-            </table>
-            <p></p>
-            <table class="network">
-                <tr>
-                    <th class="network">Protocol</th>
-                    <th class="network">Port range</th>
-                </tr>
-                <tr class="network">
-                    <td>TCP</td>
-                    <td>0-1023</td>
-                </tr>
-            </table>
-        </div>
-    </p>
+        <table>
+            <tr>
+                <th>Setting</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Scanner active:</td>
+                <td>true</td>
+            </tr>
+            <tr>
+                <td>Scanner tool name:</td>
+                <td>nmap</td>
+            </tr>
+            <tr>
+                <td>Additional custom parameters:</td>
+                <td>-T4</td>
+            </tr>
+            <tr>
+                <td>Command executor:</td>
+                <td>process</td>
+            </tr>
+            <tr>
+                <td>Scan rate (in seconds):</td>
+                <td>3600</td>
+            </tr>
+            <tr>
+                <td>Only save on changes:</td>
+                <td>true</td>
+            </tr>
+            <tr>
+                <td>Dynamic baseline mode enabled:</td>
+                <td>false</td>
+            </tr>
+            <tr>
+                <td>Use initial scan as baseline:</td>
+                <td>false</td>
+            </tr>
+            <tr>
+                <td>Baseline filename:</td>
+                <td>scans/port_scanner_report_20170403_125433.yml</td>
+            </tr>
+        </table>
 
-    <p>
-        <div class="network">
-            <h4 class="network">WWW servers on the interweb</h4>
+        <h3>Networks Scanned</h3>
 
-            <table class="network">
-                <tr>
-                    <th class="network">IP address</th>
-                    <th class="network">Host name</th>
-                </tr>
-                <tr class="network">
-                    <td>159.20.6.22</td>
-                    <td>www.dr.dk</td>
-                </tr>
-                <tr class="network">
-                    <td>172.217.18.131</td>
-                    <td>google.dk</td>
-                </tr>
-                <tr class="network">
-                    <td>98.138.253.109</td>
-                    <td>yahoo.com</td>
-                </tr>
-                <tr class="network">
-                    <td>108.174.10.10</td>
-                    <td>linkedin.com</td>
-                </tr>
-            </table>
-            <p></p>
-            <table class="network">
-                <tr>
-                    <th class="network">Protocol</th>
-                    <th class="network">Port range</th>
-                </tr>
-                <tr class="network">
-                    <td>TCP</td>
-                    <td>80</td>
-                </tr>
-                <tr class="network">
-                    <td>TCP</td>
-                    <td>443</td>
-                </tr>
-            </table>
-        </div>
-    </p>
-</div>
+        <p>
+            <div class="network">
+                <h4 class="network">My office</h4>
 
-<div>
-    <h2>Changes</h2>
+                <table class="network">
+                    <thead>
+                    <tr>
+                        <th class="network">IP address</th>
+                        <th class="network">Host name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="network">
+                        <td>127.0.0.1</td>
+                        <td>localhost</td>
+                    </tr>
+                    <tr class="network">
+                        <td>192.168.84.34</td>
+                        <td>raspberrypi.jonf</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p></p>
+                <table class="network">
+                    <thead>
+                    <tr>
+                        <th class="network">Protocol</th>
+                        <th class="network">Port range</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="network">
+                        <td>TCP</td>
+                        <td>0-1023</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </p>
 
-    <ol>
-        
-        
-        <li>
-            <p>
-                <span>Network ids with changes:</span>
-                <ol type="A">
+        <p>
+            <div class="network">
+                <h4 class="network">WWW servers on the interweb</h4>
+
+                <table class="network">
+                    <thead>
+                    <tr>
+                        <th class="network">IP address</th>
+                        <th class="network">Host name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="network">
+                        <td>159.20.6.22</td>
+                        <td>www.dr.dk</td>
+                    </tr>
+                    <tr class="network">
+                        <td>216.58.211.131</td>
+                        <td>google.dk</td>
+                    </tr>
+                    <tr class="network">
+                        <td>46.228.47.114</td>
+                        <td>www.yahoo.com</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p></p>
+                <table class="network">
+                    <thead>
+                    <tr>
+                        <th class="network">Protocol</th>
+                        <th class="network">Port range</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="network">
+                        <td>TCP</td>
+                        <td>80</td>
+                    </tr>
+                    <tr class="network">
+                        <td>TCP</td>
+                        <td>443</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </p>
+    </div>
+
+    <div>
+        <h2>Changes</h2>
+
+        <ol>
+            
+            
+            <li>
+                <p>
+                    <div class="nobreak">
+                        <span>Network ids with changes:</span>
+                        <ol type="A">
         <li>
             <b><span>My office</span></b>
         </li>
@@ -232,87 +298,104 @@
             <b><span>WWW servers on the interweb</span></b>
         </li>
     </ol>
-            </p>
-        </li>
-        <li>
-            <p>
-                <span>New hosts with open ports discovered:</span>
+                    </div>
+                </p>
+            </li>
+            <li>
                 <p>
+                    <div class="nobreak">
+                        <span>New hosts with open ports discovered:</span>
+                        <p>
         <table class="network">
-            <tr>
-                <th class="network">Network ID</th>
-                <th class="network">IP address</th>
-            </tr>
-            <tr class="network">
-                <td>WWW servers on the interweb</td>
-                <td>
-                    <p>
+            <thead>
+                <tr>
+                    <th class="network">Network ID</th>
+                    <th class="network">IP address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="network">
+                    <td>WWW servers on the interweb</td>
+                    <td>
                         <ul>
                             <li>
-                                <b><span>172.217.18.131</span></b>
+                                <b><span>159.20.6.22</span></b>
+                            </li>
+                            <li>
+                                <b><span>46.228.47.114</span></b>
                             </li>
                         </ul>
-                    </p>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </p>
-            </p>
-        </li>
-        <li>
-            <p>
-                <span>Hosts no longer with open ports:</span>
+                    </div>
+                </p>
+            </li>
+            <li>
                 <p>
+                    <div class="nobreak">
+                        <span>Hosts no longer with open ports:</span>
+                        <p>
         <table class="network">
-            <tr>
-                <th class="network">Network ID</th>
-                <th class="network">IP address</th>
-            </tr>
-            <tr class="network">
-                <td>WWW servers on the interweb</td>
-                <td>
-                    <p>
+            <thead>
+                <tr>
+                    <th class="network">Network ID</th>
+                    <th class="network">IP address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="network">
+                    <td>WWW servers on the interweb</td>
+                    <td>
                         <ul>
                             <li>
-                                <b><span>216.58.211.131</span></b>
+                                <b><span>159.20.6.6</span></b>
                             </li>
                         </ul>
-                    </p>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </p>
-            </p>
-        </li>
-        <li>
-            <p>
-                <span>Hosts with open port changes:</span>
+                    </div>
+                </p>
+            </li>
+            <li>
                 <p>
+                    <div class="nobreak">
+                        <span>Hosts with open port changes:</span>
+                        <p>
         <table class="network">
-            <tr>
-                <th class="network">Network ID</th>
-                <th class="network">IP address</th>
-            </tr>
-            <tr class="network">
-                <td>My office</td>
-                <td>
-                    <p>
+            <thead>
+                <tr>
+                    <th class="network">Network ID</th>
+                    <th class="network">IP address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="network">
+                    <td>My office</td>
+                    <td>
                         <ul>
                             <li>
                                 <b><span>127.0.0.1</span></b>
                             </li>
                         </ul>
-                    </p>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </p>
-            </p>
-        </li>
-        <li>
-            <p>
-                <span>New open ports discovered:</span>
+                    </div>
+                </p>
+            </li>
+            <li>
                 <p>
+                    <div class="nobreak">
+                        <span>New open ports discovered:</span>
+                        <p>
         <p>
             <div class="network">
                 <h3 class="network">My office</h3>
@@ -321,18 +404,154 @@
                     <h4 class="ip">IP: 127.0.0.1</h4>
 
                     <table class="network">
-                        <tr>
-                            <th class="network">Protocol</th>
-                            <th class="network">Port</th>
-                            <th class="network">Service name</th>
-                            <th class="network">Service description</th>
-                        </tr>
-                        
+                        <thead>
+                            <tr>
+                                <th class="network">Protocol</th>
+                                <th class="network">Port</th>
+                                <th class="network">Service name</th>
+                                <th class="network">Service description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                                <tr class="network">
+                                    <td>TCP</td>
+                                    <td>88</td>
+                                    <td>kerberos</td>
+                                    <td>Kerberos</td>
+                                </tr>
+                            
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+        </p>
+    </p>
+                    </div>
+                </p>
+            </li>
+            <li>
+                <p>
+                    <div class="nobreak">
+                        <span>Ports no longer open:</span>
+                        <p>
+        <p>
+            <div class="network">
+                <h3 class="network">My office</h3>
+
+                <p>
+                    <h4 class="ip">IP: 127.0.0.1</h4>
+
+                    <table class="network">
+                        <thead>
+                            <tr>
+                                <th class="network">Protocol</th>
+                                <th class="network">Port</th>
+                                <th class="network">Service name</th>
+                                <th class="network">Service description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                                <tr class="network">
+                                    <td>TCP</td>
+                                    <td>445</td>
+                                    <td>microsoft-ds</td>
+                                    <td>Microsoft-DS</td>
+                                </tr>
+                                <tr class="network">
+                                    <td>TCP</td>
+                                    <td>631</td>
+                                    <td>ipp</td>
+                                    <td>IPP (Internet Printing Protocol)</td>
+                                </tr>
+                            
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+        </p>
+    </p>
+                    </div>
+                </p>
+            </li>
+        </ol>
+    </div>
+
+    <div>
+        <h2>Open Ports</h2>
+
+        <p>
+            <div class="network">
+                <h3 class="network">My office</h3>
+
+                <table>
+                    <tr>
+                        <td>Scan completed:</td>
+                        <td>Yes</td>
+                    </tr>
+                </table>
+
+                <p>
+                    <h4 class="ip">IP: 192.168.84.34</h4>
+
+                    <table class="network">
+                        <thead>
+                            <tr>
+                                <th class="network">Protocol</th>
+                                <th class="network">Port</th>
+                                <th class="network">Service name</th>
+                                <th class="network">Service description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             <tr class="network">
                                 <td>TCP</td>
-                                <td>88</td>
-                                <td>kerberos</td>
-                                <td>Kerberos</td>
+                                <td>22</td>
+                                <td>ssh</td>
+                                <td>The Secure Shell (SSH) Protocol</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>25</td>
+                                <td>smtp</td>
+                                <td>Simple Mail Transfer</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>53</td>
+                                <td>domain</td>
+                                <td>Domain Name Server</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>80</td>
+                                <td>http, www, www-http</td>
+                                <td>World Wide Web HTTP</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>81</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>139</td>
+                                <td>netbios-ssn</td>
+                                <td>NETBIOS Session Service</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>143</td>
+                                <td>imap</td>
+                                <td>Internet Message Access Protocol</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>443</td>
+                                <td>https</td>
+                                <td>http protocol over TLS/SSL</td>
                             </tr>
                             <tr class="network">
                                 <td>TCP</td>
@@ -340,213 +559,155 @@
                                 <td>microsoft-ds</td>
                                 <td>Microsoft-DS</td>
                             </tr>
-                        
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>465</td>
+                                <td>urd</td>
+                                <td>URL Rendesvous Directory for SSM</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>548</td>
+                                <td>afpovertcp</td>
+                                <td>AFP over TCP</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>993</td>
+                                <td>imaps</td>
+                                <td>imap4 protocol over TLS/SSL</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </p>
+
+                <p>
+                    <h4 class="ip">IP: 127.0.0.1</h4>
+
+                    <table class="network">
+                        <thead>
+                            <tr>
+                                <th class="network">Protocol</th>
+                                <th class="network">Port</th>
+                                <th class="network">Service name</th>
+                                <th class="network">Service description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>88</td>
+                                <td>kerberos</td>
+                                <td>Kerberos</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </p>
             </div>
         </p>
-    </p>
-            </p>
-        </li>
-        
-    </ol>
+
+        <p>
+            <div class="network">
+                <h3 class="network">WWW servers on the interweb</h3>
+
+                <table>
+                    <tr>
+                        <td>Scan completed:</td>
+                        <td>Yes</td>
+                    </tr>
+                </table>
+
+                <p>
+                    <h4 class="ip">IP: 159.20.6.22</h4>
+
+                    <table class="network">
+                        <thead>
+                            <tr>
+                                <th class="network">Protocol</th>
+                                <th class="network">Port</th>
+                                <th class="network">Service name</th>
+                                <th class="network">Service description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>80</td>
+                                <td>http, www, www-http</td>
+                                <td>World Wide Web HTTP</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>443</td>
+                                <td>https</td>
+                                <td>http protocol over TLS/SSL</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </p>
+
+                <p>
+                    <h4 class="ip">IP: 216.58.211.131</h4>
+
+                    <table class="network">
+                        <thead>
+                            <tr>
+                                <th class="network">Protocol</th>
+                                <th class="network">Port</th>
+                                <th class="network">Service name</th>
+                                <th class="network">Service description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>80</td>
+                                <td>http, www, www-http</td>
+                                <td>World Wide Web HTTP</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>443</td>
+                                <td>https</td>
+                                <td>http protocol over TLS/SSL</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </p>
+
+                <p>
+                    <h4 class="ip">IP: 46.228.47.114</h4>
+
+                    <table class="network">
+                        <thead>
+                            <tr>
+                                <th class="network">Protocol</th>
+                                <th class="network">Port</th>
+                                <th class="network">Service name</th>
+                                <th class="network">Service description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>80</td>
+                                <td>http, www, www-http</td>
+                                <td>World Wide Web HTTP</td>
+                            </tr>
+                            <tr class="network">
+                                <td>TCP</td>
+                                <td>443</td>
+                                <td>https</td>
+                                <td>http protocol over TLS/SSL</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+        </p>
+    </div>
 </div>
 
-<div>
-    <h2>Open Ports</h2>
-
-    <p>
-        <div class="network">
-            <h3 class="network">My office</h3>
-
-            <table>
-                <tr>
-                    <td>Scan completed:</td>
-                    <td>Yes</td>
-                </tr>
-            </table>
-
-            <p>
-                <h4 class="ip">IP: 192.168.84.34</h4>
-
-                <table class="network">
-                    <tr>
-                        <th class="network">Protocol</th>
-                        <th class="network">Port</th>
-                        <th class="network">Service name</th>
-                        <th class="network">Service description</th>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>22</td>
-                        <td>ssh</td>
-                        <td>The Secure Shell (SSH) Protocol</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>25</td>
-                        <td>smtp</td>
-                        <td>Simple Mail Transfer</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>53</td>
-                        <td>domain</td>
-                        <td>Domain Name Server</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>80</td>
-                        <td>http, www, www-http</td>
-                        <td>World Wide Web HTTP</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>81</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>139</td>
-                        <td>netbios-ssn</td>
-                        <td>NETBIOS Session Service</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>143</td>
-                        <td>imap</td>
-                        <td>Internet Message Access Protocol</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>443</td>
-                        <td>https</td>
-                        <td>http protocol over TLS/SSL</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>445</td>
-                        <td>microsoft-ds</td>
-                        <td>Microsoft-DS</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>465</td>
-                        <td>urd</td>
-                        <td>URL Rendesvous Directory for SSM</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>548</td>
-                        <td>afpovertcp</td>
-                        <td>AFP over TCP</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>993</td>
-                        <td>imaps</td>
-                        <td>imap4 protocol over TLS/SSL</td>
-                    </tr>
-                </table>
-            </p>
-
-            <p>
-                <h4 class="ip">IP: 127.0.0.1</h4>
-
-                <table class="network">
-                    <tr>
-                        <th class="network">Protocol</th>
-                        <th class="network">Port</th>
-                        <th class="network">Service name</th>
-                        <th class="network">Service description</th>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>88</td>
-                        <td>kerberos</td>
-                        <td>Kerberos</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>445</td>
-                        <td>microsoft-ds</td>
-                        <td>Microsoft-DS</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>631</td>
-                        <td>ipp</td>
-                        <td>IPP (Internet Printing Protocol)</td>
-                    </tr>
-                </table>
-            </p>
-        </div>
-    </p>
-
-    <p>
-        <div class="network">
-            <h3 class="network">WWW servers on the interweb</h3>
-
-            <table>
-                <tr>
-                    <td>Scan completed:</td>
-                    <td>Yes</td>
-                </tr>
-            </table>
-
-            <p>
-                <h4 class="ip">IP: 159.20.6.22</h4>
-
-                <table class="network">
-                    <tr>
-                        <th class="network">Protocol</th>
-                        <th class="network">Port</th>
-                        <th class="network">Service name</th>
-                        <th class="network">Service description</th>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>80</td>
-                        <td>http, www, www-http</td>
-                        <td>World Wide Web HTTP</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>443</td>
-                        <td>https</td>
-                        <td>http protocol over TLS/SSL</td>
-                    </tr>
-                </table>
-            </p>
-
-            <p>
-                <h4 class="ip">IP: 172.217.18.131</h4>
-
-                <table class="network">
-                    <tr>
-                        <th class="network">Protocol</th>
-                        <th class="network">Port</th>
-                        <th class="network">Service name</th>
-                        <th class="network">Service description</th>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>80</td>
-                        <td>http, www, www-http</td>
-                        <td>World Wide Web HTTP</td>
-                    </tr>
-                    <tr class="network">
-                        <td>TCP</td>
-                        <td>443</td>
-                        <td>https</td>
-                        <td>http protocol over TLS/SSL</td>
-                    </tr>
-                </table>
-            </p>
-        </div>
-    </p>
-</div>
 
 </body>
 </html>
