@@ -3,7 +3,7 @@
 
 # Tifoon: Open Network Ports Monitoring
 
-This is an attempt to create an application in Java which can effectively monitor open ports in
+This is an attempt to create an application in Java which can effectively monitor and audit open ports in
 networks of host machines/devices by comparing consecutive scans against a known "good" baseline.
 
 Open services/ports is a significant security threat, which is why monitoring what ports are open and
