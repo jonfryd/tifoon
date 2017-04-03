@@ -10,8 +10,7 @@ network:
       addresses:
         - www.dr.dk
         - google.dk
-        - yahoo.com
-        - linkedin.com
+        - www.yahoo.com
       ports:
         - 80
         - 443
