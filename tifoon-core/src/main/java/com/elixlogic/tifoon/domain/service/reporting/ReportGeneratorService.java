@@ -11,7 +11,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public interface ReportGeneratorService {
-    String generateHtml(CoreSettings _coreSettings,
+    String generateHtml(boolean _includeHeaderAndFooter,
+                        CoreSettings _coreSettings,
                         AppSettings _appSettings,
                         List<PortScannerJob> _portScannerJobs,
                         PortScannerResult _portScannerResult,

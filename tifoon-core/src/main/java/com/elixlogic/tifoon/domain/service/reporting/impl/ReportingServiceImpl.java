@@ -53,13 +53,27 @@ public class ReportingServiceImpl implements ReportingService {
             return;
         }
 
-        final String html = reportGeneratorService.generateHtml(_coreSettings,
+        final String mailHtml = reportGeneratorService.generateHtml(false,
+                _coreSettings,
                 _appSettings,
                 _portScannerJobs,
                 _portScannerResult,
                 _portScannerDiff,
                 _portScannerDiffDetails);
-        final byte[] pdf = (reporting.isEmailPdf() || reporting.isSavePdf()) ? reportGeneratorService.generatePdf(html) : null;
+
+        byte[] pdf = null;
+
+        if (reporting.isEmailPdf() || reporting.isSavePdf()) {
+            final String pdfHtml = reportGeneratorService.generateHtml(true,
+                    _coreSettings,
+                    _appSettings,
+                    _portScannerJobs,
+                    _portScannerResult,
+                    _portScannerDiff,
+                    _portScannerDiffDetails);
+
+            pdf = reportGeneratorService.generatePdf(pdfHtml);
+        }
 
         final String formattedBeganAt = TimeHelper.formatTimestamp(_portScannerResult.getBeganAt());
 
@@ -67,7 +81,7 @@ public class ReportingServiceImpl implements ReportingService {
             final String filename = _pathAndBaseFilename.concat(formattedBeganAt).concat(".html");
 
             log.info("Saving HTML report: {}", filename);
-            reportFileIOService.saveFileAsUTF8(filename, html);
+            reportFileIOService.saveFileAsUTF8(filename, mailHtml);
         }
         if (reporting.isSavePdf() && pdf != null) {
             final String filename = _pathAndBaseFilename.concat(formattedBeganAt).concat(".pdf");
@@ -76,7 +90,7 @@ public class ReportingServiceImpl implements ReportingService {
             reportFileIOService.saveFile(filename, pdf);
         }
         if (reporting.isEmailHtml() || reporting.isEmailPdf()) {
-            final String body = reporting.isEmailHtml() ? html : "Please see attached Tifoon scan PDF report";
+            final String body = reporting.isEmailHtml() ? mailHtml : "Please see attached Tifoon scan PDF report";
             final String filename = reporting.isEmailPdf() ? "tifoon_scan_".concat(formattedBeganAt).concat(".pdf") : null;
 
             log.info("Sending e-mail...");

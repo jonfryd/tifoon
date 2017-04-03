@@ -10,22 +10,24 @@
 
     <p th:fragment="hostsTable (networkHostsMap)">
         <table class="network">
-            <tr>
-                <th class="network" th:text="#{header.networkId}">Network ID</th>
-                <th class="network" th:text="#{header.ipAddress}">IP address</th>
-            </tr>
-            <tr class="network" th:each="oh : ${networkHostsMap}">
-                <td th:text="${oh.key}">my network id</td>
-                <td>
-                    <p>
+            <thead>
+                <tr>
+                    <th class="network" th:text="#{header.networkId}">Network ID</th>
+                    <th class="network" th:text="#{header.ipAddress}">IP address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="network" th:each="oh : ${networkHostsMap}">
+                    <td th:text="${oh.key}">my network id</td>
+                    <td>
                         <ul>
                             <li th:each="ip : ${oh.value}">
                                 <b><span th:text="${ip}">1.2.3.4</span></b>
                             </li>
                         </ul>
-                    </p>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </p>
 
@@ -38,20 +40,24 @@
                     <h4 class="ip" th:text="|IP: ${oh.key}|">IP: 1.2.3.4</h4>
 
                     <table class="network">
-                        <tr>
-                            <th class="network" th:text="#{header.protocol}">Protocol</th>
-                            <th class="network" th:text="#{header.port}">Port</th>
-                            <th class="network" th:text="#{header.serviceName}">Service name</th>
-                            <th class="network" th:text="#{header.serviceDescription}">Service description</th>
-                        </tr>
-                        <tr class="network" th:each="op : ${oh.value.entrySet()}" th:remove="tag">
-                            <tr class="network" th:each="portNumber : ${op.value}">
-                                <td th:text="${op.key}">TCP</td>
-                                <td th:text="${portNumber}">80</td>
-                                <td th:text="${wellKnownPortsLookupService.getFormattedServiceNames(op.key, portNumber)}">www, http</td>
-                                <td th:text="${wellKnownPortsLookupService.getSingleFormattedServiceDescription(op.key, portNumber)}">World Wide Web</td>
+                        <thead>
+                            <tr>
+                                <th class="network" th:text="#{header.protocol}">Protocol</th>
+                                <th class="network" th:text="#{header.port}">Port</th>
+                                <th class="network" th:text="#{header.serviceName}">Service name</th>
+                                <th class="network" th:text="#{header.serviceDescription}">Service description</th>
                             </tr>
-                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="network" th:each="op : ${oh.value.entrySet()}" th:remove="tag">
+                                <tr class="network" th:each="portNumber : ${op.value}">
+                                    <td th:text="${op.key}">TCP</td>
+                                    <td th:text="${portNumber}">80</td>
+                                    <td th:text="${wellKnownPortsLookupService.getFormattedServiceNames(op.key, portNumber)}">www, http</td>
+                                    <td th:text="${wellKnownPortsLookupService.getSingleFormattedServiceDescription(op.key, portNumber)}">World Wide Web</td>
+                                </tr>
+                            </tr>
+                        </tbody>
                     </table>
                 </p>
             </div>

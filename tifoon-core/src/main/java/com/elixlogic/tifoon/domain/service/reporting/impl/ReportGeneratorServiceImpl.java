@@ -41,7 +41,8 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
     }
 
     @Override
-    public String generateHtml(@NonNull final CoreSettings _coreSettings,
+    public String generateHtml(final boolean _includeHeaderAndFooter,
+                               @NonNull final CoreSettings _coreSettings,
                                @NonNull final AppSettings _appSettings,
                                @NonNull final List<PortScannerJob> _portScannerJobs,
                                @NonNull final PortScannerResult _portScannerResult,
@@ -69,6 +70,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
         criticalApplicationSettings.put("config.tifoon.useInitialScanAsBaseline", String.valueOf(_appSettings.isUseInitialScanAsBaseline()));
         criticalApplicationSettings.put("config.tifoon.baselineFilename", _appSettings.getBaselineFilename());
 
+        ctx.setVariable("includeHeaderAndFooter", _includeHeaderAndFooter);
         ctx.setVariable("applicationVersion", version);
         ctx.setVariable("startedBy", System.getProperty("user.name"));
         ctx.setVariable("executedFrom", getLocalMachineHostname());

@@ -5,10 +5,25 @@
     <title>Tifoon Scan Report</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <style>
+        .small { font-size: xx-small; }
+        .line { border-bottom: 1px solid black; }
+
+        #page-header {
+           display: inline;
+        }
+        #page-footer{
+           text-align: right;
+        }
+
+        div.nobreak {
+            page-break-inside: avoid;
+        }
+
         div.network {
             border: solid;
             border-width: 1px 1px 1px 1px;
             padding: 8px 8px 8px 8px;
+            page-break-inside: avoid;
         }
 
         h1.title { text-align: center; }
@@ -37,14 +52,15 @@
         tr th { text-align: left; }
 
         table.network {
+            -fs-table-paginate: paginate;
             border-style: solid;
-            border-color: #779;
-            border-collapse: collapse;
+            border-color: #DDE;
+            border-spacing: 0;
             border-width: 1px 1px 1px 1px;
         }
         th.network {
             background: #DEF;
-            border-color: #779;
+            border-color: #99B;
             border-style: solid;
             border-width: 1px 1px 1px 1px;
             padding: 4px 4px 4px 4px;
@@ -52,193 +68,261 @@
         }
 
         tr.network:nth-child(even) td {
-            border-color: #779;
+            border-color: #99B;
             border-style: solid;
             border-width: 1px 1px 1px 1px;
             background: #DDD;
             padding: 2px 2px 2px 2px;
         }
         tr.network:nth-child(odd) td {
-            border-color: #779;
+            border-color: #99B;
             border-style: solid;
             border-width: 1px 1px 1px 1px;
             padding: 2px 2px 2px 2px;
         }
+
+        @page {
+            size: A4;
+            background: white;
+
+            @top-center {
+                content: element(current);
+            }
+
+            @bottom-right {
+                content: element(footer);
+            }
+        }
+
+        .break { page-break-after: always; }
+
+        span.page:before { content: counter(page); }
+        span.pagecount:before { content: counter(pages); }
+        span.align-left { float: left; }
+        span.align-right { float: right; }
     </style>
 </head>
 <body style="font-family: Liberation Serif;">
 
-<h1 class="title" th:text="#{report.title}">Tifoon Scan Report</h1>
-<h5 class="subtitle" th:text="#{report.subtitle(${applicationVersion})}">Open Network Ports Monitoring (v0.7.0)</h5>
-
 <div>
-    <h2 th:text="#{report.summary}">Summary</h2>
-
-    <table>
-        <tr>
-            <td th:text="|#{report.summary.scanStartedAt}:|">Scan started at:</td>
-            <td th:text="${#calendars.format(scanStartTime,'dd MMMM yyyy, HH:mm:ss')}">11 May 2016, 10:23:54</td>
-        </tr>
-        <tr>
-            <td th:text="|#{report.summary.scanEndedAt}:|">Scan ended at:</td>
-            <td th:text="${#calendars.format(scanEndTime,'dd MMMM yyyy, HH:mm:ss')}">11 May 2016, 10:25:04</td>
-        </tr>
-        <tr>
-            <td th:text="|#{report.summary.scanStatus}:|">Scan status:</td>
-            <td th:class="${scanStatus.name() == 'FAILURE'} ? 'error' : (${scanStatus.name() == 'INCOMPLETE'} ? 'warn')" th:text="#{${scanStatus}}">Complete</td>
-        </tr>
-        <tr>
-            <td th:text="|#{report.summary.changesDetected}:|">Changes detected:</td>
-            <td class="warn" th:class="${changesDetected} ? 'warn'" th:text="#{${changesDetected}}">Yes</td>
-        </tr>
-        <tr>
-            <td th:text="|#{report.summary.startedBy}:|">Started by:</td>
-            <td th:text="${startedBy}">johndoe</td>
-        </tr>
-        <tr>
-            <td th:text="|#{report.summary.executedFrom}:|">Executed from:</td>
-            <td th:text="${executedFrom}">johndoe</td>
-        </tr>
-    </table>
-</div>
-
-<div>
-    <h2 th:text="#{report.configuration}">Configuration</h2>
-
-    <h3 th:text="#{report.configuration.applicationSettings}">Application Settings</h3>
-
-    <table>
-        <tr>
-            <th th:text="#{header.setting}">Setting</th>
-            <th th:text="#{header.value}">Value</th>
-        </tr>
-        <tr th:each="as : ${applicationSettings}">
-            <td th:text="|#{${as.key}}:|">Key</td>
-            <td th:text="${as.value}">Some very long value</td>
-        </tr>
-    </table>
-
-    <h3 th:text="#{report.configuration.networksScanned}">Networks Scanned</h3>
-
-    <p th:each="psj,row : ${portScannerJobs}">
-        <div class="network">
-            <h4 class="network" th:text="${psj.networkId}">my network id</h4>
-
-            <table class="network">
-                <tr>
-                    <th class="network" th:text="#{header.ipAddress}">IP address</th>
-                    <th class="network" th:text="#{header.hostName}">Host name</th>
-                </tr>
-                <tr class="network" th:each="adr : ${psj.addresses}">
-                    <td th:text="${adr.hostAddress}">1.2.3.4</td>
-                    <td th:text="${adr.hostName}">myhost.dude.org</td>
-                </tr>
-            </table>
-            <p></p>
-            <table class="network">
-                <tr>
-                    <th class="network" th:text="#{header.protocol}">Protocol</th>
-                    <th class="network" th:text="#{header.portRange}">Port range</th>
-                </tr>
-                <tr class="network" th:each="pr : ${psj.portRanges}">
-                    <td th:text="${pr.protocol}">TCP</td>
-                    <td th:text="${pr.toSingleOrIntervalString()}">0-1023</td>
-                </tr>
-            </table>
+    <div style="position: running(current);" th:if="${includeHeaderAndFooter}">
+        <div id="page-header" class="small">
+            <span class="align-left">Tifoon Scan Report</span>
+            <span class="align-right" th:text="${#calendars.format(scanStartTime,'dd MMMM yyyy, HH:mm:ss')}">11 May 2016, 10:23:54</span>
+            <div class="line">&#160;</div>
         </div>
-    </p>
-</div>
+    </div>
 
-<div th:if="${changesDetected}">
-    <h2 th:text="#{report.changes}">Changes</h2>
+    <div style="position: running(footer);" th:if="${includeHeaderAndFooter}">
+        <div id="page-footer" class="small">
+            <div class="line">&#160;</div>
+            Page <span class="page"/> of <span class="pagecount"/>
+        </div>
+    </div>
 
-    <ol>
-        <li th:if="${not portScannerDiffDetails.newNetworkIds.empty}">
-            <p>
-                <span th:text="|#{report.changes.newNetworks}:|">New network ids:</span>
-                <p th:replace="changeFragments::networkList (${portScannerDiffDetails.newNetworkIds})">...</p>
-            </p>
-        </li>
-        <li th:if="${not portScannerDiffDetails.removedNetworkIds.empty}">
-            <p>
-                <span th:text="|#{report.changes.removedNetworks}:|">Removed network ids:</span>
-                <p th:replace="changeFragments::networkList (${portScannerDiffDetails.removedNetworkIds})">...</p>
-            </p>
-        </li>
-        <li th:if="${not portScannerDiffDetails.changedNetworkIds.empty}">
-            <p>
-                <span th:text="|#{report.changes.changedNetworks}:|">Network ids with changes:</span>
-                <p th:replace="changeFragments::networkList (${portScannerDiffDetails.changedNetworkIds})">...</p>
-            </p>
-        </li>
-        <li th:if="${not portScannerDiffDetails.newOpenHostsMap.empty}">
-            <p>
-                <span th:text="|#{report.changes.newOpenHosts}:|">New hosts with open ports discovered:</span>
-                <p th:replace="changeFragments::hostsTable (${portScannerDiffDetails.newOpenHostsMap})">...</p>
-            </p>
-        </li>
-        <li th:if="${not portScannerDiffDetails.removedOpenHostsMap.empty}">
-            <p>
-                <span th:text="|#{report.changes.removedOpenHosts}:|">Hosts no longer with open ports:</span>
-                <p th:replace="changeFragments::hostsTable (${portScannerDiffDetails.removedOpenHostsMap})">...</p>
-            </p>
-        </li>
-        <li th:if="${not portScannerDiffDetails.changedOpenHostsMap.empty}">
-            <p>
-                <span th:text="|#{report.changes.changedOpenHosts}:|">Hosts with open port changes:</span>
-                <p th:replace="changeFragments::hostsTable (${portScannerDiffDetails.changedOpenHostsMap})">...</p>
-            </p>
-        </li>
-        <li th:if="${not portScannerDiffDetails.newOpenPortsTree.empty}">
-            <p>
-                <span th:text="|#{report.changes.newOpenPorts}:|">New open ports discovered:</span>
-                <p th:replace="changeFragments::portsSection (${portScannerDiffDetails.newOpenPortsTree}, ${wellKnownPortsLookupService})">...</p>
-            </p>
-        </li>
-        <li th:if="${not portScannerDiffDetails.removedOpenPortsTree.empty}">
-            <p>
-                <span th:text="|#{report.changes.removedOpenPorts}:|">Ports no longer open:</span>
-                <p th:replace="changeFragments::portsSection (${portScannerDiffDetails.removedOpenPortsTree}, ${wellKnownPortsLookupService})">...</p>
-            </p>
-        </li>
-    </ol>
-</div>
+    <h1 class="title" th:text="#{report.title}">Tifoon Scan Report</h1>
+    <h5 class="subtitle" th:text="#{report.subtitle(${applicationVersion})}">Open Network Ports Monitoring (v0.7.0)</h5>
 
-<div>
-    <h2 th:text="#{report.openPorts}">Open Ports</h2>
+    <div>
+        <h2 th:text="#{report.summary}">Summary</h2>
 
-    <p th:each="nr : ${portScannerResult.networkResults}">
-        <div class="network">
-            <h3 class="network" th:text="${nr.networkId}">my network id</h3>
+        <table>
+            <tr>
+                <td th:text="|#{report.summary.scanStartedAt}:|">Scan started at:</td>
+                <td th:text="${#calendars.format(scanStartTime,'dd MMMM yyyy, HH:mm:ss')}">11 May 2016, 10:23:54</td>
+            </tr>
+            <tr>
+                <td th:text="|#{report.summary.scanEndedAt}:|">Scan ended at:</td>
+                <td th:text="${#calendars.format(scanEndTime,'dd MMMM yyyy, HH:mm:ss')}">11 May 2016, 10:25:04</td>
+            </tr>
+            <tr>
+                <td th:text="|#{report.summary.scanStatus}:|">Scan status:</td>
+                <td th:class="${scanStatus.name() == 'FAILURE'} ? 'error' : (${scanStatus.name() == 'INCOMPLETE'} ? 'warn')"
+                    th:text="#{${scanStatus}}">Complete
+                </td>
+            </tr>
+            <tr>
+                <td th:text="|#{report.summary.changesDetected}:|">Changes detected:</td>
+                <td class="warn" th:class="${changesDetected} ? 'warn'" th:text="#{${changesDetected}}">Yes</td>
+            </tr>
+            <tr>
+                <td th:text="|#{report.summary.startedBy}:|">Started by:</td>
+                <td th:text="${startedBy}">johndoe</td>
+            </tr>
+            <tr>
+                <td th:text="|#{report.summary.executedFrom}:|">Executed from:</td>
+                <td th:text="${executedFrom}">johndoe</td>
+            </tr>
+        </table>
+    </div>
 
-            <table>
-                <tr>
-                    <td th:text="|#{report.openPorts.networkScanCompleted}:|">Scan completed:</td>
-                    <td th:class="${not nr.success} ? 'warn'" th:text="#{${nr.success}}">Yes</td>
-                </tr>
-            </table>
+    <div>
+        <h2 th:text="#{report.configuration}">Configuration</h2>
 
-            <p th:each="oh : ${nr.openHosts}">
-                <h4 class="ip" th:text="|IP: ${oh.key}|">IP: 1.2.3.4</h4>
+        <h3 th:text="#{report.configuration.applicationSettings}">Application Settings</h3>
+
+        <table>
+            <tr>
+                <th th:text="#{header.setting}">Setting</th>
+                <th th:text="#{header.value}">Value</th>
+            </tr>
+            <tr th:each="as : ${applicationSettings}">
+                <td th:text="|#{${as.key}}:|">Key</td>
+                <td th:text="${as.value}">Some very long value</td>
+            </tr>
+        </table>
+
+        <h3 th:text="#{report.configuration.networksScanned}">Networks Scanned</h3>
+
+        <p th:each="psj,row : ${portScannerJobs}">
+            <div class="network">
+                <h4 class="network" th:text="${psj.networkId}">my network id</h4>
 
                 <table class="network">
+                    <thead>
+                    <tr>
+                        <th class="network" th:text="#{header.ipAddress}">IP address</th>
+                        <th class="network" th:text="#{header.hostName}">Host name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="network" th:each="adr : ${psj.addresses}">
+                        <td th:text="${adr.hostAddress}">1.2.3.4</td>
+                        <td th:text="${adr.hostName}">myhost.dude.org</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p></p>
+                <table class="network">
+                    <thead>
                     <tr>
                         <th class="network" th:text="#{header.protocol}">Protocol</th>
-                        <th class="network" th:text="#{header.port}">Port</th>
-                        <th class="network" th:text="#{header.serviceName}">Service name</th>
-                        <th class="network" th:text="#{header.serviceDescription}">Service description</th>
+                        <th class="network" th:text="#{header.portRange}">Port range</th>
                     </tr>
-                    <tr class="network" th:each="op : ${oh.value.openPortsSorted}">
-                        <td th:text="${op.protocol}">TCP</td>
-                        <td th:text="${op.portNumber}">80</td>
-                        <td th:text="${wellKnownPortsLookupService.getFormattedServiceNames(op.protocol, op.portNumber)}">www, http</td>
-                        <td th:text="${wellKnownPortsLookupService.getSingleFormattedServiceDescription(op.protocol, op.portNumber)}">World Wide Web</td>
+                    </thead>
+                    <tbody>
+                    <tr class="network" th:each="pr : ${psj.portRanges}">
+                        <td th:text="${pr.protocol}">TCP</td>
+                        <td th:text="${pr.toSingleOrIntervalString()}">0-1023</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </p>
+    </div>
+
+    <div th:if="${changesDetected}">
+        <h2 th:text="#{report.changes}">Changes</h2>
+
+        <ol>
+            <li th:if="${not portScannerDiffDetails.newNetworkIds.empty}">
+                <p>
+                    <div class="nobreak">
+                        <span th:text="|#{report.changes.newNetworks}:|">New network ids:</span>
+                        <p th:replace="changeFragments::networkList (${portScannerDiffDetails.newNetworkIds})">...</p>
+                    </div>
+                </p>
+            </li>
+            <li th:if="${not portScannerDiffDetails.removedNetworkIds.empty}">
+                <p>
+                    <div class="nobreak">
+                        <span th:text="|#{report.changes.removedNetworks}:|">Removed network ids:</span>
+                        <p th:replace="changeFragments::networkList (${portScannerDiffDetails.removedNetworkIds})">...</p>
+                    </div>
+                </p>
+            </li>
+            <li th:if="${not portScannerDiffDetails.changedNetworkIds.empty}">
+                <p>
+                    <div class="nobreak">
+                        <span th:text="|#{report.changes.changedNetworks}:|">Network ids with changes:</span>
+                        <p th:replace="changeFragments::networkList (${portScannerDiffDetails.changedNetworkIds})">...</p>
+                    </div>
+                </p>
+            </li>
+            <li th:if="${not portScannerDiffDetails.newOpenHostsMap.empty}">
+                <p>
+                    <div class="nobreak">
+                        <span th:text="|#{report.changes.newOpenHosts}:|">New hosts with open ports discovered:</span>
+                        <p th:replace="changeFragments::hostsTable (${portScannerDiffDetails.newOpenHostsMap})">...</p>
+                    </div>
+                </p>
+            </li>
+            <li th:if="${not portScannerDiffDetails.removedOpenHostsMap.empty}">
+                <p>
+                    <div class="nobreak">
+                        <span th:text="|#{report.changes.removedOpenHosts}:|">Hosts no longer with open ports:</span>
+                        <p th:replace="changeFragments::hostsTable (${portScannerDiffDetails.removedOpenHostsMap})">...</p>
+                    </div>
+                </p>
+            </li>
+            <li th:if="${not portScannerDiffDetails.changedOpenHostsMap.empty}">
+                <p>
+                    <div class="nobreak">
+                        <span th:text="|#{report.changes.changedOpenHosts}:|">Hosts with open port changes:</span>
+                        <p th:replace="changeFragments::hostsTable (${portScannerDiffDetails.changedOpenHostsMap})">...</p>
+                    </div>
+                </p>
+            </li>
+            <li th:if="${not portScannerDiffDetails.newOpenPortsTree.empty}">
+                <p>
+                    <div class="nobreak">
+                        <span th:text="|#{report.changes.newOpenPorts}:|">New open ports discovered:</span>
+                        <p th:replace="changeFragments::portsSection (${portScannerDiffDetails.newOpenPortsTree}, ${wellKnownPortsLookupService})">...</p>
+                    </div>
+                </p>
+            </li>
+            <li th:if="${not portScannerDiffDetails.removedOpenPortsTree.empty}">
+                <p>
+                    <div class="nobreak">
+                        <span th:text="|#{report.changes.removedOpenPorts}:|">Ports no longer open:</span>
+                        <p th:replace="changeFragments::portsSection (${portScannerDiffDetails.removedOpenPortsTree}, ${wellKnownPortsLookupService})">...</p>
+                    </div>
+                </p>
+            </li>
+        </ol>
+    </div>
+
+    <div>
+        <h2 th:text="#{report.openPorts}">Open Ports</h2>
+
+        <p th:each="nr : ${portScannerResult.networkResults}">
+            <div class="network">
+                <h3 class="network" th:text="${nr.networkId}">my network id</h3>
+
+                <table>
+                    <tr>
+                        <td th:text="|#{report.openPorts.networkScanCompleted}:|">Scan completed:</td>
+                        <td th:class="${not nr.success} ? 'warn'" th:text="#{${nr.success}}">Yes</td>
                     </tr>
                 </table>
-            </p>
-        </div>
-    </p>
+
+                <p th:each="oh : ${nr.openHosts}">
+                    <h4 class="ip" th:text="|IP: ${oh.key}|">IP: 1.2.3.4</h4>
+
+                    <table class="network">
+                        <thead>
+                            <tr>
+                                <th class="network" th:text="#{header.protocol}">Protocol</th>
+                                <th class="network" th:text="#{header.port}">Port</th>
+                                <th class="network" th:text="#{header.serviceName}">Service name</th>
+                                <th class="network" th:text="#{header.serviceDescription}">Service description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="network" th:each="op : ${oh.value.openPortsSorted}">
+                                <td th:text="${op.protocol}">TCP</td>
+                                <td th:text="${op.portNumber}">80</td>
+                                <td th:text="${wellKnownPortsLookupService.getFormattedServiceNames(op.protocol, op.portNumber)}">www, http</td>
+                                <td th:text="${wellKnownPortsLookupService.getSingleFormattedServiceDescription(op.protocol, op.portNumber)}">World Wide Web</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+        </p>
+    </div>
 </div>
+
 
 </body>
 </html>
