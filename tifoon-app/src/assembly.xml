@@ -22,6 +22,14 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>${basedir}/launchers</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>*.sh</include>
+                <include>*.bat</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${basedir}/plugins</directory>
             <outputDirectory>plugins</outputDirectory>
             <includes>
