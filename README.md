@@ -25,6 +25,7 @@ Tifoon is fully functional in its present state. Additional features and conveni
 * Save scan results as YAML or JSON files
 * **NEW**: [HTML](http://htmlpreview.github.com/?https://github.com/jonfryd/tifoon/blob/master/samples/sample_report.html) and [PDF](samples/sample_report.pdf) report generation
 * **NEW**: Report e-mailing (HTML mails with optional PDF attachment)
+* **NEW**: Optionally pass additional custom arguments to port scanner (e.g. '-sS --defeat-rst-ratelimit')
 
 # Building
 
@@ -179,8 +180,6 @@ developers for free, making Java coding productive and a lot of fun.
 
 Tifoon is still in its infancy, but I have several ideas for how this baby can grow in the future:
 
-* Add ability to pass additional custom arguments to scanner (**DONE** in 0.7.0-SNAPSHOT)
-* Add "convenience launchers" for common operating systems
 * UDP and SCTP protocols scanning
 * Support for specifying ranges of hosts
 * Define pre-defined sets of "top ports" for fast scanning of the most critical services
