@@ -57,9 +57,9 @@ From command line, Tifoon can be extracted from the ZIP archive and launched via
     $ cd tifoon-app-0.7.0/
     $ java -jar tifoon-app-0.7.0.jar
 
-With its "factory settings" the local host (IP address 127.0.0.1) is a complete TCP port scan is scheduled
-for every hour. For the second and later scans, the result is automatically checked ("diffed") against
-the initial scan for any changes compared to the baseline and the specific changes are reported.
+With Tifoon's factory network configuration the local host (IP address 127.0.0.1) is completely TCP
+scanned every hour. For the second and later scans, the result is automatically checked ("diffed")
+against the initial scan for any changes compared to the baseline and the specific changes are reported.
 
 This behaviour can, of course, be adjusted to include any number of networks and hosts as described in
 the configuration section below.
@@ -120,15 +120,20 @@ namely the name of the log file and log levels for various packages.
 
 ### `config/network.yml`
 
-This is list of networks and hosts to be monitored. Each network consists of an arbitrary number of hosts,
-and the set of ports to be scanned for every host in this network. Example:
+This is list of networks and hosts to be monitored. Each network consists of an arbitrary number of host
+addresses (i.e. DNS host names or IP addresses), and the set of ports to be scanned for every host in this
+network. Example:
 
+    - networkId: LAN
+      addresses:
+        - rasputin.mylan
+        - 192.168.0.2
       ports:
         - 20-25
         - 153
         - 900-999
 
-Results in all of TCP ports 20 to 25, 153 and 900 to 999 being scanned.
+Results in all of TCP ports 20 to 25, 153 and 900 to 999 being scanned on the hosts "rasputin.mylan" and 192.168.0.2.
 
 If a hostname (and not a IPv4 address) is provided for any host, the IPv4 address is resolved on startup
 by DNS lookup on startup (resolution is final and not redone on consecutive scan).
