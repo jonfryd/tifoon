@@ -56,7 +56,7 @@ From command line, Tifoon can be extracted from the ZIP archive and launched via
 
     $ unzip tifoon-app-0.8.0-dist.zip
     $ cd tifoon-app-0.8.0/
-    $ java -jar tifoon-app-0.8.0.jar
+    $ ./run_tifoon.sh
 
 With Tifoon's factory network configuration the local host (IP address 127.0.0.1) is completely TCP
 scanned every hour. For the second and later scans, the result is automatically checked ("diffed")
