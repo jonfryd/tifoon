@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <p th:fragment="networkJobs (portScannerJobs)" th:each="psj,row : ${portScannerJobs}">
+        <div class="network">
+            <h3 class="network" th:text="${psj.networkId}">my network id</h3>
+
+            <table class="network">
+                <thead>
+                    <tr>
+                        <th class="network" th:text="#{header.ipAddress}">IP address</th>
+                        <th class="network" th:text="#{header.hostName}">Host name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="network" th:each="adr : ${psj.hosts}">
+                        <td th:text="${adr.hostAddress}">1.2.3.4</td>
+                        <td th:text="${adr.hostName}">myhost.dude.org</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p></p>
+            <table class="network">
+                <thead>
+                    <tr>
+                        <th class="network" th:text="#{header.protocol}">Protocol</th>
+                        <th class="network" th:text="#{header.portRange}">Port range</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="network" th:each="pr : ${psj.portRanges}">
+                        <td th:text="${pr.protocol}">TCP</td>
+                        <td th:text="${pr.toSingleOrIntervalString()}">0-1023</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </p>
+</body>
+</html>

@@ -157,57 +157,55 @@
     </div>
 
     <div>
-        <h2 th:text="#{report.configuration}">Configuration</h2>
+        <p>
+            <h2 th:text="#{report.configuration}">Configuration</h2>
 
-        <h3 th:text="#{report.configuration.applicationSettings}">Application Settings</h3>
+            <h3 th:text="#{report.configuration.applicationSettings}">Application Settings</h3>
 
-        <table>
-            <tr>
-                <th th:text="#{header.setting}">Setting</th>
-                <th th:text="#{header.value}">Value</th>
-            </tr>
-            <tr th:each="as : ${applicationSettings}">
-                <td th:text="|#{${as.key}}:|">Key</td>
-                <td th:text="${as.value}">Some very long value</td>
-            </tr>
-        </table>
+            <table>
+                <tr>
+                    <th th:text="#{header.setting}">Setting</th>
+                    <th th:text="#{header.value}">Value</th>
+                </tr>
+                <tr th:each="as : ${applicationSettings}">
+                    <td th:text="|#{${as.key}}:|">Key</td>
+                    <td th:text="${as.value}">Some very long value</td>
+                </tr>
+            </table>
+        </p>
 
-        <h3 th:text="#{report.configuration.networksScanned}">Networks Scanned</h3>
+        <p>
+            <h3 th:text="#{report.configuration.networksScanned}">Networks Scanned</h3>
 
-        <p th:each="psj,row : ${portScannerJobs}">
-            <div class="network">
-                <h4 class="network" th:text="${psj.networkId}">my network id</h4>
+            <table>
+                <tr>
+                    <td th:text="|#{report.summary.hashAllJobs}:|">Hash of all jobs:</td>
+                    <td th:text="${portScannerResult.jobsHash}" th:class="${portScannerResult.jobsHash != baselinePortScannerResult.jobsHash} ? 'warn'">1fe3eac9</td>
+                </tr>
+            </table>
 
-                <table class="network">
-                    <thead>
-                    <tr>
-                        <th class="network" th:text="#{header.ipAddress}">IP address</th>
-                        <th class="network" th:text="#{header.hostName}">Host name</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr class="network" th:each="adr : ${psj.addresses}">
-                        <td th:text="${adr.hostAddress}">1.2.3.4</td>
-                        <td th:text="${adr.hostName}">myhost.dude.org</td>
-                    </tr>
-                    </tbody>
-                </table>
-                <p></p>
-                <table class="network">
-                    <thead>
-                    <tr>
-                        <th class="network" th:text="#{header.protocol}">Protocol</th>
-                        <th class="network" th:text="#{header.portRange}">Port range</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr class="network" th:each="pr : ${psj.portRanges}">
-                        <td th:text="${pr.protocol}">TCP</td>
-                        <td th:text="${pr.toSingleOrIntervalString()}">0-1023</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <p th:replace="summaryFragments::networkJobs (${portScannerResult.portScannerJobs})">...</p>
+        </p>
+
+        <p>
+            <h3 th:text="#{report.configuration.baselineNetworksScanned}">Baseline Networks Scanned</h3>
+
+            <table>
+                <tr>
+                    <td th:text="|#{report.summary.baselineScanStartedAt}:|">Baseline scan started at:</td>
+                    <td th:text="${#calendars.format(baselineScanStartTime,'dd MMMM yyyy, HH:mm:ss')}">10 May 2016, 15:41:12</td>
+                </tr>
+                <tr>
+                    <td th:text="|#{report.summary.baselineScanEndedAt}:|">Baseline scan ended at:</td>
+                    <td th:text="${#calendars.format(baselineScanEndTime,'dd MMMM yyyy, HH:mm:ss')}">10 May 2016, 15:42:53</td>
+                </tr>
+                <tr>
+                    <td th:text="|#{report.summary.hashAllJobs}:|">Hash of all jobs:</td>
+                    <td th:text="${baselinePortScannerResult.jobsHash}" th:class="${portScannerResult.jobsHash != baselinePortScannerResult.jobsHash} ? 'warn'">1fe3eac9</td>
+                </tr>
+            </table>
+
+            <p th:replace="summaryFragments::networkJobs (${baselinePortScannerResult.portScannerJobs})">...</p>
         </p>
     </div>
 

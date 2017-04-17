@@ -1,18 +1,31 @@
 package com.elixlogic.tifoon.domain.model.scanner;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.elixlogic.tifoon.domain.model.object.ReflectionObjectTreeAware;
+import lombok.*;
 
+import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.List;
 
+@Embeddable
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class PortScannerJob {
+public class PortScannerJob extends ReflectionObjectTreeAware implements Serializable {
     private String networkId;
-    private List<InetAddress> addresses;
-    private List<PortRange> portRanges;
+    private ArrayList<Host> hosts = new ArrayList<>();
+    private ArrayList<PortRange> portRanges = new ArrayList<>();
+    private String jobHash;
+
+    public PortScannerJob(@NonNull final String _networkId,
+                          @NonNull final List<Host> _hosts,
+                          @NonNull final List<PortRange> _portRanges) {
+        networkId = _networkId;
+        hosts = new ArrayList<>(_hosts);
+        portRanges = new ArrayList<>(_portRanges);
+        jobHash = Integer.toHexString(hashCode());
+    }
 }

@@ -2,7 +2,6 @@ package com.elixlogic.tifoon.domain.service.reporting.impl;
 
 import com.elixlogic.tifoon.domain.model.core.AppSettings;
 import com.elixlogic.tifoon.domain.model.core.CoreSettings;
-import com.elixlogic.tifoon.domain.model.scanner.PortScannerJob;
 import com.elixlogic.tifoon.domain.model.scanner.PortScannerResult;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiff;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiffDetails;
@@ -44,7 +43,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
     public String generateHtml(final boolean _includeHeaderAndFooter,
                                @NonNull final CoreSettings _coreSettings,
                                @NonNull final AppSettings _appSettings,
-                               @NonNull final List<PortScannerJob> _portScannerJobs,
+                               @NonNull final PortScannerResult _baselinePortScannerResult,
                                @NonNull final PortScannerResult _portScannerResult,
                                @NonNull final PortScannerDiff _portScannerDiff,
                                @NonNull final PortScannerDiffDetails _portScannerDiffDetails) {
@@ -56,6 +55,12 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
         final Calendar scanEndedAt = Calendar.getInstance();
         scanEndedAt.setTime(TimeHelper.toDate(_portScannerResult.getEndedAt()));
+
+        final Calendar baselineScanStartTime = Calendar.getInstance();
+        baselineScanStartTime.setTime(TimeHelper.toDate(_baselinePortScannerResult.getBeganAt()));
+
+        final Calendar baselineScanEndTime = Calendar.getInstance();
+        baselineScanEndTime.setTime(TimeHelper.toDate(_baselinePortScannerResult.getEndedAt()));
 
         final String version = Optional.ofNullable(getClass().getPackage().getImplementationVersion()).orElse("0.x.y");
 
@@ -79,7 +84,9 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
         ctx.setVariable("scanStatus", _portScannerResult.getStatus());
         ctx.setVariable("changesDetected", !_portScannerDiff.isUnchanged());
         ctx.setVariable("applicationSettings", criticalApplicationSettings);
-        ctx.setVariable("portScannerJobs", _portScannerJobs);
+        ctx.setVariable("baselinePortScannerResult", _baselinePortScannerResult);
+        ctx.setVariable("baselineScanStartTime", baselineScanStartTime);
+        ctx.setVariable("baselineScanEndTime", baselineScanEndTime);
         ctx.setVariable("portScannerDiffDetails", _portScannerDiffDetails);
         ctx.setVariable("portScannerResult", _portScannerResult);
         ctx.setVariable("wellKnownPortsLookupService", wellKnownPortsLookupService);
@@ -99,7 +106,7 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 
     @Override
     @Nullable
-    public byte[] generatePdf(final String _html) {
+    public byte[] generatePdf(@NonNull final String _html) {
         try {
             final ITextRenderer renderer = new ITextRenderer();
             final ITextFontResolver fontResolver = renderer.getFontResolver();

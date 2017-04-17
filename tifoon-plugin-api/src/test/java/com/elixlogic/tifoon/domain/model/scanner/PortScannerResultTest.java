@@ -64,7 +64,7 @@ public class PortScannerResultTest {
 
         final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2, networkResult3);
 
-        portScannerResult.setStatus(PortScannerResult.calculateStatus(networkResults));
+        portScannerResult.update();
 
         Assertions.assertThat(portScannerResult.getStatus()).as("should be DONE").isEqualTo(PortScannerStatus.DONE);
     }
@@ -76,8 +76,8 @@ public class PortScannerResultTest {
         final NetworkResult networkResult3 = new NetworkResult("network3", true, Collections.EMPTY_MAP);
 
         final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2, networkResult3);
-
-        portScannerResult.setStatus(PortScannerResult.calculateStatus(networkResults));
+        portScannerResult.setNetworkResults(networkResults);
+        portScannerResult.update();
 
         Assertions.assertThat(portScannerResult.getStatus()).as("should be INCOMPLETE").isEqualTo(PortScannerStatus.INCOMPLETE);
     }
@@ -89,8 +89,8 @@ public class PortScannerResultTest {
         final NetworkResult networkResult3 = new NetworkResult("network3", false, Collections.EMPTY_MAP);
 
         final List<NetworkResult> networkResults = Arrays.asList(networkResult1, networkResult2, networkResult3);
-
-        portScannerResult.setStatus(PortScannerResult.calculateStatus(networkResults));
+        portScannerResult.setNetworkResults(networkResults);
+        portScannerResult.update();
 
         Assertions.assertThat(portScannerResult.getStatus()).as("should be FAILURE").isEqualTo(PortScannerStatus.FAILURE);
     }

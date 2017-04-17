@@ -13,7 +13,7 @@ public interface ReportingService {
     void report(CoreSettings _coreSettings,
                 AppSettings _appSettings,
                 String _pathAndBaseFilename,
-                List<PortScannerJob> _portScannerJobs,
+                PortScannerResult _baselinePortScannerResult,
                 PortScannerResult _portScannerResult,
                 PortScannerDiff _portScannerDiff,
                 PortScannerDiffDetails _portScannerDiffDetails);

@@ -8,7 +8,6 @@ import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiffDetails;
 import com.elixlogic.tifoon.domain.service.reporting.ReportingService;
 import com.elixlogic.tifoon.domain.service.scanner.*;
 import com.elixlogic.tifoon.infrastructure.jpa.repository.PortScannerResultRepository;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -111,7 +110,7 @@ public class PortScanScheduler {
                         rootConfiguration.getCoreSettings(),
                         rootConfiguration.getAppSettings(),
                         "scans/port_scanner_report_",
-                        portScannerJobs,
+                        baselinePortScannerResult,
                         portScannerResult,
                         portScannerDiff,
                         portScannerDiffDetails);

@@ -19,7 +19,7 @@ public class PortScannerResultDiffServiceImplTest {
 
     @Test
     public void testSimplestPossibleNoChange() {
-        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST);
+        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST, "", Collections.EMPTY_LIST);
 
         final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult, portScannerResult);
 
@@ -40,7 +40,7 @@ public class PortScannerResultDiffServiceImplTest {
         final NetworkResult networkResult1 = new NetworkResult("test1", true, inetAddressPortMap);
         final NetworkResult networkResult2 = new NetworkResult("test2", true, Collections.EMPTY_MAP);
 
-        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, PortScannerStatus.DONE, Arrays.asList(networkResult1, networkResult2));
+        final PortScannerResult portScannerResult = new PortScannerResult(UUID.randomUUID().toString(), 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST, "", Arrays.asList(networkResult1, networkResult2));
 
         final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult, portScannerResult);
 
@@ -61,8 +61,8 @@ public class PortScannerResultDiffServiceImplTest {
         final NetworkResult networkResult1 = new NetworkResult("test1", true, inetAddressPortMap);
         final NetworkResult networkResult2 = new NetworkResult("test2", true, Collections.EMPTY_MAP);
 
-        final PortScannerResult portScannerResult1 = new PortScannerResult("1", 0, 0, PortScannerStatus.DONE, Arrays.asList(networkResult1, networkResult2));
-        final PortScannerResult portScannerResult2 = new PortScannerResult("2", 0, 0, PortScannerStatus.DONE, Arrays.asList(networkResult2));
+        final PortScannerResult portScannerResult1 = new PortScannerResult("1", 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST, "", Arrays.asList(networkResult1, networkResult2));
+        final PortScannerResult portScannerResult2 = new PortScannerResult("2", 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST, "", Arrays.asList(networkResult2));
 
         final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult1, portScannerResult2);
 
@@ -94,8 +94,8 @@ public class PortScannerResultDiffServiceImplTest {
         final NetworkResult networkResult1 = new NetworkResult("test", true, inetAddressPortMap1);
         final NetworkResult networkResult2 = new NetworkResult("test", true, inetAddressPortMap2);
 
-        final PortScannerResult portScannerResult1 = new PortScannerResult("1", 0, 0, PortScannerStatus.DONE, Collections.singletonList(networkResult1));
-        final PortScannerResult portScannerResult2 = new PortScannerResult("2", 0, 0, PortScannerStatus.DONE, Collections.singletonList(networkResult2));
+        final PortScannerResult portScannerResult1 = new PortScannerResult("1", 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST, "", Collections.singletonList(networkResult1));
+        final PortScannerResult portScannerResult2 = new PortScannerResult("2", 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST, "", Collections.singletonList(networkResult2));
 
         final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult1, portScannerResult2);
 
@@ -164,8 +164,8 @@ public class PortScannerResultDiffServiceImplTest {
         final NetworkResult networkResult1 = new NetworkResult("test", true, inetAddressPortMap1);
         final NetworkResult networkResult2 = new NetworkResult("test", true, inetAddressPortMap2);
 
-        final PortScannerResult portScannerResult1 = new PortScannerResult("1", 0, 0, PortScannerStatus.DONE, Collections.singletonList(networkResult1));
-        final PortScannerResult portScannerResult2 = new PortScannerResult("2", 0, 0, PortScannerStatus.DONE, Collections.singletonList(networkResult2));
+        final PortScannerResult portScannerResult1 = new PortScannerResult("1", 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST, "", Collections.singletonList(networkResult1));
+        final PortScannerResult portScannerResult2 = new PortScannerResult("2", 0, 0, PortScannerStatus.DONE, Collections.EMPTY_LIST, "", Collections.singletonList(networkResult2));
 
         final PortScannerDiff portScannerDiff = portScannerResultDiffService.diff(portScannerResult1, portScannerResult2);
 

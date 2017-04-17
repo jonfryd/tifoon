@@ -1,20 +1,19 @@
 package com.elixlogic.tifoon.domain.model.scanner;
 
-import lombok.AccessLevel;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import com.elixlogic.tifoon.domain.model.object.ReflectionObjectTreeAware;
+import lombok.*;
 import org.springframework.util.Assert;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 
-@Value
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE, staticName = "from")
-public class PortRange {
-    @Nonnull
-    private final Port lowPort;
-    @Nonnull
-    private final Port highPort;
+@Data
+@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE, staticName = "from")
+public class PortRange extends ReflectionObjectTreeAware implements Serializable {
+    private Port lowPort;
+    private Port highPort;
 
     @Nonnull
     public static PortRange from(@NonNull final Protocol _protocol,

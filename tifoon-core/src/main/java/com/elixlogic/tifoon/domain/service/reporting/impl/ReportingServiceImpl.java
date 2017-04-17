@@ -2,9 +2,7 @@ package com.elixlogic.tifoon.domain.service.reporting.impl;
 
 import com.elixlogic.tifoon.domain.model.core.AppSettings;
 import com.elixlogic.tifoon.domain.model.core.CoreSettings;
-import com.elixlogic.tifoon.domain.model.core.Mail;
 import com.elixlogic.tifoon.domain.model.core.Reporting;
-import com.elixlogic.tifoon.domain.model.scanner.PortScannerJob;
 import com.elixlogic.tifoon.domain.model.scanner.PortScannerResult;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiff;
 import com.elixlogic.tifoon.domain.model.scanner.diff.PortScannerDiffDetails;
@@ -40,7 +38,7 @@ public class ReportingServiceImpl implements ReportingService {
     public void report(@NonNull final CoreSettings _coreSettings,
                        @NonNull final AppSettings _appSettings,
                        @NonNull final String _pathAndBaseFilename,
-                       @NonNull final List<PortScannerJob> _portScannerJobs,
+                       @NonNull final PortScannerResult _baselinePortScannerResult,
                        @NonNull final PortScannerResult _portScannerResult,
                        @NonNull final PortScannerDiff _portScannerDiff,
                        @NonNull final PortScannerDiffDetails _portScannerDiffDetails) {
@@ -56,7 +54,7 @@ public class ReportingServiceImpl implements ReportingService {
         final String mailHtml = reportGeneratorService.generateHtml(false,
                 _coreSettings,
                 _appSettings,
-                _portScannerJobs,
+                _baselinePortScannerResult,
                 _portScannerResult,
                 _portScannerDiff,
                 _portScannerDiffDetails);
@@ -67,7 +65,7 @@ public class ReportingServiceImpl implements ReportingService {
             final String pdfHtml = reportGeneratorService.generateHtml(true,
                     _coreSettings,
                     _appSettings,
-                    _portScannerJobs,
+                    _baselinePortScannerResult,
                     _portScannerResult,
                     _portScannerDiff,
                     _portScannerDiffDetails);

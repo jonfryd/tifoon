@@ -37,32 +37,53 @@ public class PortScannerResult extends BaseEntity implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
     @Cascade(CascadeType.ALL)
+    private List<PortScannerJob> portScannerJobs = Collections.unmodifiableList(new ArrayList<>());
+
+    private String jobsHash;
+
+    @NonNull
+    @Embedded
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @Cascade(CascadeType.ALL)
     private List<NetworkResult> networkResults = Collections.unmodifiableList(new ArrayList<>());
+
+    public void setPortScannerJobs(@Nullable final List<PortScannerJob> _portScannerJobs) {
+        portScannerJobs = _portScannerJobs != null ? _portScannerJobs : Collections.unmodifiableList(new ArrayList<>());
+    }
+
+    private void updateJobsHash() {
+        setJobsHash(Integer.toHexString(portScannerJobs.hashCode()));
+    }
 
     public void setNetworkResults(@Nullable final List<NetworkResult> _networkResults) {
         networkResults = _networkResults != null ? _networkResults : Collections.unmodifiableList(new ArrayList<>());
     }
 
-    @Nonnull
-    public static PortScannerStatus calculateStatus(@NonNull final List<NetworkResult> _networkResults) {
-        if (_networkResults.isEmpty()) {
-            return PortScannerStatus.DONE;
+    private void updateStatus() {
+        if (networkResults.isEmpty()) {
+            setStatus(PortScannerStatus.DONE);
         } else {
-            final long successCount = _networkResults
+            final long successCount = networkResults
                     .stream()
                     .map(NetworkResult::isSuccess)
                     .filter(Predicate.isEqual(true))
                     .count();
 
             if (successCount == 0) {
-                return PortScannerStatus.FAILURE;
-            } else if (successCount < _networkResults.size()) {
+                setStatus(PortScannerStatus.FAILURE);
+            } else if (successCount < networkResults.size()) {
                 // partially done
-                return PortScannerStatus.INCOMPLETE;
+                setStatus(PortScannerStatus.INCOMPLETE);
             } else {
-                return PortScannerStatus.DONE;
+                setStatus(PortScannerStatus.DONE);
             }
         }
+    }
+
+    public void update() {
+        updateJobsHash();
+        updateStatus();
     }
 
     public long calcExecutionTimeMillis() {

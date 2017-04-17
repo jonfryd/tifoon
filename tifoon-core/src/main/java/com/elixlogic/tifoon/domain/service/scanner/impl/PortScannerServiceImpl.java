@@ -50,11 +50,14 @@ public class PortScannerServiceImpl implements PortScannerService {
                 .map(nr -> scanNetwork(nr, _additionalParameters))
                 .collect(Collectors.toList());
 
-        return PortScannerResult.builder()
+        final PortScannerResult portScannerResult = PortScannerResult.builder()
                 .beganAt(start)
                 .endedAt(System.currentTimeMillis())
+                .portScannerJobs(_request)
                 .networkResults(networkResults)
-                .status(PortScannerResult.calculateStatus(networkResults))
                 .build();
+        portScannerResult.update(); // update jobsHash and status
+
+        return portScannerResult;
     }
 }

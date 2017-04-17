@@ -38,7 +38,7 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
             final String[] commandWithArguments = buildNmapCommandWithArguments(_request, scanResultFilename, _additionalParameters);
             final byte result[] = _executorPlugin.dispatch("nmap", commandWithArguments, scanResultFilename);
 
-            return mapXmlToPortScannerResult(_request.getNetworkId(), result);
+            return mapXmlToPortScannerResult(_request, result);
         }
         catch (Exception _e) {
             log.error("Error running nmap", _e);
@@ -55,9 +55,9 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
                 .map(PortRange::toSingleOrIntervalString)
                 .collect(Collectors.joining(","));
 
-        final List<String> targetHosts = _request.getAddresses()
+        final List<String> targetHosts = _request.getHosts()
                 .stream()
-                .map(InetAddress::getHostAddress)
+                .map(com.elixlogic.tifoon.domain.model.scanner.Host::getHostAddress)
                 .collect(Collectors.toList());
 
         final List<String> additionalParameters = Stream.of(Optional.ofNullable(_additionalParameters).orElse("")
@@ -71,10 +71,10 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
         return argumentsList.toArray(new String[argumentsList.size()]);
     }
 
-    private NetworkResult mapXmlToPortScannerResult(@NonNull final String _description,
+    private NetworkResult mapXmlToPortScannerResult(@NonNull final PortScannerJob _request,
                                                     @Nullable final byte[] _result) {
         if (_result == null) {
-            return new NetworkResult(_description, false, Collections.EMPTY_MAP);
+            return new NetworkResult(_request.getNetworkId(), false, Collections.EMPTY_MAP);
         }
 
         final Map<InetAddress, List<Port>> openPortsMap = Maps.newHashMap();
@@ -105,7 +105,7 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
             }
         }
 
-        return new NetworkResult(_description, true, openPortsMap);
+        return new NetworkResult(_request.getNetworkId(), true, openPortsMap);
     }
 
     private Protocol mapProtocol(@NonNull final String _protocol) {

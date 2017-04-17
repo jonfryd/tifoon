@@ -1,6 +1,7 @@
 package com.elixlogic.tifoon.domain.mapper.scanner;
 
 import com.elixlogic.tifoon.domain.model.network.Target;
+import com.elixlogic.tifoon.domain.model.scanner.Host;
 import com.elixlogic.tifoon.domain.model.scanner.Protocol;
 import com.elixlogic.tifoon.domain.model.scanner.PortRange;
 import com.elixlogic.tifoon.domain.model.scanner.PortScannerJob;
@@ -8,6 +9,7 @@ import lombok.NonNull;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.internal.util.Assert;
 
+import java.net.InetAddress;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,8 +20,12 @@ public class TargetPortScannerJobMapper extends AbstractConverter<Target, PortSc
                 .stream()
                 .map(this::convertStringToPortRange)
                 .collect(Collectors.toList());
+        final List<Host> hostnames = _target.getAddresses()
+                .stream()
+                .map(adr -> new Host(adr.getHostName(), adr.getHostAddress()))
+                .collect(Collectors.toList());
 
-        return new PortScannerJob(_target.getNetworkId(), _target.getAddresses(), portRanges);
+        return new PortScannerJob(_target.getNetworkId(), hostnames, portRanges);
     }
 
     private PortRange convertStringToPortRange(@NonNull final String _stringRange) {
