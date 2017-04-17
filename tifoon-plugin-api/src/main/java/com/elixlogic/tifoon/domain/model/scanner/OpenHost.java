@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class OpenHost extends ReflectionObjectTreeAware implements Serializable {
     private Map<Integer, Port> openPorts;
 
-    public List<Port> getOpenPortsSorted() {
+    public List<Port> toSortedOpenPorts() {
         return openPorts.values()
                 .stream()
                 .sorted(Port.BY_PROTOCOL_THEN_PORT_NUMBER)

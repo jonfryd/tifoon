@@ -307,7 +307,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="network" th:each="op : ${oh.value.openPortsSorted}">
+                            <tr class="network" th:each="op : ${oh.value.toSortedOpenPorts()}">
                                 <td th:text="${op.protocol}">TCP</td>
                                 <td th:text="${op.portNumber}">80</td>
                                 <td th:text="${wellKnownPortsLookupService.getFormattedServiceNames(op.protocol, op.portNumber)}">www, http</td>
