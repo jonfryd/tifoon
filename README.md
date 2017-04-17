@@ -180,17 +180,17 @@ developers for free, making Java coding productive and a lot of fun.
 
 Tifoon is still in its infancy, but I have several ideas for how this baby can grow in the future:
 
+* Report when the input network configuration has changed (via a hash)  (**DONE** in 0.8.0-SNAPSHOT)
 * UDP and SCTP protocols scanning
 * Support for specifying ranges of hosts
 * Define pre-defined sets of "top ports" for fast scanning of the most critical services
 * IPv6 support
 * Banner grabbing and OS detection
 * Optionally save scans and diffs to a database instead of as local files (JPA mapping is done already)
-* Report when the input network configuration has changed (via a hash)
 * Add the option of defining sets of ports which can be easily referred to in scan targets
 * Alternative scanner plugins, e.g. Robert David Graham's [masscan](https://github.com/robertdavidgraham/masscan) looks like an excellent addition
 * REST web application
-* A proper frontend (AngularJS)
+* A proper frontend (AngularJS?)
 
 # How to contribute
 
