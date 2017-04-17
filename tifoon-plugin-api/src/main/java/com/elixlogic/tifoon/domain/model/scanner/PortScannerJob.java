@@ -12,7 +12,6 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor
 public class PortScannerJob extends ReflectionObjectTreeAware implements Serializable {
     private String networkId;
     private ArrayList<Host> hosts = new ArrayList<>();
