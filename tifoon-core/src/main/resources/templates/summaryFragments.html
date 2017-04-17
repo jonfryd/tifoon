@@ -30,7 +30,7 @@
                 </thead>
                 <tbody>
                     <tr class="network" th:each="pr : ${psj.portRanges}">
-                        <td th:text="${pr.protocol}">TCP</td>
+                        <td th:text="${pr.toProtocol()}">TCP</td>
                         <td th:text="${pr.toSingleOrIntervalString()}">0-1023</td>
                     </tr>
                 </tbody>

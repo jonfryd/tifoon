@@ -1,6 +1,7 @@
 package com.elixlogic.tifoon.domain.model.scanner;
 
 import com.elixlogic.tifoon.domain.model.object.ReflectionObjectTreeAware;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.util.Assert;
 
@@ -30,11 +31,12 @@ public class PortRange extends ReflectionObjectTreeAware implements Serializable
         return from(Port.from(_protocol, _portNumber), Port.from(_protocol, _portNumber));
     }
 
+    @JsonIgnore
     public boolean isSinglePort() {
         return getLowPort().getPortNumber() == getHighPort().getPortNumber();
     }
 
-    public Protocol getProtocol() {
+    public Protocol toProtocol() {
         return lowPort.getProtocol(); // or highPort - doesn't matter
     }
 
