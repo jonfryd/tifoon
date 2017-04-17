@@ -23,9 +23,10 @@ Tifoon is fully functional in its present state. Additional features and conveni
 * Runs periodic scans using either a local nmap install or Docker (nmap image downloaded automatically)
 * Determine exact changes compared to a configurable baseline
 * Save scan results as YAML or JSON files
-* **NEW**: [HTML](http://htmlpreview.github.com/?https://github.com/jonfryd/tifoon/blob/master/samples/sample_report.html) and [PDF](samples/sample_report.pdf) report generation
-* **NEW**: Report e-mailing (HTML mails with optional PDF attachment)
-* **NEW**: Optionally pass additional custom arguments to port scanner (e.g. '-sS --defeat-rst-ratelimit')
+* [HTML](http://htmlpreview.github.com/?https://github.com/jonfryd/tifoon/blob/master/samples/sample_report.html) and [PDF](samples/sample_report.pdf) report generation
+* Report e-mailing (HTML mails with optional PDF attachment)
+* Optionally pass additional custom arguments to port scanner (e.g. '-sS --defeat-rst-ratelimit')
+* **NEW**: Report when the input network configuration has changed (via a hash)
 
 # Building
 
@@ -185,7 +186,6 @@ developers for free, making Java coding productive and a lot of fun.
 
 Tifoon is still in its infancy, but I have several ideas for how this baby can grow in the future:
 
-* Report when the input network configuration has changed (via a hash)  (**DONE** in 0.8.0-SNAPSHOT)
 * UDP and SCTP protocols scanning
 * Support for specifying ranges of hosts
 * Define pre-defined sets of "top ports" for fast scanning of the most critical services
