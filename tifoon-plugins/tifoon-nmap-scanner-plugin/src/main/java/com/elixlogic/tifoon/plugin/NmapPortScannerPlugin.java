@@ -129,7 +129,7 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
 
         if (!unsupportedScanTypes.isEmpty()) {
             // warn about running non-root, since these scan types require root access on Unixes
-            log.error("Unsupported scan type(s) specified: {}", unsupportedScanTypes.toString());
+            throw new IllegalArgumentException(String.format("Unsupported scan type(s) specified: %s", unsupportedScanTypes.toString()));
         }
 
         // identify root scan techniques
