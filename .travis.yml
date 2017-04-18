@@ -5,6 +5,6 @@ deploy:
   provider: releases
   api_key:
     secure: zvUGHDqDpCJ6Ock85E47wqNZ1VHA9/bt+MHkwNrJWDXhREPU/OuYQJqkDY0sbNaPCkdfhLekx+Oa+2SWzRxYibnfySzxcS2ZRQ12UoyEMNhy9++KmpPJdbj1Kys5umc/riu+UDxsKNuYHKY4f8jeDc/6jk96rgOSP8oOOJcQtQ/PBny1K+XCjFsdpykg1XoSJ+YHXWz3lVafaVbfWVoPhTilvOStfze2GzILfoXeN0k+7knJrFCLPRI5kuewFMSTu/UD9toyvYs4Wbr3+ZWDATnrJtvt3CsMnw1m0mSvwDDy2eCZ+u/wi0/zdKZWPVnQHIYaW6lw2FhLlzaSj8Hl+Tr7DyoNC3GWbu5tBWxOAnAJHwtGrOj1C/v4nlpxpufibxzQgRKxGq8YXVN4+X3zbiYLFgjEmx0TFIcifJ6Ug9IUlLKyfhDak1MhLmK+Ws5F2MvXvFAtbTr/6flycyK2pp3g86lGKIqtBnYk6+GRFOl4/1cHkLTlVbhz8nDNEQS6F38mxRpZ88GlM007yYDDQL69LBcaD7z0T6dKhaUthPHNguRofoqbefOwhoRacE1DhQqULFVqr3uIIcpZFSe5dFshG74GvtIGl1zNXz4nalQax8wUlTBh8PSqql8JN9pfZ3OspVZCPAdJbS9xf8/UJCj3zkS8xWA+v8A5Xafbzik=
-  file: tifoon-app/target/tifoon-app-1.0.0-dist.zip
+  file: tifoon-app/target/tifoon-app-1.1.0-dist.zip
   on:
     tags: true
