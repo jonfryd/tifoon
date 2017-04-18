@@ -7,9 +7,9 @@ import static org.assertj.core.api.Assertions.*;
 public class PortTest {
     @Test
     public void canConstructValidPort() {
-        final Port port = Port.from(Protocol.IP, 23);
+        final Port port = Port.from(Protocol.SCTP, 23);
 
-        assertThat(port.getProtocol()).as("protocol").isEqualTo(Protocol.IP);
+        assertThat(port.getProtocol()).as("protocol").isEqualTo(Protocol.SCTP);
         assertThat(port.getPortNumber()).as("portNumber").isEqualTo(23);
     }
 
