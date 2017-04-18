@@ -4,7 +4,7 @@
 
     <groupId>com.elixlogic</groupId>
     <artifactId>tifoon-parent</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>Tifoon - Open Network Ports Monitoring</name>
