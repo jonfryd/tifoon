@@ -5,6 +5,7 @@ import lombok.Cleanup;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -67,5 +68,10 @@ public class ProcessExecutorPlugin extends AbstractExecutorPlugin {
         }
 
         return null;
+    }
+
+    @Override
+    public String getRunningAsUsername() {
+        return SystemUtils.USER_NAME;
     }
 }

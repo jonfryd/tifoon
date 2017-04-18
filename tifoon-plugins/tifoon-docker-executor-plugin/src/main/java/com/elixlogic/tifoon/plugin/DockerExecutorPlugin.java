@@ -94,6 +94,11 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
         return data;
     }
 
+    @Override
+    public String getRunningAsUsername() {
+        return "root"; // TODO: query container (e.g. "whoami"), assume root for now, which is the Docker default
+    }
+
     private DockerImage findDockerImage(@NonNull final String _command) {
         Assert.hasLength(_command, "command must have length");
 
@@ -175,7 +180,6 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
                     .exec(new ExecStartResultCallback() {
                         @Override
                         public void onNext(Frame frame) {
-                            //System.out.print(new String(frame.getPayload()));
                             super.onNext(frame);
                         }
                     })
