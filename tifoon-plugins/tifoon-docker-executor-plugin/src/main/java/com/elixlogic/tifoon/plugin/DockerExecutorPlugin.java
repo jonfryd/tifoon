@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -41,9 +42,11 @@ public class DockerExecutorPlugin extends AbstractExecutorPlugin {
     public DockerExecutorPlugin(final DockerConfiguration _dockerConfiguration) {
         dockerConfiguration = _dockerConfiguration;
 
-        customDockerImageMap = dockerConfiguration.getCustomImages()
-                .stream()
-                .collect(Collectors.toMap(DockerImage::getCommand, i -> i));
+        customDockerImageMap = dockerConfiguration.getCustomImages() == null ?
+                Collections.EMPTY_MAP :
+                dockerConfiguration.getCustomImages()
+                        .stream()
+                        .collect(Collectors.toMap(DockerImage::getCommand, i -> i));
     }
 
     @Override

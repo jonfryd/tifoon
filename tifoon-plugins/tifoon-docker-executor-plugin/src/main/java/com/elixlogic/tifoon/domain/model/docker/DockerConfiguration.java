@@ -19,11 +19,6 @@ public class DockerConfiguration implements Validator {
     @Nullable
     private List<DockerImage> customImages;
 
-    @Nullable
-    public DockerImage getDefaultImage() {
-        return defaultImage;
-    }
-
     public void setDefaultImage(@NonNull String defaultImage) {
         this.defaultImage = new DockerImage(defaultImage);
     }
