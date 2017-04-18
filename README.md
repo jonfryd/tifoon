@@ -19,14 +19,15 @@ Tifoon is fully functional in its present state. Additional features and conveni
 
 # Features
 
-* Scan a configurable list of networks via nmap for open TCP ports
+* Scan a configurable list of networks via nmap for open TCP, UDP and SCTP ports
 * Runs periodic scans using either a local nmap install or Docker (nmap image downloaded automatically)
 * Determine exact changes compared to a configurable baseline
 * Save scan results as YAML or JSON files
 * [HTML](http://htmlpreview.github.com/?https://github.com/jonfryd/tifoon/blob/master/samples/sample_report.html) and [PDF](samples/sample_report.pdf) report generation
 * Report e-mailing (HTML mails with optional PDF attachment)
-* Optionally pass additional custom arguments to port scanner (e.g. '-sS --defeat-rst-ratelimit')
+* Optionally pass additional custom arguments to port scanner (e.g. '--defeat-icmp-ratelimit --defeat-rst-ratelimit' for faster UDP and TCP SYN scanning)
 * **NEW**: Report when the input network configuration has changed (via a hash)
+* **NEW**: UDP and SCTP protocol scanning
 
 # Building
 
@@ -54,8 +55,8 @@ Also, either of the following is a prerequisite to perform any port scanning:
 
 From command line, Tifoon can be extracted from the ZIP archive and launched via three simple steps:
 
-    $ unzip tifoon-app-0.8.0-dist.zip
-    $ cd tifoon-app-0.8.0/
+    $ unzip tifoon-app-1.0.0-dist.zip
+    $ cd tifoon-app-1.0.0/
     $ ./run_tifoon.sh
 
 With Tifoon's factory network configuration the local host (IP address 127.0.0.1) is completely TCP
@@ -93,7 +94,8 @@ a Linux/UNIX `screen` so it runs in the background in a way that is detached fro
 
 TCP SYN stealth scanning is used by default when executing Tifoon with root privileges on Unix, Linux and 
 Mac OS X. Unprivileged execution results in TCP connect() scanning being used, which generates more "noise" 
-in log files. Run Tifoon as root if this is an issue.
+in log files. Run Tifoon as root if this is an issue. Note that root is required anyway for UDP or SCTP
+scanning.
 
 It is also possible to run the application directly with Maven's Exec plugin. From the root of the cloned
 GIT project:
@@ -130,11 +132,19 @@ network. Example:
         - rasputin.mylan
         - 192.168.0.2
       ports:
-        - 20-25
-        - 153
-        - 900-999
+        - A:20-25
+        - T:153
+        - TCP:400-450
+        - U:900-999
+        - SCTP:20
 
-Results in all of TCP ports 20 to 25, 153 and 900 to 999 being scanned on the hosts "rasputin.mylan" and 192.168.0.2.
+This configuration Results in TCP, UDP and SCTP ports 20 to 25, TCP port 153, TCP ports 400-450, UDP ports 900 to 999 and SCTP
+port 20 being scanned on the target hosts "rasputin.mylan" and 192.168.0.2. The supported protocol prefixes are:
+
+- TCP: "T" and "TCP"
+- UDP: "U" and "UDP"
+- SCTP: "S" and "SCTP"
+- ALL: "A" and "ALL" (implies TCP, UDP and SCTP protocols being scanned)
 
 If a hostname (and not a IPv4 address) is provided for any host, the IPv4 address is resolved on startup
 by DNS lookup on startup (resolution is final and not redone on consecutive scan).
@@ -142,8 +152,7 @@ by DNS lookup on startup (resolution is final and not redone on consecutive scan
 Of course, all hosts could technically speaking be on the same physical network but grouped into
 logical networks.
 
-Ranges of hosts in CIDR or IP interval notation can not be specified, yet. Also, TCP is the only
-protocol supported as of this moment.
+Ranges of hosts in CIDR or IP interval notation can not be specified, yet.
 
 ### `config/docker.yml`
 
@@ -186,7 +195,6 @@ developers for free, making Java coding productive and a lot of fun.
 
 Tifoon is still in its infancy, but I have several ideas for how this baby can grow in the future:
 
-* UDP and SCTP protocols scanning
 * Support for specifying ranges of hosts
 * Define pre-defined sets of "top ports" for fast scanning of the most critical services
 * IPv6 support
