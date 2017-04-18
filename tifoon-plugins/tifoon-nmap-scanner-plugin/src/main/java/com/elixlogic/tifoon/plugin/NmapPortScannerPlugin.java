@@ -1,12 +1,14 @@
 package com.elixlogic.tifoon.plugin;
 
 import com.elixlogic.tifoon.domain.model.scanner.*;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.elixlogic.tifoon.plugin.executer.ExecutorPlugin;
 import com.elixlogic.tifoon.plugin.scanner.AbstractScannerPlugin;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SystemUtils;
 import org.nmap4j.data.NMapRun;
 import org.nmap4j.data.host.Address;
 import org.nmap4j.data.nmaprun.Host;
@@ -24,6 +26,9 @@ import java.util.stream.Stream;
 public class NmapPortScannerPlugin extends AbstractScannerPlugin {
     private static final String PROVIDES = "nmap";
 
+    private static final Set<String> UNSUPPORTED_SCAN_TECHNIQUES = ImmutableSet.of("-sO");
+    private static final Set<String> ROOT_SCAN_TECHNIQUES = ImmutableSet.of("-sS", "-sA", "-sW", "-sM", "-sU", "-sN", "-sF", "-sX", "-sI", "-sY", "-sZ");
+
     @Override
     public boolean supports(final String _s) {
         return PROVIDES.equals(_s);
@@ -35,7 +40,7 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
                               @Nullable final String _additionalParameters) {
         try {
             final String scanResultFilename = String.format("nmap_scan_result_%s.xml", UUID.randomUUID().toString());
-            final String[] commandWithArguments = buildNmapCommandWithArguments(_request, scanResultFilename, _additionalParameters);
+            final String[] commandWithArguments = buildNmapCommandWithArguments(_request, scanResultFilename, _executorPlugin.getRunningAsUsername(), _additionalParameters);
             final byte result[] = _executorPlugin.dispatch("nmap", commandWithArguments, scanResultFilename);
 
             return mapXmlToPortScannerResult(_request, result);
@@ -49,10 +54,53 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
 
     private String[] buildNmapCommandWithArguments(@NonNull final PortScannerJob _request,
                                                    @NonNull final String _scanResultFilename,
+                                                   @NonNull final String _runningAsUsername,
                                                    @Nullable final String _additionalParameters) {
-        final String nmapPortRanges = _request.getPortRanges()
+        // create port argument based on port ranges grouped by protocol
+        final List<String> impliedScanTypes = new LinkedList<>();
+
+        final Map<Protocol, List<PortRange>> portRangesByProtocol = _request.getPortRanges()
                 .stream()
-                .map(PortRange::toSingleOrIntervalString)
+                .collect(Collectors.groupingBy(PortRange::toProtocol));
+
+        final List<String> portRanges = new LinkedList<>();
+
+        boolean protocolsOtherThanTCP = false;
+
+        for(Map.Entry<Protocol, List<PortRange>> entry : portRangesByProtocol.entrySet()) {
+            final StringBuilder stringBuilder = new StringBuilder();
+
+            switch(entry.getKey()) {
+                case UDP:
+                    stringBuilder.append("U:");
+                    impliedScanTypes.add("-sU");
+                    break;
+                case TCP:
+                    stringBuilder.append("T:");
+                    impliedScanTypes.add("-sS");
+                    break;
+                case SCTP:
+                    stringBuilder.append("S:");
+                    impliedScanTypes.add("-sY");
+                    break;
+                default:
+                    throw new IllegalArgumentException(String.format("Unknown protocol: %s", entry.getKey()));
+            }
+
+            protocolsOtherThanTCP |= (entry.getKey() != Protocol.TCP);
+
+            final String portRangesForProtocol = entry.getValue()
+                    .stream()
+                    .map(PortRange::toSingleOrIntervalString)
+                    .collect(Collectors.joining(","));
+
+            stringBuilder.append(portRangesForProtocol);
+
+            portRanges.add(stringBuilder.toString());
+        }
+
+        final String nmapPortRanges = portRanges
+                .stream()
                 .collect(Collectors.joining(","));
 
         final List<String> targetHosts = _request.getHosts()
@@ -65,8 +113,33 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
                 .collect(Collectors.toList());
 
         final List<String> argumentsList = Lists.newArrayList("-oX", _scanResultFilename, "-p", nmapPortRanges);
+
+        // only add implied scan types if absolutely necessary, otherwise rely on default
+        // (TCP connect for non-root, stealth for root)
+        if (protocolsOtherThanTCP) {
+            argumentsList.addAll(impliedScanTypes);
+        }
+
         argumentsList.addAll(targetHosts);
         argumentsList.addAll(0, additionalParameters);
+
+        // check for unsupported scan techniques
+        final Set<String> unsupportedScanTypes = new HashSet<>(UNSUPPORTED_SCAN_TECHNIQUES);
+        unsupportedScanTypes.retainAll(argumentsList);
+
+        if (!unsupportedScanTypes.isEmpty()) {
+            // warn about running non-root, since these scan types require root access on Unixes
+            log.error("Unsupported scan type(s) specified: {}", unsupportedScanTypes.toString());
+        }
+
+        // identify root scan techniques
+        final Set<String> rootScanTypes = new HashSet<>(ROOT_SCAN_TECHNIQUES);
+        rootScanTypes.retainAll(argumentsList);
+
+        if (!rootScanTypes.isEmpty() && SystemUtils.IS_OS_UNIX && !("root".equals(_runningAsUsername))) {
+            // warn about running non-root, since these scan types require root access on Unixes
+            log.warn("Scan types require root privileges. Please re-run Tifoon as root.");
+        }
 
         return argumentsList.toArray(new String[argumentsList.size()]);
     }
@@ -116,10 +189,8 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
                 return Protocol.UDP;
             case "stcp":
                 return Protocol.SCTP;
-            case "ip":
-                return Protocol.IP;
             default:
-                throw new IllegalArgumentException("Unknown protocol: " + _protocol);
+                throw new IllegalArgumentException(String.format("Unknown protocol: %s", _protocol));
         }
     }
 }
