@@ -136,7 +136,7 @@ network. Example:
         - U:900-999
         - SCTP:20
 
-This configuration Results in TCP, UDP and SCTP ports 20 to 25, TCP port 153, TCP ports 400-450, UDP ports 900 to 999 and SCTP
+This configuration defines TCP, UDP and SCTP ports 20 to 25, TCP port 153, TCP ports 400-450, UDP ports 900 to 999 and SCTP
 port 20 being scanned on the target hosts "rasputin.mylan" and 192.168.0.2. The supported protocol prefixes are:
 
 - "T" and "TCP" (TCP)
