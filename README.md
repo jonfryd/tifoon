@@ -136,8 +136,9 @@ network. Example:
         - U:900-999
         - SCTP:20
 
-This configuration defines TCP, UDP and SCTP ports 20 to 25, TCP port 153, TCP ports 400-450, UDP ports 900 to 999 and SCTP
-port 20 being scanned on the target hosts "rasputin.mylan" and 192.168.0.2. The supported protocol prefixes are:
+This configuration defines TCP, UDP and SCTP ports 20 to 25, TCP port 153, TCP ports 400-450, UDP ports 900 to
+999 and SCTP port 20 being scanned on the target hosts "rasputin.mylan" and 192.168.0.2. The supported protocol
+prefixes are:
 
 - "T" and "TCP" (TCP)
 - "U" and "UDP" (UDP)
@@ -147,8 +148,8 @@ port 20 being scanned on the target hosts "rasputin.mylan" and 192.168.0.2. The 
 If a hostname (and not a IPv4 address) is provided for any host, the IPv4 address is resolved on startup
 by DNS lookup on startup (resolution is final and not redone on consecutive scan).
 
-Of course, all hosts could technically speaking be on the same physical network but grouped into
-logical networks.
+Target hosts might exist on the same actual physical network, but Tifoon allows grouping hosts into several
+logical networks if so desired.
 
 Ranges of hosts in CIDR or IP interval notation can not be specified, yet.
 
