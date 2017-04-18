@@ -50,7 +50,7 @@ public class TargetPortScannerJobMapper extends AbstractConverter<Target, PortSc
                     protocols.add(Protocol.UDP);
                     break;
                 case "S":
-                case "SCPT":
+                case "SCTP":
                     protocols.add(Protocol.SCTP);
                     break;
                 case "A":
