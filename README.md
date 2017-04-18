@@ -15,8 +15,6 @@ Currently Tifoon relies on the world class `nmap` port scanner from which it rea
 as a diff algorithm using [JaVers](http://javers.org/) for determining changes to open ports reported
 in a concise, easy to read manner.
 
-Tifoon is fully functional in its present state. Additional features and convenience is coming soon, though.
-
 # Features
 
 * Scan a configurable list of networks via nmap for open TCP, UDP and SCTP ports
@@ -193,7 +191,8 @@ developers for free, making Java coding productive and a lot of fun.
 
 # TODO
 
-Tifoon is still in its infancy, but I have several ideas for how this baby can grow in the future:
+Tifoon is production ready in terms of critical features, but I do have some additional ideas for how
+this baby might grow in the future:
 
 * Support for specifying ranges of hosts
 * Define pre-defined sets of "top ports" for fast scanning of the most critical services
