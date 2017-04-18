@@ -141,10 +141,10 @@ network. Example:
 This configuration Results in TCP, UDP and SCTP ports 20 to 25, TCP port 153, TCP ports 400-450, UDP ports 900 to 999 and SCTP
 port 20 being scanned on the target hosts "rasputin.mylan" and 192.168.0.2. The supported protocol prefixes are:
 
-- TCP: "T" and "TCP"
-- UDP: "U" and "UDP"
-- SCTP: "S" and "SCTP"
-- ALL: "A" and "ALL" (implies TCP, UDP and SCTP protocols being scanned)
+- "T" and "TCP" (TCP)
+- "U" and "UDP" (UDP)
+- "S" and "SCTP" (SCTP)
+- "A" and "ALL" (implies all protocols will be scanned on the specified ports, i.e. TCP, UDP and SCTP)
 
 If a hostname (and not a IPv4 address) is provided for any host, the IPv4 address is resolved on startup
 by DNS lookup on startup (resolution is final and not redone on consecutive scan).
