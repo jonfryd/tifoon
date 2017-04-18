@@ -2,4 +2,4 @@ docker:
   defaultImage: kunals/generic-scanner:latest
   customImages:
     - command: nmap
-      image: uzyexe/nmap:latest
+      image: instrumentisto/nmap:latest
