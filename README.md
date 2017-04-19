@@ -53,8 +53,8 @@ Also, either of the following is a prerequisite to perform any port scanning:
 
 From command line, Tifoon can be extracted from the ZIP archive and launched via three simple steps:
 
-    $ unzip tifoon-app-1.0.0-dist.zip
-    $ cd tifoon-app-1.0.0/
+    $ unzip tifoon-app-1.0.2-dist.zip
+    $ cd tifoon-app-1.0.2/
     $ ./run_tifoon.sh
 
 With Tifoon's factory network configuration the local host (IP address 127.0.0.1) is completely TCP
