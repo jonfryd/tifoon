@@ -145,7 +145,7 @@ prefixes are:
 - "S" and "SCTP" (SCTP)
 - "A" and "ALL" (implies all protocols will be scanned on the specified ports, i.e. TCP, UDP and SCTP)
 
-If a hostname (and not a IPv4 address) is provided for any host, the IPv4 address is resolved on startup
+If a host name (instead of an IP address) is provided for any host, the IP address is resolved on startup
 by DNS lookup on startup (resolution is final and not redone on consecutive scan).
 
 Target hosts might exist on the same actual physical network, but Tifoon allows grouping hosts into several
