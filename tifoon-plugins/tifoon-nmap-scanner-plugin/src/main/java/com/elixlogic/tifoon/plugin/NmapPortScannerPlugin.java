@@ -138,7 +138,7 @@ public class NmapPortScannerPlugin extends AbstractScannerPlugin {
 
         if (!rootScanTypes.isEmpty() && SystemUtils.IS_OS_UNIX && !("root".equals(_runningAsUsername))) {
             // warn about running non-root, since these scan types require root access on Unixes
-            log.warn("Scan types require root privileges. Please re-run Tifoon as root.");
+            log.warn("Scan requires root privileges. Please re-run Tifoon as root.");
         }
 
         return argumentsList.toArray(new String[argumentsList.size()]);
