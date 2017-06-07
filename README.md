@@ -1,3 +1,4 @@
+[![Java 8](https://img.shields.io/badge/Java-8-blue.svg)](http://www.oracle.com/technetwork/java/javase)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/jonfryd/tifoon.svg?branch=master)](https://travis-ci.org/jonfryd/tifoon)
 
