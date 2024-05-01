@@ -22,7 +22,7 @@ in a concise, easy to read manner.
 * Runs periodic scans using either a local nmap install or Docker (nmap image downloaded automatically)
 * Determine exact changes compared to a configurable baseline
 * Save scan results as YAML or JSON files
-* [HTML](http://htmlpreview.github.com/?https://github.com/jonfryd/tifoon/blob/master/samples/sample_report.html) and [PDF](samples/sample_report.pdf) report generation
+* [HTML](http://htmlpreview.github.io/?https://github.com/jonfryd/tifoon/blob/master/samples/sample_report.html) and [PDF](samples/sample_report.pdf) report generation
 * Report e-mailing (HTML mails with optional PDF attachment)
 * Optionally pass additional custom arguments to port scanner (e.g. '--defeat-icmp-ratelimit --defeat-rst-ratelimit' for faster UDP and TCP SYN scanning)
 * **NEW**: Report when the input network configuration has changed (via a hash)
